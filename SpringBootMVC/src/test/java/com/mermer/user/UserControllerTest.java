@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,4 +46,16 @@ public class UserControllerTest {
 			.andExpect(jsonPath("$.age", is(equalTo(27))));
 	}
 
+	@Test
+	public void createUser_XML() throws Exception {
+		String userJson = "{\"username\":\"mermer\", \"age\": 27 }";
+		mockMvc.perform(post("/user/create")
+		.contentType(MediaType.APPLICATION_JSON_UTF8)
+		.accept(MediaType.APPLICATION_XML)
+		.content(userJson))
+			.andExpect(status().isOk())
+			.andExpect(xpath("/User/username").string("mermer"))
+			.andExpect(xpath("/User/age").string("27"));
+	}
+	
 }
