@@ -1,11 +1,15 @@
 <!Doctype html>
-<html lang="ko">
+<html lang="ko" xmlns:th="https://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8"/>
 	<title>Index</title>
 </head>
 <body>
 Welcome Index Page
+<h1 th:text="${name}">
+Name
+</h1>
+
 </body>
 <script src="/webjars/jquery/dist/jquery.min.js"></script>
 <script>
