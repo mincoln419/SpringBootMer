@@ -3,6 +3,7 @@ package com.mermer.events;
 
 import java.net.URI;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -19,16 +20,21 @@ public class EventController {
 	@Autowired
 	private final EventRepository eventRepository;
 	
-	public EventController(EventRepository eventRepository) {
+	private final ModelMapper modelMapper;
+	
+	public EventController(EventRepository eventRepository, ModelMapper modelMapper) {
 		this.eventRepository = eventRepository;
+		this.modelMapper = modelMapper;
 	}
 	
+	
 	@PostMapping
-	public ResponseEntity<Event> createEvent(@RequestBody Event event) {
+	public ResponseEntity<Event> createEvent(@RequestBody EventDto eventDto) {
+		Event event = modelMapper.map(eventDto, Event.class);
 		Event newEvent = this.eventRepository.save(event);
 		URI createdUri = ControllerLinkBuilder.linkTo(EventController.class)
-				.slash("{id}").toUri();
-		event.setId(10);
+				.slash(newEvent.getId()).toUri();
+		//event.setId(100);
 		return ResponseEntity.created(createdUri).body(event);
 	}
 	
