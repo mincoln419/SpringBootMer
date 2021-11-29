@@ -2,6 +2,12 @@ package com.mermer.events;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -10,9 +16,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Builder @AllArgsConstructor @NoArgsConstructor
-@Getter @Setter @EqualsAndHashCode(of = "id")  
+@Getter @Setter @EqualsAndHashCode(of = "id")
+@Entity
 public class Event {
 	// hashcode equal method에서 stack overflow 방지 위함 - entity 간 상호참조로 꼬였을 경우 방지
+	@Id @GeneratedValue
 	private Integer id;
 
 	private String name;
@@ -28,5 +36,6 @@ public class Event {
 
 	private boolean offline;
 	private boolean free;
+	@Enumerated(EnumType.STRING)
 	private EventStatus eventStatus;
 }
