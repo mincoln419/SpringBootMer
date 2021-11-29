@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Builder @AllArgsConstructor @NoArgsConstructor
-@Getter @Setter @EqualsAndHashCode(of = "id") // hashcode equal method에서 stack overflow 방지 위함 - entity 간 상호참조로 데이터가 꼬일 경우 방지 
+@Getter @Setter @EqualsAndHashCode(of = "id")  
 public class Event {
-
+	// hashcode equal method에서 stack overflow 방지 위함 - entity 간 상호참조로 꼬였을 경우 방지
 	private Integer id;
 
 	private String name;
