@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mermer.events.Event;
+import com.mermer.events.EventDto;
 //import com.mermer.events.EventRepository;
 import com.mermer.events.EventStatus;
 
@@ -50,15 +51,15 @@ public class EventControllerTest {
 
 	@Test
 	public void createEvent() throws Exception {
-		Event event = Event.builder().name("Spring").description("REST API Development with Spring")
-				.id(100)
+		EventDto event = EventDto.builder().name("Spring").description("REST API Development with Spring")
+				//.id(100)//dto를 통해서 id값을 직접 받을 수 없도록 했음
 				.beginEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 22, 11, 12))
 				.closeEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 23, 11, 12))
 				.beginEventDateTime(LocalDateTime.of(2021, 11, 11, 12, 11, 12))
 				.closeEnrollmentDateTime(LocalDateTime.of(2021, 11, 12, 13, 11, 12)).basePrice(100).maxPrice(200)
-				.free(true)
-				.eventStatus(EventStatus.PUBLISHED)
+				//.eventStatus(EventStatus.PUBLISHED)
 				.limitOfEnrollment(100).location("서대문구 홍제동").build();
+		
 		//Mockito.when(eventRepository.save(event)).thenReturn(event);
 
 		mockMvc.perform(post("/api/events/").contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -71,4 +72,28 @@ public class EventControllerTest {
 				.andExpect(jsonPath("eventStatus").value(Matchers.not(EventStatus.DRAFT)));
 	}
 
+	@Test
+	public void createEvent_Bad_request() throws Exception {
+		Event event = Event.builder().name("Spring").description("REST API Development with Spring")
+				.id(100)//dto를 통해서 id값을 직접 받을 수 없도록 했음
+				.beginEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 22, 11, 12))
+				.closeEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 23, 11, 12))
+				.beginEventDateTime(LocalDateTime.of(2021, 11, 11, 12, 11, 12))
+				.closeEnrollmentDateTime(LocalDateTime.of(2021, 11, 12, 13, 11, 12))
+				.basePrice(100)
+				.maxPrice(200)
+				.free(true)
+				.eventStatus(EventStatus.PUBLISHED)
+				.limitOfEnrollment(100).location("서대문구 홍제동").build();
+		
+		//Mockito.when(eventRepository.save(event)).thenReturn(event);
+
+		mockMvc.perform(post("/api/events/")
+				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.accept(MediaTypes.HAL_JSON_UTF8)
+				.content(objMapper.writeValueAsString(event))).andDo(print())
+				.andExpect(status().isBadRequest());//400
+				
+	}
+	
 }
