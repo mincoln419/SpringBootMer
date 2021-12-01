@@ -27,6 +27,11 @@ import com.mermer.events.Event;
 //import com.mermer.events.EventRepository;
 import com.mermer.events.EventStatus;
 
+/*
+ * 슬라이싱 테스트 -> 스프링부트 테스트
+ * 
+ * */
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
