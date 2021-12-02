@@ -34,12 +34,12 @@ public class EventController {
 	
 	
 	@PostMapping
-	public ResponseEntity<Event> createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
+	public ResponseEntity<Object> createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
 		if(errors.hasErrors()) {
 			System.out.println("==================================");
 			System.out.println(errors.toString());
 			System.out.println("==================================");
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body(errors);
 		}
 		
 		eventValidator.validate(eventDto, errors);
@@ -47,7 +47,7 @@ public class EventController {
 			System.out.println("==================================");
 			System.out.println(errors.toString());
 			System.out.println("==================================");
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body(errors);
 		}
 		
 		//eventDTo -> event
