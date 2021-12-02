@@ -57,10 +57,13 @@ public class EventController {
 		event.update();
 		
 		Event newEvent = this.eventRepository.save(event);
-		URI createdUri = ControllerLinkBuilder.linkTo(EventController.class)
-				.slash(newEvent.getId()).toUri();
+		ControllerLinkBuilder selfLinkBuilder = ControllerLinkBuilder.linkTo(EventController.class).slash(newEvent.getId());
+		URI createdUri = selfLinkBuilder.toUri();
 		//event.setId(100);
-		return ResponseEntity.created(createdUri).body(event);
+		EventResource eventResource = new EventResource(event);
+		eventResource.add(ControllerLinkBuilder.linkTo(EventController.class).withRel("query-events"));
+		eventResource.add(selfLinkBuilder.withRel("update-event"));
+		return ResponseEntity.created(createdUri).body(eventResource);
 	}
 	
 }
