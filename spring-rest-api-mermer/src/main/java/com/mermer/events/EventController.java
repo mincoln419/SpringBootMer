@@ -52,6 +52,10 @@ public class EventController {
 		
 		//eventDTo -> event
 		Event event = modelMapper.map(eventDto, Event.class);
+		
+		//free 상태값 갱신
+		event.update();
+		
 		Event newEvent = this.eventRepository.save(event);
 		URI createdUri = ControllerLinkBuilder.linkTo(EventController.class)
 				.slash(newEvent.getId()).toUri();

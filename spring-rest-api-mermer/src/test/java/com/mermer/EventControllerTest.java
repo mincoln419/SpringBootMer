@@ -31,6 +31,7 @@ import com.mermer.events.EventStatus;
 import com.mermer.events.EventValidator;
 
 /*
+ * EventController Instance Test
  * 슬라이싱 테스트 -> 스프링부트 테스트
  * 
  * */
@@ -75,7 +76,8 @@ public class EventControllerTest {
 				.andExpect(jsonPath("id").exists()).andExpect(header().exists(HttpHeaders.LOCATION))
 				.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_UTF8_VALUE))
 				.andExpect(jsonPath("id").value(Matchers.not(100)))
-				.andExpect(jsonPath("free").value(Matchers.not(true)))
+				.andExpect(jsonPath("free").value(false))
+				.andExpect(jsonPath("offline").value(true))
 				.andExpect(jsonPath("eventStatus").value(Matchers.not(EventStatus.DRAFT)));
 	}
 
@@ -136,7 +138,8 @@ public class EventControllerTest {
 
 		mockMvc.perform(post("/api/events")
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
-				.content(objMapper.writeValueAsString(event))).andDo(print())
+				.content(objMapper.writeValueAsString(event)))
+				.andDo(print())
 				.andExpect(status().isBadRequest())//400
 				.andExpect(jsonPath("$[0].objectName").exists())
 				.andExpect(jsonPath("$[0].field").exists())
