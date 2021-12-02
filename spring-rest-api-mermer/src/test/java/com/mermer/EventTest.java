@@ -3,13 +3,18 @@ package com.mermer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import com.mermer.events.Event;
+
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 /* 
  * Event Domain 테스트
  * 
  * */
+@RunWith(JUnitParamsRunner.class)
 public class EventTest {
 
 	@Test
@@ -36,54 +41,57 @@ public class EventTest {
 	}
 
 	@Test
-	public void testFree() {
+	/*
+	 * @Parameters({"0, 0 , true", "100, 0, false", "0, 100, false" })
+	 * --> 문자열로 쓰는게 맘에 안들면..
+	 */
+	//@Parameters(method = "parametersForTestFree")
+	@Parameters
+	public void testFree(int basePrice, int maxPrice, boolean isFree) {
 		// Given
 		Event event = Event
 				.builder()
-				.basePrice(0)
-				.maxPrice(0)
+				.basePrice(basePrice)
+				.maxPrice(maxPrice)
 				.build();
 		// when
 		event.update();
 		// then
-		assertThat(event.isFree()).isTrue();
-
-		// Given
-		event = Event.builder().basePrice(100).maxPrice(0).build();
-		// when
-		event.update();
-		// then
-		assertThat(event.isFree()).isFalse();
-
-		// Given
-		event = Event.builder().basePrice(0).maxPrice(100).build();
-		// when
-		event.update();
-		// then
-		assertThat(event.isFree()).isFalse();
+		assertThat(event.isFree()).isEqualTo(isFree);
 
 	}
-
+	//parametersFor가 convention -> @Parameters 뒤에 (methos =...)를 안써도 인식함
+	//단 postfix 뒤의 이름이 동일해야 함
+	private Object[] parametersForTestFree() {
+		return new Object[] {
+				new Object[] {0, 0 , true},
+				new Object[] {100, 0 , false},
+				new Object[] {0, 100 , false},
+				new Object[] {200, 100 , false}
+		};
+	}
+	
 	@Test
-	public void offlineTest() {
+	@Parameters
+	public void testOffline(String location, boolean isOffline) {
 		// Given
 		Event event = Event
 				.builder()
-				.location("강남역 9번 출구")
+				.location(location)
 				.build();
 		// when
 		event.update();
 		// then
-		assertThat(event.isOffline()).isTrue();
-		
-		
-		// Given
-		event = Event
-				.builder()
-				.build();
-		// when
-		event.update();
-		// then
-		assertThat(event.isOffline()).isFalse();
+		assertThat(event.isOffline()).isEqualTo(isOffline);
+
+	}
+	
+	private Object[] parametersForTestOffline() {
+		return new Object[] {
+				new Object[] {"강남역 9번출구", true},
+				new Object[] {"" , false},
+				new Object[] {" " , false},
+				new Object[] {null , false}
+		};
 	}
 }
