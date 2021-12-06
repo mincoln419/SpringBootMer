@@ -6,7 +6,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.time.LocalDateTime;
 
 import org.hamcrest.Matchers;
@@ -19,6 +32,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.hateoas.Links;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -88,8 +102,54 @@ public class EventControllerTest {
 				.andExpect(jsonPath("_links.self").exists())
 				.andExpect(jsonPath("_links.query-events").exists())
 				.andExpect(jsonPath("_links.update-event").exists())
-				.andDo(document("create-event"));
-				;
+				.andDo(document("create-event", 
+					links(
+						linkWithRel("self").description("link to self")
+						, linkWithRel("query-events").description("link to query-events")
+						, linkWithRel("update-event").description("link to update an existing event")		
+					),
+					requestHeaders(
+						headerWithName(HttpHeaders.ACCEPT).description("accept header"),
+						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+					),
+					requestFields(
+						fieldWithPath("name").description("name of new event"),
+						fieldWithPath("description").description("description of new event"),
+						fieldWithPath("beginEnrollmentDateTime").description("date time of begin of new event"),
+						fieldWithPath("closeEnrollmentDateTime").description("date time of end of new event"),
+						fieldWithPath("beginEventDateTime").description("date time of begin of new event"),
+						fieldWithPath("endEventDateTime").description("date time of end of new event"),
+						fieldWithPath("location").description("location of new event"),
+						fieldWithPath("basePrice").description("basePrice of new event"),
+						fieldWithPath("maxPrice").description("maxPrice of new event"),
+						fieldWithPath("limitOfEnrollment").description("limitOfEnrollment of new event")
+					),
+					responseHeaders(
+							headerWithName(HttpHeaders.LOCATION).description("location header"),
+							headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+					),
+					relaxedResponseFields(
+							//response only
+							fieldWithPath("id").description("id of new event"),
+							fieldWithPath("free").description("free of new event"),
+							fieldWithPath("offline").description("offline of new event"),
+							fieldWithPath("eventStatus").description("eventStatus of new event"),
+							
+							//request +
+							fieldWithPath("name").description("name of new event"),
+							fieldWithPath("description").description("description of new event"),
+							fieldWithPath("beginEnrollmentDateTime").description("date time of begin of new event"),
+							fieldWithPath("closeEnrollmentDateTime").description("date time of end of new event"),
+							fieldWithPath("beginEventDateTime").description("date time of begin of new event"),
+							fieldWithPath("endEventDateTime").description("date time of end of new event"),
+							fieldWithPath("location").description("location of new event"),
+							fieldWithPath("basePrice").description("basePrice of new event"),
+							fieldWithPath("maxPrice").description("maxPrice of new event"),
+							fieldWithPath("limitOfEnrollment").description("limitOfEnrollment of new event")
+						)
+					
+				));
+				
 		
 	}
 
