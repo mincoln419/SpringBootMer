@@ -1,6 +1,7 @@
 package com.mermer;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -45,6 +47,7 @@ import com.mermer.common.RestDocConfiguration;
 import com.mermer.common.TestDescription;
 import com.mermer.events.Event;
 import com.mermer.events.EventDto;
+import com.mermer.events.EventRepository;
 //import com.mermer.events.EventRepository;
 import com.mermer.events.EventStatus;
 import com.mermer.events.EventValidator;
@@ -69,6 +72,9 @@ public class EventControllerTest {
 
 	@Autowired
 	ObjectMapper objMapper;
+	
+	@Autowired
+	EventRepository eventRepository;
 	
 	/*
 	 * @MockBean EventRepository eventRepository;
@@ -216,11 +222,49 @@ public class EventControllerTest {
 				.content(objMapper.writeValueAsString(event)))
 				.andDo(print())
 				.andExpect(status().isBadRequest())//400
-				.andExpect(jsonPath("$[0].objectName").exists())
-				.andExpect(jsonPath("$[0].field").exists())
-				.andExpect(jsonPath("$[0].defaultMessage").exists())
-				.andExpect(jsonPath("$[0].code").exists())
-				.andExpect(jsonPath("$[0].rejectedValue").exists());
+				.andExpect(jsonPath("content[0].objectName").exists())
+				.andExpect(jsonPath("content[0].field").exists())
+				.andExpect(jsonPath("content[0].defaultMessage").exists())
+				.andExpect(jsonPath("content[0].code").exists())
+				.andExpect(jsonPath("content[0].rejectedValue").exists())
+				.andExpect(jsonPath("_links.index").exists())
+				;
+		
 				
+	}
+	
+	@Test
+	@TestDescription("30개의 이벤트를 10개씩 두번째 페이지 조회하기")
+	public void queryEvent() throws Exception{
+		//Given -- 이벤트 30개 생성
+//		IntStream.range(0, 30).forEach(i -> {
+//			this.generateEvent(i);
+//		});
+		//method reference로 간결화
+		IntStream.range(0, 30).forEach(this::generateEvent);
+		
+		//When
+		this.mockMvc.perform(get("/api/events")
+				.param("page", "1")//두번째 페이지
+				.param("size", "10")
+				.param("sort", "name,DESC")
+		)
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("page").exists())
+		.andExpect(jsonPath("_links.self").exists())
+		.andExpect(jsonPath("_links.profile").exists())
+		.andDo(document("query-events"))
+		;
+		
+	}
+
+	private void generateEvent(int index) {
+		Event event = Event.builder()
+				.name("event" + index)
+				.description("test event")
+				.build();
+		
+		this.eventRepository.save(event);
 	}
 }
