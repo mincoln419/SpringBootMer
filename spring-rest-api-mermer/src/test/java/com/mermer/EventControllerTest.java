@@ -3,6 +3,7 @@ package com.mermer;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,6 +29,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -80,6 +82,9 @@ public class EventControllerTest {
 	 * @MockBean EventRepository eventRepository;
 	 */
 
+	@Autowired
+	ModelMapper modelMapper;
+	
 	@Test
 	@TestDescription("정상적으로 이벤트를 생성하는 테스트")
 	public void createEvent() throws Exception {
@@ -249,6 +254,7 @@ public class EventControllerTest {
 				.param("size", "10")
 				.param("sort", "name,DESC")
 		)
+		//Then
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("page").exists())
@@ -259,12 +265,155 @@ public class EventControllerTest {
 		
 	}
 
-	private void generateEvent(int index) {
+	@Test
+	@TestDescription("기존의 이벤트 하나만 조회하기")
+	public void getEvent() throws Exception{
+		//Given
+		Event event = this.generateEvent(100);
+		
+		//when & then
+		this.mockMvc.perform(get("/api/events/{id}", event.getId()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("id").exists())
+			.andExpect(jsonPath("name").exists())
+			.andExpect(jsonPath("_links.self").exists())
+			.andExpect(jsonPath("_links.profile").exists())
+			.andDo(print())
+			.andDo(document("get-an-event"))
+		;
+		
+	}
+	
+	@Test
+	@TestDescription("없는 이벤트 조회했을 때 404 응답받기")
+	public void getEvent404() throws Exception {
+		//when & then
+		this.mockMvc.perform(get("/api/events/11883"))
+			.andExpect(status().isNotFound())
+		;
+	}
+	
+	@Test
+	@TestDescription("이벤트 데이터 정상 수정처리")
+	public void updateEvent() throws Exception {
+		//Given
+		Event event = this.generateEvent(100);
+		
+		EventDto eventDto = this.modelMapper.map(event, EventDto.class);
+		String eventName = event.getName() + "_modified"; 
+		eventDto.setName(eventName);
+		
+		
+		//when & then
+/*		this.mockMvc.perform(get("/api/events/{id}", event.getId()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("id").exists())
+			.andExpect(jsonPath("name").exists())
+			.andExpect(jsonPath("_links.self").exists())
+			.andExpect(jsonPath("_links.profile").exists())
+			.andDo(print())
+			.andDo(document("update-an-event"))
+		;*/
+		
+//		Event eventModified = Event.builder()
+//				.id(event.getId())
+//				.name(event.getName() + "_modified")
+//				.description("REST API Development with Spring")
+//				//.id(100)//dto를 통해서 id값을 직접 받을 수 없도록 했음
+//				.beginEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 22, 11, 12))
+//				.closeEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 23, 11, 12))
+//				.beginEventDateTime(LocalDateTime.of(2021, 12, 11, 12, 11, 12))
+//				.endEventDateTime(LocalDateTime.of(2021, 12, 12, 13, 11, 12))
+//				.basePrice(100)
+//				.maxPrice(200)
+//				//.eventStatus(EventStatus.PUBLISHED)
+//				.limitOfEnrollment(100).location("서대문구 홍제동").build();
+//		
+		//when & then
+		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
+				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))	
+				)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("name").value(eventName))
+			.andExpect(jsonPath("_links.self").exists())
+			//.andExpect(jsonPath("_links.profile").exists())
+			.andDo(print())
+			.andDo(document("get-an-event"))
+		;
+	}
+	@Test
+	@TestDescription("입력값 empty 오류 발생")
+	public void updateEvent400Empty() throws Exception {
+		//Given
+		Event event = this.generateEvent(200);
+		
+		EventDto eventDto = new EventDto();
+		
+		//when & then
+		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
+				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))	
+				)
+			.andExpect(status().isBadRequest())//400
+		;
+		
+	}
+	
+	@Test
+	@TestDescription("입력값 wrong 오류 발생")
+	public void updateEvent400_Wrong() throws Exception {
+		//Given
+		Event event = this.generateEvent(200);
+		
+		EventDto eventDto = new EventDto();
+		eventDto.setBasePrice(20000);
+		eventDto.setMaxPrice(1000);
+		
+		//when & then
+		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
+				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))	
+				)
+			.andExpect(status().isBadRequest())//400
+		;
+		
+	}
+	
+	@Test
+	@TestDescription("존재하지 않는 이벤트 수정시 오류")
+	public void updateEvent404() throws Exception {
+		//Given
+		Event event = this.generateEvent(200);
+		
+		EventDto eventDto = this.modelMapper.map(event, EventDto.class);
+		
+		
+		//when & then
+		this.mockMvc.perform(put("/api/events/123456", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
+				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))	
+				)
+			.andDo(print())
+			.andExpect(status().isNotFound())//404	
+		;
+		
+	}
+
+	private Event generateEvent(int index) {
 		Event event = Event.builder()
 				.name("event" + index)
-				.description("test event")
+				.description("test event generated")
+				//.id(100)//dto를 통해서 id값을 직접 받을 수 없도록 했음
+				.beginEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 22, 11, 12))
+				.closeEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 23, 11, 12))
+				.beginEventDateTime(LocalDateTime.of(2021, 11, 11, 12, 11, 12))
+				.endEventDateTime(LocalDateTime.of(2021, 11, 12, 13, 11, 12))
+				.basePrice(100)
+				.maxPrice(200)
+				.free(false)
+				.offline(true)
+				.eventStatus(EventStatus.DRAFT)
+				.limitOfEnrollment(100).location("서대문구 홍제동")
 				.build();
 		
-		this.eventRepository.save(event);
+		return this.eventRepository.save(event);
 	}
+
 }
