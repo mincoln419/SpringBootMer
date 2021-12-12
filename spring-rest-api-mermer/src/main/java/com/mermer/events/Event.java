@@ -7,6 +7,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import com.mermer.accounts.Account;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +47,9 @@ public class Event {
 	private boolean free;
 	@Enumerated(EnumType.STRING)
 	private EventStatus eventStatus = EventStatus.DRAFT;
+	
+	@ManyToOne
+	private Account manager;//단방향(Account -> Event)으로 참조할 수 있도록 매핑
 	
 	public void update() {
 
