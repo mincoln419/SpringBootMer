@@ -13,8 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +29,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.mermer.accounts.Account;
+import com.mermer.accounts.AccountAdapter;
+import com.mermer.accounts.CurrentUser;
 import com.mermer.common.ErrorsResource;
 
 @Controller
@@ -43,9 +51,24 @@ public class EventController {
 	}
 	
 	@GetMapping
-	public ResponseEntity queryEvents(Pageable pageable, PagedResourcesAssembler<Event> assembler){
+	public ResponseEntity queryEvents(Pageable pageable, 
+									PagedResourcesAssembler<Event> assembler,
+									//@AuthenticationPrincipal AccountAdapter currentUser -> 여기서 account를 꺼내는 것과 동일하게 사용 가능
+									//@AuthenticationPrincipal(expression = "account") Account account -> CurrentUser 라는  메타어노테이션 생성
+									@CurrentUser Account account
+									){
+		
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		User user = (User)authentication.getPrincipal(); -> @AuthenticationPrincipal 이걸로 바로 주입받을 수 있음
+		
+		
 		Page<Event> page = this.eventRepository.findAll(pageable);
 		var pagedResource = assembler.toResource(page, e -> new EventResource(e));
+		
+		if(account != null) {
+			pagedResource.add(ControllerLinkBuilder.linkTo(EventController.class).withRel("create-event"));
+		}
+		
 		pagedResource.add(new Link("/docs/index.html#resources-event-list").withRel("profile"));
 		return ResponseEntity.ok(pagedResource);
 		
@@ -111,6 +134,10 @@ public class EventController {
 	
 	@PostMapping
 	public ResponseEntity<Object> createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
+		
+		//사용자 정보 체크하기
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
 		if(errors.hasErrors()) {
 			System.out.println("==================================");
 			System.out.println(errors.toString());

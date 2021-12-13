@@ -291,6 +291,35 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 
 	@Test
+	@TestDescription("30개의 이벤트를 10개씩 두번째 페이지 조회하기 - 사용자 인증정보 체크")
+	public void queryEventWithAuthentication() throws Exception{
+		//Given -- 이벤트 30개 생성
+//		IntStream.range(0, 30).forEach(i -> {
+//			this.generateEvent(i);
+//		});
+		//method reference로 간결화
+		IntStream.range(0, 30).forEach(this::generateEvent);
+		
+		//When
+		this.mockMvc.perform(get("/api/events")
+				.param("page", "1")//두번째 페이지
+				.param("size", "10")
+				.param("sort", "name,DESC")
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+		)
+		//Then
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("page").exists())
+		.andExpect(jsonPath("_links.self").exists())
+		.andExpect(jsonPath("_links.profile").exists())
+		.andExpect(jsonPath("_links.create-event").exists())
+		.andDo(document("query-events"))
+		;
+		
+	}
+	
+	@Test
 	@TestDescription("기존의 이벤트 하나만 조회하기")
 	public void getEvent() throws Exception{
 		//Given
