@@ -9,6 +9,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -18,15 +19,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.common.util.Jackson2JsonParser;
+import org.springframework.test.web.servlet.ResultActions;
 
+import com.mermer.accounts.Account;
+import com.mermer.accounts.AccountRepository;
+import com.mermer.accounts.AccountRole;
+import com.mermer.accounts.AccountService;
 import com.mermer.common.BaseControllerTest;
 import com.mermer.common.TestDescription;
 import com.mermer.events.Event;
@@ -44,6 +53,18 @@ public class EventControllerTest extends BaseControllerTest{
 
 	@Autowired
 	EventRepository eventRepository;
+	
+	@Autowired
+	AccountService accountService;
+	
+	@Autowired
+	AccountRepository accountRepository;
+	
+	@Before
+	public void setUp() {
+		this.eventRepository.deleteAll();
+		this.accountRepository.deleteAll();
+	}
 	
 	/*
 	 * @MockBean EventRepository eventRepository;
@@ -66,8 +87,11 @@ public class EventControllerTest extends BaseControllerTest{
 		
 		//Mockito.when(eventRepository.save(event)).thenReturn(event);
 
-		mockMvc.perform(post("/api/events/").contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(event))).andDo(print())
+		mockMvc.perform(post("/api/events/")
+					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(event))
+					.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함 
+					).andDo(print())
 				.andExpect(status().isCreated())// 201
 				.andExpect(jsonPath("id").exists()).andExpect(header().exists(HttpHeaders.LOCATION))
 				.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_UTF8_VALUE))
@@ -105,7 +129,7 @@ public class EventControllerTest extends BaseControllerTest{
 							headerWithName(HttpHeaders.LOCATION).description("location header"),
 							headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
 					),
-					relaxedResponseFields(
+					relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
 							//response only
 							fieldWithPath("id").description("id of new event"),
 							fieldWithPath("free").description("free of new event"),
@@ -130,6 +154,37 @@ public class EventControllerTest extends BaseControllerTest{
 		
 	}
 
+	private String getBearerToken(String accessToken) {
+		return "Bearer " + accessToken;
+	}
+
+	private String getAccessToken() throws Exception {
+		//Given
+		//com.mermer.config.AppConfig.applicationRunner() 에서 app 통해 최초 생성되는 계정과 겹치면 중복 에러 발생
+		String username = "mermer@email.com"; 
+		String password = "mermer";
+		Account mermer = Account.builder()
+				.email(username)
+				.password(password)
+				.roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
+				.build();
+		this.accountService.saveAccount(mermer);
+		
+		String clientId = "myApp";
+		String clientSecret = "pass";
+		
+		ResultActions perform = this.mockMvc.perform(post("/oauth/token")
+				.with(httpBasic(clientId, clientSecret))
+				.param("username", username)
+				.param("password", password)
+				.param("grant_type", "password")
+				);
+		var responseBody = perform.andReturn().getResponse().getContentAsString();
+		Jackson2JsonParser parser = new Jackson2JsonParser();
+
+		return parser.parseMap(responseBody).get("access_token").toString();
+	}
+
 	@Test
 	@TestDescription("입력받을 수 없은 값이 들어왔을 때")
 	public void createEvent_Bad_request() throws Exception {
@@ -148,6 +203,7 @@ public class EventControllerTest extends BaseControllerTest{
 		//Mockito.when(eventRepository.save(event)).thenReturn(event);
 
 		mockMvc.perform(post("/api/events/")
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.accept(MediaTypes.HAL_JSON_UTF8)
 				.content(objMapper.writeValueAsString(event))).andDo(print())
@@ -163,6 +219,7 @@ public class EventControllerTest extends BaseControllerTest{
 		this.mockMvc.perform(post("/api/events")
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.content(this.objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isBadRequest());
 	}
@@ -186,7 +243,8 @@ public class EventControllerTest extends BaseControllerTest{
 		//Mockito.when(eventRepository.save(event)).thenReturn(event);
 
 		mockMvc.perform(post("/api/events")
-				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.contentType(MediaType.APPLICATION_JSON_UTF8)				
 				.content(objMapper.writeValueAsString(event)))
 				.andDo(print())
 				.andExpect(status().isBadRequest())//400
@@ -294,7 +352,8 @@ public class EventControllerTest extends BaseControllerTest{
 //		
 		//when & then
 		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))	
+				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("name").value(eventName))
@@ -314,7 +373,8 @@ public class EventControllerTest extends BaseControllerTest{
 		
 		//when & then
 		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))	
+				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isBadRequest())//400
 		;
@@ -333,7 +393,8 @@ public class EventControllerTest extends BaseControllerTest{
 		
 		//when & then
 		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))	
+				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isBadRequest())//400
 		;
@@ -351,7 +412,8 @@ public class EventControllerTest extends BaseControllerTest{
 		
 		//when & then
 		this.mockMvc.perform(put("/api/events/123456", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))	
+				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andDo(print())
 			.andExpect(status().isNotFound())//404	
