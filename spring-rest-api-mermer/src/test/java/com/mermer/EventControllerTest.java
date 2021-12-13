@@ -38,6 +38,7 @@ import com.mermer.accounts.AccountRole;
 import com.mermer.accounts.AccountService;
 import com.mermer.common.BaseControllerTest;
 import com.mermer.common.TestDescription;
+import com.mermer.config.AppProperties;
 import com.mermer.events.Event;
 import com.mermer.events.EventDto;
 import com.mermer.events.EventRepository;
@@ -59,6 +60,9 @@ public class EventControllerTest extends BaseControllerTest{
 	
 	@Autowired
 	AccountRepository accountRepository;
+	
+	@Autowired
+	AppProperties appProperties;
 	
 	@Before
 	public void setUp() {
@@ -161,8 +165,8 @@ public class EventControllerTest extends BaseControllerTest{
 	private String getAccessToken() throws Exception {
 		//Given
 		//com.mermer.config.AppConfig.applicationRunner() 에서 app 통해 최초 생성되는 계정과 겹치면 중복 에러 발생
-		String username = "mermer@email.com"; 
-		String password = "mermer";
+		String username = appProperties.getUserUsername(); 
+		String password = appProperties.getUserPassword();
 		Account mermer = Account.builder()
 				.email(username)
 				.password(password)

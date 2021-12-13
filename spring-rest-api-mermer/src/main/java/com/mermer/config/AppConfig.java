@@ -12,11 +12,13 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.mermer.accounts.Account;
+import com.mermer.accounts.AccountRepository;
 import com.mermer.accounts.AccountRole;
 import com.mermer.accounts.AccountService;
 
 @Configuration
 public class AppConfig {
+	
 
 	@Bean
 	public ModelMapper modelMapper() {
@@ -35,14 +37,27 @@ public class AppConfig {
 			@Autowired
 			AccountService accountService; 
 			
+			@Autowired
+			AppProperties appProperties;
+			
+			
+			
 			@Override
-			public void run(ApplicationArguments args) throws Exception {
-				Account mermer = Account.builder()
-						.email("mermer@naver.com")
-						.password("mermer")
+			public void run(ApplicationArguments args) throws Exception {	
+				Account admin = Account.builder()
+						.email(appProperties.getAdminUsername())
+						.password(appProperties.getAdminPassword())
 						.roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
 						.build();
-				accountService.saveAccount(mermer);
+				accountService.saveAccount(admin);
+				
+				
+				Account user = Account.builder()
+						.email(appProperties.getUserUsername())
+						.password(appProperties.getUserPassword())
+						.roles(Set.of(AccountRole.USER))
+						.build();
+				accountService.saveAccount(user);
 			}
 		};
 	}

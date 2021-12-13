@@ -14,11 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.mermer.common.BaseControllerTest;
 import com.mermer.common.TestDescription;
+import com.mermer.config.AppProperties;
 
 public class AuthServerConfigTest extends BaseControllerTest{
 	
 	@Autowired
 	AccountService accountService;
+	
+	@Autowired
+	AppProperties appProperties;
 	
 	@Test
 	@TestDescription("인증 토큰을 발급 받는 테스트")
@@ -26,17 +30,17 @@ public class AuthServerConfigTest extends BaseControllerTest{
 			
 		//Given
 		//com.mermer.config.AppConfig.applicationRunner() 에서 app 통해 최초 생성되는 계정과 겹치면 중복 에러 발생
-		String username = "mermer@email.com"; 
-		String password = "mermer";
-		Account mermer = Account.builder()
-				.email(username)
-				.password(password)
-				.roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-				.build();
-		this.accountService.saveAccount(mermer);
-		
-		String clientId = "myApp";
-		String clientSecret = "pass";
+		String username = appProperties.getUserUsername(); 
+		String password = appProperties.getUserPassword();
+//		Account mermer = Account.builder()
+//				.email(username)
+//				.password(password)
+//				.roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
+//				.build();
+//		this.accountService.saveAccount(mermer);
+//		
+		String clientId = appProperties.getClientId();
+		String clientSecret = appProperties.getClientSecret();
 		
 		this.mockMvc.perform(post("/oauth/token")
 				.with(httpBasic(clientId, clientSecret))
