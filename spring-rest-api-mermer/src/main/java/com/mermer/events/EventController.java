@@ -15,6 +15,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.mermer.accounts.Account;
 import com.mermer.accounts.AccountAdapter;
+import com.mermer.accounts.AccountRole;
 import com.mermer.accounts.CurrentUser;
 import com.mermer.common.ErrorsResource;
 
@@ -75,7 +77,8 @@ public class EventController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity getEvent(@PathVariable Integer id){
+	public ResponseEntity getEvent(@PathVariable Integer id,
+								   @CurrentUser Account currentUser){
 		Optional<Event> optionalEvent = this.eventRepository.findById(id);
 		if(optionalEvent.isEmpty()){
 			return ResponseEntity.notFound().build();
@@ -83,12 +86,18 @@ public class EventController {
 		Event event = optionalEvent.get();
 		EventResource eventResource = new EventResource(event);
 		eventResource.add(new Link("/docs/index.html#resources-events-get").withRel("profile"));
+		if(currentUser != null && currentUser.equals(event.getManager())) {
+			eventResource.add(ControllerLinkBuilder.linkTo(EventController.class).slash(event.getId()).withRel("update-event"));
+		}
 		return ResponseEntity.ok(eventResource);
 		
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity updateEvent(@PathVariable Integer id, @RequestBody @Valid EventDto eventDto, Errors errors){
+	public ResponseEntity updateEvent(@PathVariable Integer id, 
+									  @RequestBody @Valid EventDto eventDto,
+									  @CurrentUser Account currentUser,
+									  Errors errors){
 		
 		/* 필수값 검증 */
 		if(errors.hasErrors()) {
@@ -116,6 +125,9 @@ public class EventController {
 		}
 		
 		Event bfEvent = optionalEvent.get();
+		if(bfEvent.getManager() != null && !bfEvent.getManager().equals(currentUser)) {//본 작성자가 아닌경우(수정 권한 없는 경우)
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
 		//수정 데이터 세팅 - modelMapper
 		this.modelMapper.map(eventDto, bfEvent);
 
@@ -133,7 +145,9 @@ public class EventController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
+	public ResponseEntity<Object> createEvent(@RequestBody @Valid EventDto eventDto, 
+												Errors errors,
+												@CurrentUser Account currentUser) {
 		
 		//사용자 정보 체크하기
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -158,8 +172,10 @@ public class EventController {
 		
 		//free 상태값 갱신
 		event.update();
-		
+		event.setManager(currentUser);		
 		Event newEvent = this.eventRepository.save(event);
+		
+		
 		ControllerLinkBuilder selfLinkBuilder = ControllerLinkBuilder.linkTo(EventController.class).slash(newEvent.getId());
 		URI createdUri = selfLinkBuilder.toUri();
 		//event.setId(100);

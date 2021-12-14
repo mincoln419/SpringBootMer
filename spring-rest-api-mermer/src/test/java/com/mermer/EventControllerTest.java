@@ -1,5 +1,6 @@
 package com.mermer;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -63,6 +64,9 @@ public class EventControllerTest extends BaseControllerTest{
 	
 	@Autowired
 	AppProperties appProperties;
+	
+	//사용자 인증 후 해당 사용자 계속 사용하기 위함
+	static Account mermer;
 	
 	@Before
 	public void setUp() {
@@ -167,7 +171,7 @@ public class EventControllerTest extends BaseControllerTest{
 		//com.mermer.config.AppConfig.applicationRunner() 에서 app 통해 최초 생성되는 계정과 겹치면 중복 에러 발생
 		String username = appProperties.getUserUsername(); 
 		String password = appProperties.getUserPassword();
-		Account mermer = Account.builder()
+		mermer = Account.builder()
 				.email(username)
 				.password(password)
 				.roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
@@ -264,7 +268,7 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 	
 	@Test
-	@TestDescription("30개의 이벤트를 10개씩 두번째 페이지 조회하기")
+	@TestDescription("30개의 이벤트를 10개씩 두번째 페이지 조회하기 - anoymous 일 경우")
 	public void queryEvent() throws Exception{
 		//Given -- 이벤트 30개 생성
 //		IntStream.range(0, 30).forEach(i -> {
@@ -350,9 +354,11 @@ public class EventControllerTest extends BaseControllerTest{
 	@Test
 	@TestDescription("이벤트 데이터 정상 수정처리")
 	public void updateEvent() throws Exception {
+		
+		String token = getAccessToken();//토큰 받으면서 유저 생성되므로 앞서서 토큰 받아와야함 - manager 값이 없으면 null point 발생하므로
+		
 		//Given
 		Event event = this.generateEvent(100);
-		
 		EventDto eventDto = this.modelMapper.map(event, EventDto.class);
 		String eventName = event.getName() + "_modified"; 
 		eventDto.setName(eventName);
@@ -386,7 +392,7 @@ public class EventControllerTest extends BaseControllerTest{
 		//when & then
 		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
 				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(token)) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("name").value(eventName))
@@ -455,6 +461,8 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 
 	private Event generateEvent(int index) {
+		
+		//이벤트 생성시 manager null 발생 방지 위해 체크
 		Event event = Event.builder()
 				.name("event" + index)
 				.description("test event generated")
@@ -467,6 +475,7 @@ public class EventControllerTest extends BaseControllerTest{
 				.maxPrice(200)
 				.free(false)
 				.offline(true)
+				//.manager(mermer)
 				.eventStatus(EventStatus.DRAFT)
 				.limitOfEnrollment(100).location("서대문구 홍제동")
 				.build();
