@@ -18,6 +18,7 @@ public class Account {
 	private Long id;
 	private String username;
 	private String password;
+	private boolean active; // 컬럼을 추가했다고 기존의 스키마 파일을 건드려서는 안된다 -> 새로운 스키마 파일 필요
 
 	@Override
 	public int hashCode() {
