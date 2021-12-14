@@ -34,7 +34,7 @@ public class MysqlRunner implements ApplicationRunner{
 		
 		String sql = "CREATE TABLE USER (ID INTEGER NOT NULL, name VARCHAR(255), PRIMARY KEY (id))";
 		try {
-			state.execute(sql);
+			//state.execute(sql);
 			System.out.println("create table");
 		}catch(Exception e) {
 			con.rollback();
@@ -42,7 +42,7 @@ public class MysqlRunner implements ApplicationRunner{
 		}
 		con.close();
 		
-		jdbc.execute("insert into user values(2, 'eunwoo')");
+		//jdbc.execute("insert into user values(2, 'eunwoo')");
 	}
 	
 	
