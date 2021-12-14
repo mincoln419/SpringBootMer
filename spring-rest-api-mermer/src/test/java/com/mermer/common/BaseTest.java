@@ -1,6 +1,7 @@
 package com.mermer.common;
 
 import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +15,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 //@MockMvcTest
 @AutoConfigureRestDocs
 @Import(RestDocConfiguration.class)
 @ActiveProfiles("test")
-@Ignore
-public class BaseControllerTest {
+@Disabled
+public class BaseTest {
 	@Autowired
 	protected ModelMapper modelMapper;
 	

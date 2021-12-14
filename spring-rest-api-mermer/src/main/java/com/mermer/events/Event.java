@@ -9,7 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mermer.accounts.Account;
+import com.mermer.accounts.AccountSerializer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +51,7 @@ public class Event {
 	private EventStatus eventStatus = EventStatus.DRAFT;
 	
 	@ManyToOne
+	@JsonSerialize(using = AccountSerializer.class)
 	private Account manager;//단방향(Account -> Event)으로 참조할 수 있도록 매핑
 	
 	public void update() {

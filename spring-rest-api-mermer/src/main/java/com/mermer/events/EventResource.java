@@ -1,12 +1,9 @@
 package com.mermer.events;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceSupport;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 //public class EventResource extends ResourceSupport{
 //	
 //	
@@ -21,11 +18,11 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 //		return event;
 //	}
 //}
-public class EventResource extends Resource<Event>{
+public class EventResource extends EntityModel<Event>{
 
 	public EventResource(Event event, Link... links) {
 		super(event, links);
-		add(ControllerLinkBuilder.linkTo(EventController.class).slash(event.getId()).withSelfRel());
+		add(linkTo(EventController.class).slash(event.getId()).withSelfRel());
 	}
 	
 }

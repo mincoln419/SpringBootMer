@@ -1,26 +1,24 @@
 package com.mermer.events;
 
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
 import java.net.URI;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,13 +29,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.mermer.accounts.Account;
-import com.mermer.accounts.AccountAdapter;
-import com.mermer.accounts.AccountRole;
 import com.mermer.accounts.CurrentUser;
 import com.mermer.common.ErrorsResource;
 
 @Controller
-@RequestMapping(value = "/api/events", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
+@RequestMapping(value = "/api/events", produces = MediaTypes.HAL_JSON_VALUE)
 public class EventController {
 
 	private final EventRepository eventRepository;
@@ -65,10 +61,10 @@ public class EventController {
 		
 		
 		Page<Event> page = this.eventRepository.findAll(pageable);
-		var pagedResource = assembler.toResource(page, e -> new EventResource(e));
+		var pagedResource = assembler.toModel(page, e -> new EventResource(e));
 		
 		if(account != null) {
-			pagedResource.add(ControllerLinkBuilder.linkTo(EventController.class).withRel("create-event"));
+			pagedResource.add(linkTo(EventController.class).withRel("create-event"));
 		}
 		
 		pagedResource.add(new Link("/docs/index.html#resources-event-list").withRel("profile"));
@@ -87,7 +83,7 @@ public class EventController {
 		EventResource eventResource = new EventResource(event);
 		eventResource.add(new Link("/docs/index.html#resources-events-get").withRel("profile"));
 		if(currentUser != null && currentUser.equals(event.getManager())) {
-			eventResource.add(ControllerLinkBuilder.linkTo(EventController.class).slash(event.getId()).withRel("update-event"));
+			eventResource.add(linkTo(EventController.class).slash(event.getId()).withRel("update-event"));
 		}
 		return ResponseEntity.ok(eventResource);
 		
@@ -125,7 +121,7 @@ public class EventController {
 		}
 		
 		Event bfEvent = optionalEvent.get();
-		if(bfEvent.getManager() != null && !bfEvent.getManager().equals(currentUser)) {//본 작성자가 아닌경우(수정 권한 없는 경우)
+		if(bfEvent.getManager() == null || !bfEvent.getManager().equals(currentUser)) {//본 작성자가 아닌경우(수정 권한 없는 경우)
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		//수정 데이터 세팅 - modelMapper
@@ -137,7 +133,7 @@ public class EventController {
 
 		EventResource eventResource = new EventResource(savedEvent);
 				
-		eventResource.add(ControllerLinkBuilder.linkTo(EventController.class).withRel("update-event"));
+		eventResource.add(linkTo(EventController.class).withRel("update-event"));
 		eventResource.add(new Link("/docs/index.html#resources-events-update").withRel("profile"));
 		
 		return ResponseEntity.ok(eventResource);
@@ -172,15 +168,15 @@ public class EventController {
 		
 		//free 상태값 갱신
 		event.update();
-		event.setManager(currentUser);		
+		event.setManager(currentUser);
 		Event newEvent = this.eventRepository.save(event);
 		
 		
-		ControllerLinkBuilder selfLinkBuilder = ControllerLinkBuilder.linkTo(EventController.class).slash(newEvent.getId());
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(EventController.class).slash(newEvent.getId());
 		URI createdUri = selfLinkBuilder.toUri();
 		//event.setId(100);
 		EventResource eventResource = new EventResource(event);
-		eventResource.add(ControllerLinkBuilder.linkTo(EventController.class).withRel("query-events"));
+		eventResource.add(linkTo(EventController.class).withRel("query-events"));
 		eventResource.add(selfLinkBuilder.withRel("update-event"));
 		eventResource.add(new Link("/docs/index.html#resources-events-create").withRel("profile"));
 		return ResponseEntity.created(createdUri).body(eventResource);

@@ -6,13 +6,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.mermer.common.BaseControllerTest;
+import com.mermer.common.BaseTest;
 
-public class IndexControllerTest extends BaseControllerTest{
+public class IndexControllerTest extends BaseTest{
 	
 	@Autowired
 	MockMvc mockMvc;

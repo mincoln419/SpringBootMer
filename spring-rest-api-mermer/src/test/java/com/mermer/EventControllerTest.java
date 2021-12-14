@@ -1,6 +1,5 @@
 package com.mermer;
 
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -24,8 +23,9 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
@@ -37,8 +37,7 @@ import com.mermer.accounts.Account;
 import com.mermer.accounts.AccountRepository;
 import com.mermer.accounts.AccountRole;
 import com.mermer.accounts.AccountService;
-import com.mermer.common.BaseControllerTest;
-import com.mermer.common.TestDescription;
+import com.mermer.common.BaseTest;
 import com.mermer.config.AppProperties;
 import com.mermer.events.Event;
 import com.mermer.events.EventDto;
@@ -51,7 +50,7 @@ import com.mermer.events.EventStatus;
  * 슬라이싱 테스트 -> 스프링부트 테스트
  * 
  * */
-public class EventControllerTest extends BaseControllerTest{
+public class EventControllerTest extends BaseTest{
 
 	@Autowired
 	EventRepository eventRepository;
@@ -67,9 +66,11 @@ public class EventControllerTest extends BaseControllerTest{
 	
 	//사용자 인증 후 해당 사용자 계속 사용하기 위함
 	static Account mermer;
+	static String username;
+	static String password;
 	
-	@Before
-	public void setUp() {
+	@BeforeEach
+	public void setUp() throws Exception {
 		this.eventRepository.deleteAll();
 		this.accountRepository.deleteAll();
 	}
@@ -78,7 +79,7 @@ public class EventControllerTest extends BaseControllerTest{
 	 * @MockBean EventRepository eventRepository;
 	 */
 	@Test
-	@TestDescription("정상적으로 이벤트를 생성하는 테스트")
+	@DisplayName("정상적으로 이벤트를 생성하는 테스트")
 	public void createEvent() throws Exception {
 		EventDto event = EventDto.builder()
 				.name("Spring")
@@ -96,13 +97,13 @@ public class EventControllerTest extends BaseControllerTest{
 		//Mockito.when(eventRepository.save(event)).thenReturn(event);
 
 		mockMvc.perform(post("/api/events/")
-					.contentType(MediaType.APPLICATION_JSON_UTF8)
-					.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(event))
-					.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함 
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaTypes.HAL_JSON).content(objMapper.writeValueAsString(event))
+					.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함 
 					).andDo(print())
 				.andExpect(status().isCreated())// 201
 				.andExpect(jsonPath("id").exists()).andExpect(header().exists(HttpHeaders.LOCATION))
-				.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_UTF8_VALUE))
+				.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
 				.andExpect(jsonPath("id").value(Matchers.not(100)))
 				.andExpect(jsonPath("free").value(false))
 				.andExpect(jsonPath("offline").value(true))
@@ -166,18 +167,14 @@ public class EventControllerTest extends BaseControllerTest{
 		return "Bearer " + accessToken;
 	}
 
-	private String getAccessToken() throws Exception {
-		//Given
-		//com.mermer.config.AppConfig.applicationRunner() 에서 app 통해 최초 생성되는 계정과 겹치면 중복 에러 발생
-		String username = appProperties.getUserUsername(); 
-		String password = appProperties.getUserPassword();
-		mermer = Account.builder()
-				.email(username)
-				.password(password)
-				.roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
-				.build();
-		this.accountService.saveAccount(mermer);
+	private String getAccessToken(boolean isAccount) throws Exception {
 		
+		//Given
+		if(isAccount) {
+			generateAccount();
+		}
+		
+		//com.mermer.config.AppConfig.applicationRunner() 에서 app 통해 최초 생성되는 계정과 겹치면 중복 에러 발생
 		String clientId = "myApp";
 		String clientSecret = "pass";
 		
@@ -194,7 +191,7 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 
 	@Test
-	@TestDescription("입력받을 수 없은 값이 들어왔을 때")
+	@DisplayName("입력받을 수 없은 값이 들어왔을 때")
 	public void createEvent_Bad_request() throws Exception {
 		Event event = Event.builder().name("Spring").description("REST API Development with Spring")
 				.id(100)//dto를 통해서 id값을 직접 받을 수 없도록 했음
@@ -211,30 +208,30 @@ public class EventControllerTest extends BaseControllerTest{
 		//Mockito.when(eventRepository.save(event)).thenReturn(event);
 
 		mockMvc.perform(post("/api/events/")
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
-				.contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8)
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaTypes.HAL_JSON)
 				.content(objMapper.writeValueAsString(event))).andDo(print())
 				.andExpect(status().isBadRequest());//400
 				
 	}
 	
 	@Test
-	@TestDescription("필수 값이 비어있을 때")
+	@DisplayName("필수 값이 비어있을 때")
 	public void createEvent_Bad_Request_Empty_Input() throws Exception {
 		EventDto eventDto = EventDto.builder().build();
 		
 		this.mockMvc.perform(post("/api/events")
-				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(this.objMapper.writeValueAsString(eventDto))
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isBadRequest());
 	}
 
 	
 	@Test
-	@TestDescription("비즈니스 룰에 위반되는 값이 들어올 때")
+	@DisplayName("비즈니스 룰에 위반되는 값이 들어올 때")
 	public void createEvent_Wrong_Input_request() throws Exception {
 		EventDto event = EventDto.builder()
 				.name("Spring")
@@ -251,8 +248,8 @@ public class EventControllerTest extends BaseControllerTest{
 		//Mockito.when(eventRepository.save(event)).thenReturn(event);
 
 		mockMvc.perform(post("/api/events")
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
-				.contentType(MediaType.APPLICATION_JSON_UTF8)				
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.contentType(MediaType.APPLICATION_JSON)				
 				.content(objMapper.writeValueAsString(event)))
 				.andDo(print())
 				.andExpect(status().isBadRequest())//400
@@ -268,7 +265,7 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 	
 	@Test
-	@TestDescription("30개의 이벤트를 10개씩 두번째 페이지 조회하기 - anoymous 일 경우")
+	@DisplayName("30개의 이벤트를 10개씩 두번째 페이지 조회하기 - anoymous 일 경우")
 	public void queryEvent() throws Exception{
 		//Given -- 이벤트 30개 생성
 //		IntStream.range(0, 30).forEach(i -> {
@@ -295,7 +292,7 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 
 	@Test
-	@TestDescription("30개의 이벤트를 10개씩 두번째 페이지 조회하기 - 사용자 인증정보 체크")
+	@DisplayName("30개의 이벤트를 10개씩 두번째 페이지 조회하기 - 사용자 인증정보 체크")
 	public void queryEventWithAuthentication() throws Exception{
 		//Given -- 이벤트 30개 생성
 //		IntStream.range(0, 30).forEach(i -> {
@@ -309,7 +306,7 @@ public class EventControllerTest extends BaseControllerTest{
 				.param("page", "1")//두번째 페이지
 				.param("size", "10")
 				.param("sort", "name,DESC")
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 		)
 		//Then
 		.andDo(print())
@@ -324,10 +321,11 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 	
 	@Test
-	@TestDescription("기존의 이벤트 하나만 조회하기")
+	@DisplayName("기존의 이벤트 하나만 조회하기")
 	public void getEvent() throws Exception{
 		//Given
-		Event event = this.generateEvent(100);
+		Account account = generateAccount();
+		Event event = this.generateEvent(100, account);
 		
 		//when & then
 		this.mockMvc.perform(get("/api/events/{id}", event.getId()))
@@ -343,7 +341,7 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 	
 	@Test
-	@TestDescription("없는 이벤트 조회했을 때 404 응답받기")
+	@DisplayName("없는 이벤트 조회했을 때 404 응답받기")
 	public void getEvent404() throws Exception {
 		//when & then
 		this.mockMvc.perform(get("/api/events/11883"))
@@ -352,13 +350,12 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 	
 	@Test
-	@TestDescription("이벤트 데이터 정상 수정처리")
+	@DisplayName("이벤트 데이터 정상 수정처리")
 	public void updateEvent() throws Exception {
 		
-		String token = getAccessToken();//토큰 받으면서 유저 생성되므로 앞서서 토큰 받아와야함 - manager 값이 없으면 null point 발생하므로
-		
 		//Given
-		Event event = this.generateEvent(100);
+		Account account = generateAccount();
+		Event event = this.generateEvent(100, account);
 		EventDto eventDto = this.modelMapper.map(event, EventDto.class);
 		String eventName = event.getName() + "_modified"; 
 		eventDto.setName(eventName);
@@ -390,9 +387,9 @@ public class EventControllerTest extends BaseControllerTest{
 //				.limitOfEnrollment(100).location("서대문구 홍제동").build();
 //		
 		//when & then
-		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(token)) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaTypes.HAL_JSON).content(objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(false))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("name").value(eventName))
@@ -403,17 +400,18 @@ public class EventControllerTest extends BaseControllerTest{
 		;
 	}
 	@Test
-	@TestDescription("입력값 empty 오류 발생")
+	@DisplayName("입력값 empty 오류 발생")
 	public void updateEvent400Empty() throws Exception {
 		//Given
-		Event event = this.generateEvent(200);
+		Account account = generateAccount();
+		Event event = this.generateEvent(200, account);
 		
 		EventDto eventDto = new EventDto();
 		
 		//when & then
-		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaTypes.HAL_JSON).content(objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(false))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isBadRequest())//400
 		;
@@ -421,19 +419,20 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 	
 	@Test
-	@TestDescription("입력값 wrong 오류 발생")
+	@DisplayName("입력값 wrong 오류 발생")
 	public void updateEvent400_Wrong() throws Exception {
 		//Given
-		Event event = this.generateEvent(200);
+		Account account = generateAccount();
+		Event event = this.generateEvent(200, account);
 		
 		EventDto eventDto = new EventDto();
 		eventDto.setBasePrice(20000);
 		eventDto.setMaxPrice(1000);
 		
 		//when & then
-		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+		this.mockMvc.perform(put("/api/events/{id}", event.getId()).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaTypes.HAL_JSON).content(objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(false))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andExpect(status().isBadRequest())//400
 		;
@@ -441,18 +440,19 @@ public class EventControllerTest extends BaseControllerTest{
 	}
 	
 	@Test
-	@TestDescription("존재하지 않는 이벤트 수정시 오류")
+	@DisplayName("존재하지 않는 이벤트 수정시 오류")
 	public void updateEvent404() throws Exception {
 		//Given
-		Event event = this.generateEvent(200);
+		Account account = generateAccount();
+		Event event = this.generateEvent(200, account);
 		
 		EventDto eventDto = this.modelMapper.map(event, EventDto.class);
 		
 		
 		//when & then
-		this.mockMvc.perform(put("/api/events/123456", event.getId()).contentType(MediaType.APPLICATION_JSON_UTF8)
-				.accept(MediaTypes.HAL_JSON_UTF8).content(objMapper.writeValueAsString(eventDto))
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken())) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+		this.mockMvc.perform(put("/api/events/123456", event.getId()).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaTypes.HAL_JSON).content(objMapper.writeValueAsString(eventDto))
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(false))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andDo(print())
 			.andExpect(status().isNotFound())//404	
@@ -460,8 +460,43 @@ public class EventControllerTest extends BaseControllerTest{
 		
 	}
 
-	private Event generateEvent(int index) {
+	
+	private Account generateAccount() {		
+		username = appProperties.getUserUsername(); 
+		password = appProperties.getUserPassword();
+		Account account = Account.builder()
+				.email(username)
+				.password(password)
+				.roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
+				.build();
+		this.accountService.saveAccount(account);
+		return account;
+	}
+	
+	private Event generateEvent(int index, Account account) {
 		
+		//이벤트 생성시 manager null 발생 방지 위해 체크
+		Event event = Event.builder()
+				.name("event" + index)
+				.description("test event generated")
+				//.id(100)//dto를 통해서 id값을 직접 받을 수 없도록 했음
+				.beginEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 22, 11, 12))
+				.closeEnrollmentDateTime(LocalDateTime.of(2021, 11, 10, 23, 11, 12))
+				.beginEventDateTime(LocalDateTime.of(2021, 11, 11, 12, 11, 12))
+				.endEventDateTime(LocalDateTime.of(2021, 11, 12, 13, 11, 12))
+				.basePrice(100)
+				.maxPrice(200)
+				.manager(account)
+				.free(false)
+				.offline(true)
+				.eventStatus(EventStatus.DRAFT)
+				.limitOfEnrollment(100).location("서대문구 홍제동")
+				.build();
+		
+		return this.eventRepository.save(event);
+	}
+
+	private Event generateEvent(int index) {
 		//이벤트 생성시 manager null 발생 방지 위해 체크
 		Event event = Event.builder()
 				.name("event" + index)
@@ -475,12 +510,10 @@ public class EventControllerTest extends BaseControllerTest{
 				.maxPrice(200)
 				.free(false)
 				.offline(true)
-				//.manager(mermer)
 				.eventStatus(EventStatus.DRAFT)
 				.limitOfEnrollment(100).location("서대문구 홍제동")
 				.build();
 		
 		return this.eventRepository.save(event);
 	}
-
 }

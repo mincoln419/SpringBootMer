@@ -9,14 +9,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.mermer.common.BaseControllerTest;
+import com.mermer.common.BaseTest;
 import com.mermer.common.TestDescription;
 import com.mermer.config.AppProperties;
 
-public class AuthServerConfigTest extends BaseControllerTest{
+public class AuthServerConfigTest extends BaseTest{
 	
 	@Autowired
 	AccountService accountService;
@@ -25,7 +26,7 @@ public class AuthServerConfigTest extends BaseControllerTest{
 	AppProperties appProperties;
 	
 	@Test
-	@TestDescription("인증 토큰을 발급 받는 테스트")
+	@DisplayName("인증 토큰을 발급 받는 테스트")
 	public void getAuthToken() throws Exception {
 			
 		//Given
