@@ -18,19 +18,27 @@ import org.springframework.http.HttpHeaders;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mermer.cm.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.common.RestDocConfiguration;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@MockMvcTest
+@AutoConfigureRestDocs
+@Import(RestDocConfiguration.class)
+@ActiveProfiles("test")
 public class CMACControllerTest {
 
 	@Autowired
@@ -66,7 +74,7 @@ public class CMACControllerTest {
 				links(
 					linkWithRel("self").description("link to self")
 					, linkWithRel("query-events").description("link to query-events")
-					, linkWithRel("update-event").description("link to update an existing event")
+					, linkWithRel("create-event").description("link to update an existing event")
 					, linkWithRel("profile").description("link to profile")
 				),
 				requestHeaders(
@@ -75,9 +83,11 @@ public class CMACControllerTest {
 				),
 				requestFields(
 					fieldWithPath("username").description("User name of new account"),
-					fieldWithPath("description").description("description of new event"),
-					fieldWithPath("instDtm").description("date time of created Account"),
-					fieldWithPath("mdfDtm").description("date time of modified Account information")
+					fieldWithPath("roleCd").description("role code"),
+					fieldWithPath("email").description("User email of new account"),
+					fieldWithPath("hpNum").description("User cellphone number of new account"),
+					fieldWithPath("accountRole").description("User role level"),
+					fieldWithPath("accountPart").description("working part which User participate in")
 				),
 				responseHeaders(
 						headerWithName(HttpHeaders.LOCATION).description("location header"),
@@ -89,9 +99,13 @@ public class CMACControllerTest {
 												
 						//request +
 						fieldWithPath("username").description("User name of new account"),
-						fieldWithPath("description").description("description of new event"),
 						fieldWithPath("instDtm").description("date time of created Account"),
-						fieldWithPath("mdfDtm").description("date time of modified Account information")
+						fieldWithPath("mdfDtm").description("date time of modified Account information"),
+						fieldWithPath("roleCd").description("role code"),
+						fieldWithPath("email").description("User email of new account"),
+						fieldWithPath("hpNum").description("User cellphone number of new account"),
+						fieldWithPath("accountRole").description("User role level"),
+						fieldWithPath("accountPart").description("working part which User participate in")
 					)
 				
 			));
