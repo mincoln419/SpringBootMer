@@ -1,4 +1,4 @@
-package com.mermer.cm.dto;
+package com.mermer.cm.entity.dto;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,6 +12,7 @@ import com.mermer.cm.entity.type.AccountRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /* 

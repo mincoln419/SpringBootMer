@@ -14,8 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.springframework.http.HttpHeaders;
-
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -23,19 +22,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mermer.cm.dto.AccountDto;
+import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.common.RestDocConfiguration;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-//@MockMvcTest
 @AutoConfigureRestDocs
 @Import(RestDocConfiguration.class)
 @ActiveProfiles("test")
@@ -48,6 +48,7 @@ public class CMACControllerTest {
 	protected ObjectMapper objMapper;
 	
 	@Test
+	@DisplayName("계정 정상 생성")
 	public void createAccount() throws Exception {
 		
 		String name = "mermer";
@@ -109,7 +110,29 @@ public class CMACControllerTest {
 					)
 				
 			));
-		;
+		
+	}
+	
+	@Test
+	@DisplayName("계정 생성 오류 - 휴대전화 번호 잘못")
+	public void createAcccount400_wrong_hp_num() throws JsonProcessingException, Exception {
+		String name = "mermer";
+		AccountDto accountDto = AccountDto.builder()
+				.username(name)
+				.hpNum("02312345656")
+				.roleCd(200)
+				.accountRole(AccountRole.ADMIN)
+				.accountPart(AccountPart.BULLETIN)
+				.email("mermer@naver.com")
+				.build();
+		
+		mockMvc.perform(post("/account/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objMapper.writeValueAsString(accountDto)) //body parameter
+				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
+				)
+		.andExpect(status().isBadRequest())
+		.andDo(print());
 	}
 	
 }

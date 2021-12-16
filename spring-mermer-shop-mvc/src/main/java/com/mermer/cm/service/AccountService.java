@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mermer.cm.controller.CMACController;
-import com.mermer.cm.dto.AccountDto;
 import com.mermer.cm.entity.TB_CMAC_ACOUNT;
+import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.resource.AccountResource;
 
@@ -37,7 +37,7 @@ public class AccountService {
 	@Transactional
 	public ResponseEntity createAccount(AccountDto accountDto) {
 		TB_CMAC_ACOUNT account = modelMapper.map(accountDto, TB_CMAC_ACOUNT.class);
-		log.debug("error?? where");
+
 		TB_CMAC_ACOUNT result = accountRepository.save(account);
 		List<TB_CMAC_ACOUNT> list = new ArrayList<>();
 		list.add(result);

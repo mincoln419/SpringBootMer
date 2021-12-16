@@ -19,11 +19,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum BizExceptionCode {
 
+	/* ACCOUNT 관련 비즈니스 오류 메시지 */
 	DATE_MACH_ERR("시작 시간이 종료시간 보다 앞섭니다"),
 	DUPLICATED_USER_ID("중복되는 유저ID가 있습니다"),
+	PHONE_NUMBER("잘못된 전화번호 입니다"),
 	
+	/* 일반적인 오류 메시지 */
 	INTERNAL_SERVER_ERROR("서버에 오류가 발생하였습니다"),
-	INVALID_REQUEST("잘못된 요청입니다")
+	INVALID_REQUEST("잘못된 요청입니다"),
+	
 	
 	;
 	

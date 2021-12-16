@@ -1,11 +1,14 @@
 package com.mermer.cm.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.Arrays;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,21 +16,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mermer.cm.dto.AccountDto;
-import com.mermer.cm.entity.TB_CMAC_ACOUNT;
-import com.mermer.cm.repository.AccountRepository;
+import com.mermer.cm.entity.dto.AccountDto;
+import com.mermer.cm.exception.ErrorsResource;
 import com.mermer.cm.service.AccountService;
+import com.mermer.cm.validator.AccountValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-@RequestMapping("/account")
+@RequestMapping(value = "/account", produces = MediaTypes.HAL_JSON_VALUE)
 @RequiredArgsConstructor
 public class CMACController {
 
 	private final AccountService accountService;
+	private final AccountValidator accountValidator;
 	
 	@GetMapping
 	public List<String> getAccount() {
@@ -36,10 +40,29 @@ public class CMACController {
 	}
 
 	@PostMapping
-	public ResponseEntity newAccount(@Validated @RequestBody AccountDto accountDto) {
+	public ResponseEntity newAccount(@RequestBody @Validated AccountDto accountDto
+									, Errors errors) 
+	{
+		if(errors.hasErrors()) return badRequest(errors);
+		
+		accountValidator.accountValidate(accountDto, errors);
+		if(errors.hasErrors()) return badRequest(errors);
+		
 		log.debug("GET /account/new HTTP/1.1");
 		ResponseEntity result = accountService.createAccount(accountDto);
+		
 		return result;
+	}
+
+	/**
+	 * badRequest
+	 * @param errors
+	 * @return
+	 * ResponseEntity
+	 */
+	private ResponseEntity badRequest(Errors errors) {
+		return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+				
 	}
 /*	public List<TB_CMAC_ACOUNT> newAccount(@Validated @RequestBody AccountDto accountDto) {
 		log.debug("GET /account/new HTTP/1.1");

@@ -1,6 +1,8 @@
 
 package com.mermer.cm.exception;
 
+import org.springframework.validation.Errors;
+
 import lombok.Getter;
 
 /**
@@ -33,5 +35,13 @@ public class BizException extends RuntimeException{
 		super();
 		this.errCode = errCode;
 		this.detailMessage = detailMessage;
+	}
+
+	/**
+	 * @param phoneNumber
+	 * @param errors
+	 */
+	public BizException(BizExceptionCode errCode, Errors errors) {
+		errors.reject(errCode.getMessage());
 	} 
 }
