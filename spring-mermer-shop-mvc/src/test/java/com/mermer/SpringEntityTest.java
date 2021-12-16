@@ -3,9 +3,11 @@ package com.mermer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.time.LocalDateTime;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,28 @@ class SpringEntityTest {
 	@Autowired
 	MockMvc mockMvc;
 
+
+	@Test
+	@DisplayName("CMACEntity 입력,수정시간 입력 없을 경우 - 서비스 사용안한경우")
+	public void CMACEntityTestWithNoService() throws Exception {
+		String name = "mermer";
+		TB_CMAC_ACOUNT account = TB_CMAC_ACOUNT.builder()
+				.username(name)
+				.roleCd(200)
+				.email("mermer@naver.com")
+				.hpNum("01080139108")
+				.build();
+		TB_CMAC_ACOUNT returnAccount = accountRepository.save(account);
+		
+		assertThat(returnAccount.getUsername()).isEqualTo(name);
+		assertThat(returnAccount.getInstDtm()).isNotNull();
+		assertThat(returnAccount.getMdfDtm()).isNotNull();
+		//이 경우에도 시간이 입력된다. accountRepository에 save가 이루어져야 함
+		System.out.println("returnAccount:" + returnAccount.getInstDtm());
+	}
+	
+	
+	
 	@Test
 	@DisplayName("CMACEntity 입력,수정시간 입력 없을 경우 - default 설정 - now")
 	public void CMACEntityTest() throws Exception {
@@ -37,14 +61,13 @@ class SpringEntityTest {
 				.email("mermer@naver.com")
 				.hpNum("01080139108")
 				.build();
-
-		// When
-		TB_CMAC_ACOUNT returnAccount = accountRepository.save(account);
-		mockMvc.perform(get("/account/new")).andDo(print());
-		// Then
-		assertThat(returnAccount.getUsername()).isEqualTo(name);
-		assertThat(returnAccount.getInstDtm()).isNotNull();
-		assertThat(returnAccount.getMdfDtm()).isNotNull();
+		// When & Then
+		mockMvc.perform(get("/account/new"))
+		.andDo(print())
+		.andExpect(jsonPath("$[0].username").value(name))
+		.andExpect(jsonPath("$[0].instDtm").exists())
+		.andExpect(jsonPath("$[0].mdfDtm").exists())
+		;
 	}
 
 	@Test
@@ -53,7 +76,7 @@ class SpringEntityTest {
 		String name = "mermer";
 		LocalDateTime manulTime = LocalDateTime.of(2021, 11, 10, 22, 11, 12);
 		TB_CMAC_ACOUNT account = TB_CMAC_ACOUNT.builder()
-				.username("mermer")
+				.username(name)
 				.roleCd(200)
 				.email("mermer@naver.com")
 				.hpNum("01080139108")
@@ -61,14 +84,14 @@ class SpringEntityTest {
 				.mdfDtm(manulTime)//JPA Auditing적용되면서 무시된다.
 				.build();
 
-		// When
-		TB_CMAC_ACOUNT returnAccount = accountRepository.save(account);
-		mockMvc.perform(get("/account/new")).andDo(print());
-		// Then
-		assertThat(returnAccount.getUsername()).isEqualTo(name);
-		assertThat(returnAccount.getInstDtm()).isNotEqualTo(manulTime);
-		assertThat(returnAccount.getMdfDtm()).isNotEqualTo(manulTime);
-
+		// When & Then
+		accountRepository.save(account);
+		mockMvc.perform(get("/account/new"))
+			.andDo(print())
+			.andExpect(jsonPath("$[0].username").value(name))
+			.andExpect(jsonPath("$[0].instDtm").value(Matchers.not(manulTime)))
+			.andExpect(jsonPath("$[0].mdfDtm").value(Matchers.not(manulTime)))
+			;
 	}
 
 }

@@ -38,9 +38,9 @@ public class TB_CMAC_ACOUNT {
 	 * */
 
 	@Id @GeneratedValue 
-	private long accountId;
+	private Long accountId;
 	
-	private int roleCd;
+	private Integer roleCd;
 	
 	private String username;
 	
