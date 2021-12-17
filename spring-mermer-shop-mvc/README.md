@@ -1,3 +1,7 @@
+## Autor Mermer Cho ##
+## README version 0.0.1 ##
+
+
 ### Introduce ###
 - 이 프로젝트는 Springboot 와 react.js 를 활용하여 만든 e-commerce 프로그램입니다.
 - 아직 주력 상품에 대해서는 정하지 않았으나 기본적인 사용자 관리, 게시판 등록으로 프로그램 제작을 시작하고 있습니다.
@@ -22,10 +26,13 @@
 
 
 
-### 기타 사용 툴 ###
+### Etc Development Tool ###
 - [Json Parser Online][jsonParserLink]
 - [Postman][postmanLink]
 
 [jsonParserLink]: http://json.parser.online.fr "jsonParser Link"
 [postmanLink]: https://www.postman.com "postman Link"
+
+
+
 
