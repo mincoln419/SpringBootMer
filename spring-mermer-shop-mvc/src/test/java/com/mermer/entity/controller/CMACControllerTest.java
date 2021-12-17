@@ -15,50 +15,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-
-import javax.sound.sampled.AudioFormat.Encoding;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
-import com.mermer.cm.repository.AccountRepository;
-import com.mermer.common.RestDocConfiguration;
+import com.mermer.common.BaseTest;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Import(RestDocConfiguration.class)
-@ActiveProfiles("test")
-public class CMACControllerTest {
-
-	@Autowired
-	MockMvc mockMvc;
-	
-	
-	@Autowired
-	AccountRepository accountRepository;
-	
-	@Autowired
-	protected ObjectMapper objMapper;
+public class CMACControllerTest extends BaseTest{
 	
 	@Test
 	@DisplayName("계정 전부 조회")

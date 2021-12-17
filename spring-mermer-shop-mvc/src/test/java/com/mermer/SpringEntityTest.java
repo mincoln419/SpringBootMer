@@ -21,22 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.repository.AccountRepository;
+import com.mermer.common.BaseTest;
 import com.mermer.common.RestDocConfiguration;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Import(RestDocConfiguration.class)
-@ActiveProfiles("test")
-class SpringEntityTest {
-
-	@Autowired
-	AccountRepository accountRepository;
-
-	@Autowired
-	MockMvc mockMvc;
-
-
+class SpringEntityTest extends BaseTest{
 	@Test
 	@DisplayName("CMACEntity 입력,수정시간 입력 없을 경우 - 서비스 사용안한경우")
 	public void CMACEntityTestWithNoService() throws Exception {
