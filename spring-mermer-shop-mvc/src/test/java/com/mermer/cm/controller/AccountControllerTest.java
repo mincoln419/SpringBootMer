@@ -56,12 +56,42 @@ public class AccountControllerTest extends BaseTest{
 		accountRepository.save(account);
 		//When & Then
 		mockMvc.perform(get("/account")
+				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("_embedded.accountList[0].username").isNotEmpty())
-		.andExpect(jsonPath("page.totalElements").value(1));
+		.andExpect(jsonPath("page.totalElements").value(1))
+		.andDo(document("query-accounts", links(
+					linkWithRel("self").description("link to self"),
+				    linkWithRel("profile").description("link to profile")
+				),
+				requestHeaders(
+					headerWithName(HttpHeaders.ACCEPT).description("accept header"),
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				responseHeaders(
+						//headerWithName(HttpHeaders.LOCATION).description("location header"),
+						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+						//response only
+						fieldWithPath("_embedded.accountList[0].accountId").description("Id of new account"),
+												
+						//request +
+						fieldWithPath("_embedded.accountList[0].username").description("User name of new account"),
+						fieldWithPath("_embedded.accountList[0].instDtm").description("date time of created Account"),
+						fieldWithPath("_embedded.accountList[0].mdfDtm").description("date time of modified Account information"),
+						fieldWithPath("_embedded.accountList[0].roleCd").description("role code"),
+						fieldWithPath("_embedded.accountList[0].email").description("User email of new account"),
+						fieldWithPath("_embedded.accountList[0].hpNum").description("User cellphone number of new account"),
+						fieldWithPath("_embedded.accountList[0].accountRole").description("User role level"),
+						fieldWithPath("_embedded.accountList[0].accountPart").description("working part which User participate in")
+					)
+				
+			))
+		;
 	}
 	
 	@Test
@@ -88,11 +118,11 @@ public class AccountControllerTest extends BaseTest{
 		.andExpect(jsonPath("accountId").exists())
 		.andExpect(jsonPath("username").isNotEmpty())
 		.andExpect(jsonPath("username").value(name))
-		.andDo(document("create-event", 
+		.andDo(document("create-account", 
 				links(
 					linkWithRel("self").description("link to self")
-					, linkWithRel("query-events").description("link to query-events")
-					, linkWithRel("create-event").description("link to update an existing event")
+					, linkWithRel("query-accounts").description("link to query-events")
+					, linkWithRel("update-account").description("link to update an existing event")
 					, linkWithRel("profile").description("link to profile")
 				),
 				requestHeaders(

@@ -1,6 +1,8 @@
 
 package com.mermer.cm.service;
 
+import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,20 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description 
 	 */
+	@Transactional
 	public ResponseEntity createNotice(NoticeDto noticeDto) {
+		
+		//TODO 사용자 정보 가져오기
+		
+		/*
+		 * 데이터 저장  
+		 */
+		
+		
+		
+		
+		//TODO 게시글의 댓글 정보 link return  
+		
 		
 		
 		return null;

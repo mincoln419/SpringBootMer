@@ -49,8 +49,8 @@ public class AccountService {
 		//event.setId(100);
 		EntityModel<Optional> eventResource = AccountResource.of(Optional.of(result));//생성자 대신 static of 사용
 		eventResource.add(linkTo(AccountController.class).slash(String.valueOf(result.getAccountId())).withSelfRel())
-		.add(linkTo(AccountController.class).withRel("query-events"))
-		.add(selfLinkBuilder.withRel("create-event"))
+		.add(linkTo(AccountController.class).withRel("query-accounts"))
+		.add(selfLinkBuilder.withRel("update-account"))
 		.add(Link.of("/docs/index.html#resources-events-create").withRel("profile"));
 		return ResponseEntity.created(createdUri).body(eventResource);
 	}
@@ -66,8 +66,8 @@ public class AccountService {
 			, PagedResourcesAssembler assembler) {
 		
 		Page<Account> page = this.accountRepository.findAll(pageable);
-		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-event-list").withRel("profile")));
-	
+		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-account-list").withRel("profile")));
+		pagedResource.add(Link.of("/docs/index.html#resources-event-list").withRel("profile"));
 		return ResponseEntity.ok(pagedResource);
 	}
 	

@@ -1,10 +1,6 @@
 package com.mermer.cm.controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
-import java.util.Arrays;
-import java.util.List;
+import static com.mermer.cm.exception.ErrorsResource.badRequest;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -20,11 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
-import com.mermer.cm.exception.ErrorsResource;
 import com.mermer.cm.service.AccountService;
 import com.mermer.cm.validator.AccountValidator;
 
-import static com.mermer.cm.exception.ErrorsResource.badRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
