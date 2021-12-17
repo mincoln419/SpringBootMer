@@ -23,5 +23,6 @@
 
 
 ### 기타 사용 툴 ###
--  [Json Parser Online]: http://json.parser.online.fr/
+-  [Json Parser Online][jsonParserLink]
+[jsonParserLink]: http://json.parser.online.fr/ "jsonParserLink"
 
