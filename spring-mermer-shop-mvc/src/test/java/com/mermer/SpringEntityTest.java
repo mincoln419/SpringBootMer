@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.mermer.cm.entity.TB_CMAC_ACOUNT;
+import com.mermer.cm.entity.Account;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.common.RestDocConfiguration;
 
@@ -41,13 +41,13 @@ class SpringEntityTest {
 	@DisplayName("CMACEntity 입력,수정시간 입력 없을 경우 - 서비스 사용안한경우")
 	public void CMACEntityTestWithNoService() throws Exception {
 		String name = "mermer";
-		TB_CMAC_ACOUNT account = TB_CMAC_ACOUNT.builder()
+		Account account = Account.builder()
 				.username(name)
 				.roleCd(200)
 				.email("mermer@naver.com")
 				.hpNum("01080139108")
 				.build();
-		TB_CMAC_ACOUNT returnAccount = accountRepository.save(account);
+		Account returnAccount = accountRepository.save(account);
 		
 		assertThat(returnAccount.getUsername()).isEqualTo(name);
 		assertThat(returnAccount.getInstDtm()).isNotNull();

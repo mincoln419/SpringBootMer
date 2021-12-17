@@ -9,10 +9,16 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+
+import javax.sound.sampled.AudioFormat.Encoding;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,12 +32,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.cm.repository.AccountRepository;
 import com.mermer.common.RestDocConfiguration;
 
 @SpringBootTest
@@ -44,8 +53,37 @@ public class CMACControllerTest {
 	@Autowired
 	MockMvc mockMvc;
 	
+	
+	@Autowired
+	AccountRepository accountRepository;
+	
 	@Autowired
 	protected ObjectMapper objMapper;
+	
+	@Test
+	@DisplayName("계정 전부 조회")
+	public void selectAccountAll() throws Exception {
+		//Given
+		String name = "mermer";
+		Account account = Account.builder()
+				.username(name)
+				.hpNum("01012345656")
+				.roleCd(200)
+				.accountRole(AccountRole.ADMIN)
+				.accountPart(AccountPart.BULLETIN)
+				.email("mermer@naver.com")
+				.build();
+		
+		accountRepository.save(account);
+		//When & Then
+		mockMvc.perform(get("/account")
+				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
+				)
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("_embedded.accountList[0].username").isNotEmpty())
+		.andExpect(jsonPath("page.totalElements").value(1));
+	}
 	
 	@Test
 	@DisplayName("계정 정상 생성")
@@ -120,6 +158,28 @@ public class CMACControllerTest {
 		AccountDto accountDto = AccountDto.builder()
 				.username(name)
 				.hpNum("02312345656")
+				.roleCd(200)
+				.accountRole(AccountRole.ADMIN)
+				.accountPart(AccountPart.BULLETIN)
+				.email("mermer@naver.com")
+				.build();
+		
+		mockMvc.perform(post("/account/")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objMapper.writeValueAsString(accountDto)) //body parameter
+				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
+				)
+		.andExpect(status().isBadRequest())
+		.andDo(print());
+	}
+	
+	@Test
+	@DisplayName("계정 생성 오류 - 이름이 없는 경우")
+	public void createAcccount400_empty() throws JsonProcessingException, Exception {
+		String name = "";
+		AccountDto accountDto = AccountDto.builder()
+				.username(name)
+				.hpNum("010312345656")
 				.roleCd(200)
 				.accountRole(AccountRole.ADMIN)
 				.accountPart(AccountPart.BULLETIN)

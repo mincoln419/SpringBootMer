@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -17,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mermer.cm.controller.CMACController;
-import com.mermer.cm.entity.TB_CMAC_ACOUNT;
+import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.resource.AccountResource;
@@ -36,10 +38,10 @@ public class AccountService {
 	
 	@Transactional
 	public ResponseEntity createAccount(AccountDto accountDto) {
-		TB_CMAC_ACOUNT account = modelMapper.map(accountDto, TB_CMAC_ACOUNT.class);
+		Account account = modelMapper.map(accountDto, Account.class);
 
-		TB_CMAC_ACOUNT result = accountRepository.save(account);
-		List<TB_CMAC_ACOUNT> list = new ArrayList<>();
+		Account result = accountRepository.save(account);
+		List<Account> list = new ArrayList<>();
 		list.add(result);
 		
 		WebMvcLinkBuilder selfLinkBuilder = linkTo(CMACController.class).slash(result.getAccountId());
@@ -51,6 +53,22 @@ public class AccountService {
 		.add(selfLinkBuilder.withRel("create-event"))
 		.add(Link.of("/docs/index.html#resources-events-create").withRel("profile"));
 		return ResponseEntity.created(createdUri).body(eventResource);
+	}
+
+	/**
+	 * getAccountAll
+	 * @param assembler 
+	 * @param pageable 
+	 * @return
+	 * ResponseEntity
+	 */
+	public ResponseEntity getAccountAll(Pageable pageable
+			, PagedResourcesAssembler assembler) {
+		
+		Page<Account> page = this.accountRepository.findAll(pageable);
+		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-event-list").withRel("profile")));
+	
+		return ResponseEntity.ok(pagedResource);
 	}
 	
 }

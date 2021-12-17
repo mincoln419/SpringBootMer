@@ -2,6 +2,8 @@ package com.mermer.cm.entity.dto;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.lang.NonNull;
 import org.springframework.validation.annotation.Validated;
@@ -28,13 +30,13 @@ public class AccountDto {
 		@NonNull
 		private int roleCd;
 		
-		@NonNull
+		@NotBlank
 		private String username;
 		
-		@NonNull
+		@Email
 		private String email;
 		
-		@NonNull
+		@NotBlank
 		private String hpNum;
 		
 		@Enumerated(EnumType.STRING)

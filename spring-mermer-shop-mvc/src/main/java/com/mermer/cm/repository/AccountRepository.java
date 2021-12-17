@@ -2,8 +2,8 @@ package com.mermer.cm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.mermer.cm.entity.TB_CMAC_ACOUNT;
+import com.mermer.cm.entity.Account;
 
-public interface AccountRepository extends JpaRepository<TB_CMAC_ACOUNT, Long> {
+public interface AccountRepository extends JpaRepository<Account, Long> {
 
 }

@@ -6,6 +6,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -16,10 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.exception.ErrorsResource;
 import com.mermer.cm.service.AccountService;
 import com.mermer.cm.validator.AccountValidator;
+
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +38,14 @@ public class CMACController {
 	private final AccountValidator accountValidator;
 	
 	@GetMapping
-	public List<String> getAccount() {
+	public ResponseEntity getAccount(Pageable pageable, 
+			PagedResourcesAssembler<Account> assembler) {
 		log.debug("GET /account HTTP/1.1");
-		return Arrays.asList("snow", "elsa", "olaf");
+		
+		ResponseEntity result = accountService.getAccountAll(pageable, 
+				 assembler);
+		
+		return result;
 	}
 
 	@PostMapping
@@ -61,7 +70,11 @@ public class CMACController {
 	 * ResponseEntity
 	 */
 	private ResponseEntity badRequest(Errors errors) {
-		return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+		System.out.print(errors.toString());
+		return ResponseEntity.badRequest()
+				.body(ErrorsResource
+						.of(errors)
+						.add(linkTo(methodOn(IndexController.class).index()).withRel("index")));
 				
 	}
 /*	public List<TB_CMAC_ACOUNT> newAccount(@Validated @RequestBody AccountDto accountDto) {

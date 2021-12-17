@@ -27,6 +27,7 @@ public class ErrorsSerializer extends JsonSerializer<Errors>{
 
 	@Override
 	public void serialize(Errors errors, JsonGenerator gen, SerializerProvider provider) throws IOException {
+		
 		gen.writeFieldName("errors");//스프링 부트 2.3부터 jackson 라이브러리가 더이상 startArray 부터 만드는 걸 허용하지 않음
 		gen.writeStartArray();
 		/*
