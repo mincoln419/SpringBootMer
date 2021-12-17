@@ -23,13 +23,5 @@
 
 
 ### 기타 사용 툴 ###
-- <b>Online jsonParser</b> http://json.parser.online.fr/
+-  [Json Parser Online] http://json.parser.online.fr/
 
-[link keyword][id]
-
-[id]: URL "Optional Title here"
-
-// code
-Link: [Google][googlelink]
-
-[googlelink]: https://google.com "Go google"
