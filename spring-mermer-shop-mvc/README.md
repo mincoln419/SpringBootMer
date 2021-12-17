@@ -23,9 +23,9 @@
 
 
 ### 기타 사용 툴 ###
-[Json Parser Online][jsonParserLink]
-[Postman][postmanLink]
+- [Json Parser Online][jsonParserLink]
+- [Postman][postmanLink]
 
-- [jsonParserLink]: http://json.parser.online.fr "jsonParser Link"
-- [postmanLink]: https://www.postman.com "postman Link"
+[jsonParserLink]: http://json.parser.online.fr "jsonParser Link"
+[postmanLink]: https://www.postman.com "postman Link"
 
