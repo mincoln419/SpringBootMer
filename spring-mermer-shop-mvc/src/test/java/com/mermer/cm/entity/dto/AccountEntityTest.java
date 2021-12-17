@@ -1,4 +1,4 @@
-package com.mermer;
+package com.mermer.cm.entity.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -24,17 +24,13 @@ import com.mermer.cm.repository.AccountRepository;
 import com.mermer.common.BaseTest;
 import com.mermer.common.RestDocConfiguration;
 
-class SpringEntityTest extends BaseTest{
+class AccountEntityTest extends BaseTest{
 	@Test
 	@DisplayName("CMACEntity 입력,수정시간 입력 없을 경우 - 서비스 사용안한경우")
 	public void CMACEntityTestWithNoService() throws Exception {
 		String name = "mermer";
-		Account account = Account.builder()
-				.username(name)
-				.roleCd(200)
-				.email("mermer@naver.com")
-				.hpNum("01080139108")
-				.build();
+;		Account account = getOneAccount(name);
+		
 		Account returnAccount = accountRepository.save(account);
 		
 		assertThat(returnAccount.getUsername()).isEqualTo(name);
@@ -42,5 +38,22 @@ class SpringEntityTest extends BaseTest{
 		assertThat(returnAccount.getMdfDtm()).isNotNull();
 		//이 경우에도 시간이 입력된다. accountRepository에 save가 이루어져야 함
 		System.out.println("returnAccount:" + returnAccount.getInstDtm());
+	}
+
+	/**
+	 * @methond getOneAccount
+	 * @return
+	 * Account
+	 * @description Account객체 1개 build 해서 리턴
+	 */
+	static public Account getOneAccount(String name) {
+		
+		Account account = Account.builder()
+				.username(name)
+				.roleCd(200)
+				.email("mermer@naver.com")
+				.hpNum("01080139108")
+				.build();
+		return account;
 	}
 }

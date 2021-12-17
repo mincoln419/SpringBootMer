@@ -3,6 +3,9 @@ package com.mermer.cm.entity;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -10,6 +13,14 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mermer.cm.entity.serializer.AccountSerializer;
+import com.mermer.cm.entity.type.UseYn;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @packageName : com.mermer.cm.entity
@@ -22,21 +33,27 @@ import com.mermer.cm.entity.serializer.AccountSerializer;
  * ----------------------------------------------------------- 
  * 2021.12.17 Mermer 최초 생성
  */
+@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter
+@SuperBuilder
 public class CommonEntity {
+	
 	@CreatedDate
-	private LocalDateTime instDtm;//생성일시
+	protected LocalDateTime instDtm;//생성일시
 	
 	@LastModifiedDate
-	private LocalDateTime mdfDtm;//수정일시
+	protected LocalDateTime mdfDtm;//수정일시
 	
 	//단방향(Account -> Notice)으로 참조하도록 매핑
 	@ManyToOne
 	@JsonSerialize(using = AccountSerializer.class)
-	private Account instId;//생성자ID 
+	protected Account instId;//생성자ID 
 	
 	@ManyToOne
 	@JsonSerialize(using = AccountSerializer.class)
-	private Account mdfId;//수정자ID
+	protected Account mdfId;//수정자ID
 	
-	private String useYn; //사용여부
+	@Enumerated(EnumType.STRING)
+	@Builder.Default
+	protected UseYn useYn = UseYn.Y; //사용여부(default 값 Y);
 }
