@@ -1,5 +1,7 @@
-## Autor Mermer Cho ##
-## README version 0.0.1 ##
+## Author: Mermer Cho <br> 
+    README version 0.0.1
+##
+
 
 
 ### Introduce ###
