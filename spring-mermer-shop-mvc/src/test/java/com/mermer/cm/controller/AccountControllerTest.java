@@ -1,4 +1,4 @@
-package com.mermer.entity.controller;
+package com.mermer.cm.controller;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -28,7 +28,7 @@ import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.common.BaseTest;
 
-public class CMACControllerTest extends BaseTest{
+public class AccountControllerTest extends BaseTest{
 	
 	@Test
 	@DisplayName("계정 전부 조회")

@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mermer.cm.controller.CMACController;
+import com.mermer.cm.controller.AccountController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.repository.AccountRepository;
@@ -44,12 +44,12 @@ public class AccountService {
 		List<Account> list = new ArrayList<>();
 		list.add(result);
 		
-		WebMvcLinkBuilder selfLinkBuilder = linkTo(CMACController.class).slash(result.getAccountId());
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(AccountController.class).slash(result.getAccountId());
 		URI createdUri = selfLinkBuilder.toUri();
 		//event.setId(100);
 		EntityModel<Optional> eventResource = AccountResource.of(Optional.of(result));//생성자 대신 static of 사용
-		eventResource.add(linkTo(CMACController.class).slash(String.valueOf(result.getAccountId())).withSelfRel())
-		.add(linkTo(CMACController.class).withRel("query-events"))
+		eventResource.add(linkTo(AccountController.class).slash(String.valueOf(result.getAccountId())).withSelfRel())
+		.add(linkTo(AccountController.class).withRel("query-events"))
 		.add(selfLinkBuilder.withRel("create-event"))
 		.add(Link.of("/docs/index.html#resources-events-create").withRel("profile"));
 		return ResponseEntity.created(createdUri).body(eventResource);

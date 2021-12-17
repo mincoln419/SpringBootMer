@@ -27,7 +27,7 @@ public class IndexController {
 	@GetMapping("/")
 	public RepresentationModel index() {
 		var index = new RepresentationModel();
-		index.add(linkTo(CMACController.class).withRel("account"));
+		index.add(linkTo(AccountController.class).withRel("account"));
 		return index;
 	}
 }

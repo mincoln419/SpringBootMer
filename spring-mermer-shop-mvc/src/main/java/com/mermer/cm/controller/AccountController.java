@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping(value = "/account", produces = MediaTypes.HAL_JSON_VALUE)
 @RequiredArgsConstructor
-public class CMACController {
+public class AccountController {
 
 	private final AccountService accountService;
 	private final AccountValidator accountValidator;
