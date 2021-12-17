@@ -24,14 +24,14 @@ import com.mermer.cm.exception.ErrorsResource;
 import com.mermer.cm.service.AccountService;
 import com.mermer.cm.validator.AccountValidator;
 
-
+import static com.mermer.cm.exception.ErrorsResource.badRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-@RequestMapping(value = "/account", produces = MediaTypes.HAL_JSON_VALUE)
 @RequiredArgsConstructor
+@RequestMapping(value = "/account", produces = MediaTypes.HAL_JSON_VALUE)
 public class AccountController {
 
 	private final AccountService accountService;
@@ -63,20 +63,7 @@ public class AccountController {
 		return result;
 	}
 
-	/**
-	 * badRequest
-	 * @param errors
-	 * @return
-	 * ResponseEntity
-	 */
-	private ResponseEntity badRequest(Errors errors) {
-		System.out.print(errors.toString());
-		return ResponseEntity.badRequest()
-				.body(ErrorsResource
-						.of(errors)
-						.add(linkTo(methodOn(IndexController.class).index()).withRel("index")));
-				
-	}
+
 /*	public List<TB_CMAC_ACOUNT> newAccount(@Validated @RequestBody AccountDto accountDto) {
 		log.debug("GET /account/new HTTP/1.1");
 		List<TB_CMAC_ACOUNT> result = accountService.createAccount(accountDto);

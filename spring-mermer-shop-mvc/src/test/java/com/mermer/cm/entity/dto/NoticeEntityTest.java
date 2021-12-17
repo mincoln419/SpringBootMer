@@ -13,9 +13,6 @@ package com.mermer.cm.entity.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.sql.rowset.serial.SerialClob;
-
-import org.h2.jdbc.JdbcClob;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +27,6 @@ public class NoticeEntityTest extends BaseTest{
 
 	@Autowired
 	NoticeRepository noticeRepository;
-	
 	
 	@Test
 	@DisplayName("Notice Entity 생성 테스트")

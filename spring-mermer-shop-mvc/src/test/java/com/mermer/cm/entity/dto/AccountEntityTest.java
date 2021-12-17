@@ -25,6 +25,8 @@ import com.mermer.common.BaseTest;
 import com.mermer.common.RestDocConfiguration;
 
 class AccountEntityTest extends BaseTest{
+	
+
 	@Test
 	@DisplayName("CMACEntity 입력,수정시간 입력 없을 경우 - 서비스 사용안한경우")
 	public void CMACEntityTestWithNoService() throws Exception {

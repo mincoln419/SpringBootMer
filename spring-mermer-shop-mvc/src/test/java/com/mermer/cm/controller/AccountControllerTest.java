@@ -15,8 +15,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,9 +28,16 @@ import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.cm.repository.AccountRepository;
 import com.mermer.common.BaseTest;
 
 public class AccountControllerTest extends BaseTest{
+	
+		
+	@BeforeEach
+	public void init() {
+		this.accountRepository.deleteAll();
+	}
 	
 	@Test
 	@DisplayName("계정 전부 조회")
@@ -69,7 +78,7 @@ public class AccountControllerTest extends BaseTest{
 				.email("mermer@naver.com")
 				.build();
 		
-		mockMvc.perform(post("/account/")
+		mockMvc.perform(post("/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto)) //body parameter
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
@@ -134,7 +143,7 @@ public class AccountControllerTest extends BaseTest{
 				.email("mermer@naver.com")
 				.build();
 		
-		mockMvc.perform(post("/account/")
+		mockMvc.perform(post("/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto)) //body parameter
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
@@ -156,7 +165,7 @@ public class AccountControllerTest extends BaseTest{
 				.email("mermer@naver.com")
 				.build();
 		
-		mockMvc.perform(post("/account/")
+		mockMvc.perform(post("/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto)) //body parameter
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류

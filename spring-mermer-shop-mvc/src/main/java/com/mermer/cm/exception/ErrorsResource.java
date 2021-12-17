@@ -1,8 +1,14 @@
 
 package com.mermer.cm.exception;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+
+import com.mermer.cm.controller.IndexController;
 /**
  * @packageName : com.mermer.cm.exception
  * @fileName : ErrorsResource.java 
@@ -16,5 +22,19 @@ import org.springframework.validation.Errors;
  */
 public class ErrorsResource extends EntityModel<Errors>{
 	 
+	/**
+	 * badRequest
+	 * @param errors
+	 * @return
+	 * ResponseEntity
+	 */
+	static public ResponseEntity badRequest(Errors errors) {
+		System.out.print(errors.toString());
+		return ResponseEntity.badRequest()
+				.body(ErrorsResource
+						.of(errors)
+						.add(linkTo(methodOn(IndexController.class).index()).withRel("index")));
+				
+	}
 		 
 }
