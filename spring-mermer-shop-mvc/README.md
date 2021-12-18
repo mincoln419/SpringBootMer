@@ -1,6 +1,7 @@
 ## 
     Author: Mermer Cho
     Version: 0.0.1 - Abstract planning
+    Version: 0.0.2 - gitignore, 사용자 인증 관련 설명 추가
 ##
 
 
@@ -26,7 +27,14 @@
 - h2 1.4.200
 - lombok 1.18.22
 - spring-restdocs-mockmvc 2.0.6.RELEASE
+- 
 
+### 사용자 인증 ###
+- OAuth2 및 redis를 통한 token 저장
+- 최초 계정 추가는 관리자 권한으로 바로 연결하여 등록할 수 있도록 함 - 이후 로그인으로 토큰 발급받아 사용가능
+
+### Git Ignore ###
+- 개발관련 개인정보 사항이 담긴 properties 파일에 대해서 형상관리에서 제외 -> 운영배포 서버에 직접 파일을 복사해서 사용
 
 
 ### Etc Development Tool ###
@@ -35,6 +43,7 @@
 
 [jsonParserLink]: http://json.parser.online.fr "jsonParser Link"
 [postmanLink]: https://www.postman.com "postman Link"
+
 
 
 
