@@ -35,8 +35,6 @@ import com.mermer.common.BaseTest;
 
 public class AccountControllerTest extends BaseTest{
 	
-	@Autowired
-	private ModelMapper mapper;
 	
 	@BeforeEach
 	public void init() {
@@ -141,7 +139,7 @@ public class AccountControllerTest extends BaseTest{
 		Account account = getOneAccount(name);
 		account = accountRepository.save(account);
 		
-		AccountDto accountDto = mapper.map(account, AccountDto.class);
+		AccountDto accountDto = modelMapper.map(account, AccountDto.class);
 		String modified = name + "_modified";
 		accountDto.setUsername(modified);
 		

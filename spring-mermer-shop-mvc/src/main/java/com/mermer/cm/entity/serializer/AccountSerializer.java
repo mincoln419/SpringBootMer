@@ -13,6 +13,7 @@ import com.mermer.cm.entity.Account;
  * @author : Mermer 
  * @date : 2021.12.17 
  * @description : Account 객체를 타 entity에서 사용할 때의 Serializer
+ * 				  계정정보중 예민한 부분을 없애고 보여줄 수 있음
  * =========================================================== 
  * DATE AUTHOR NOTE 
  * ----------------------------------------------------------- 
@@ -22,7 +23,7 @@ public class AccountSerializer extends JsonSerializer<Account>{
 		@Override
 		public void serialize(Account account, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 			gen.writeStartObject();
-			gen.writeNumberField("writerId", account.getAccountId());
+			gen.writeNumberField("accountId", account.getAccountId());
 			gen.writeEndObject();
 		}
 }

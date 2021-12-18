@@ -7,6 +7,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,12 +35,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping(value = "/notice", produces = MediaTypes.HAL_JSON_VALUE)
+@SuppressWarnings("rawtypes")
 public class NoticeController {
 
-	private final NoticeRepository noticeRepository;
 	private final NoticeValidator noticeValidator;
 	private final NoticeService noticeService;
 	
+	@PostMapping
 	public ResponseEntity createNotice(@RequestBody @Validated NoticeDto noticeDto,
 									   Errors errors
 	) 
@@ -49,7 +51,7 @@ public class NoticeController {
 		noticeValidator.noticeValidate(noticeDto, errors);
 		if(errors.hasErrors()) return badRequest(errors);
 		
-		log.debug("GET /Notice/new HTTP/1.1");
+		log.debug("POST /notice/new HTTP/1.1");
 		ResponseEntity result = noticeService.createNotice(noticeDto);
 		
 		return result;

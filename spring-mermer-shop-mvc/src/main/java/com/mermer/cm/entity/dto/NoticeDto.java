@@ -2,9 +2,14 @@
 package com.mermer.cm.entity.dto;
 
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.lang.NonNull;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mermer.cm.entity.Account;
+import com.mermer.cm.entity.serializer.AccountSerializer;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
 
@@ -29,8 +34,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NoticeDto {
 
+	@NotBlank
 	private String title;
 	
 	@Lob
+	@NotBlank
 	private String content;
+	
 }
