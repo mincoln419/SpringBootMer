@@ -1,30 +1,16 @@
 package com.mermer.cm.entity.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import java.time.LocalDateTime;
-
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
 import com.mermer.cm.entity.Account;
-import com.mermer.cm.repository.AccountRepository;
+import com.mermer.cm.entity.type.AccountPart;
+import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.common.BaseTest;
-import com.mermer.common.RestDocConfiguration;
 
-class AccountEntityTest extends BaseTest{
+public class AccountEntityTest extends BaseTest{
 	
 
 	@Test
@@ -53,6 +39,28 @@ class AccountEntityTest extends BaseTest{
 		Account account = Account.builder()
 				.username(name)
 				.roleCd(200)
+				.accountRole(AccountRole.GOLD)
+				.accountPart(AccountPart.NOTION)
+				.email("mermer@naver.com")
+				.hpNum("01080139108")
+				.build();
+		return account;
+	}
+	
+	/**
+	 * @methond getOneAccount
+	 * @return
+	 * Account
+	 * @description Account객체 1개 build(with accountId) 해서 리턴 
+	 */
+	static public Account getOneAccount(String name, Long accountId) {
+		
+		Account account = Account.builder()
+				.accountId(accountId)
+				.username(name)
+				.roleCd(200)
+				.accountRole(AccountRole.GOLD)
+				.accountPart(AccountPart.NOTION)
 				.email("mermer@naver.com")
 				.hpNum("01080139108")
 				.build();

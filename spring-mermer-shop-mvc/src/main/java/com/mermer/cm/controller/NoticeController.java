@@ -49,7 +49,7 @@ public class NoticeController {
 		noticeValidator.noticeValidate(noticeDto, errors);
 		if(errors.hasErrors()) return badRequest(errors);
 		
-		log.debug("GET /account/new HTTP/1.1");
+		log.debug("GET /Notice/new HTTP/1.1");
 		ResponseEntity result = noticeService.createNotice(noticeDto);
 		
 		return result;

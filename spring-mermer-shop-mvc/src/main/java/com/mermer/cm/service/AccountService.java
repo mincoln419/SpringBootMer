@@ -44,15 +44,26 @@ public class AccountService {
 		List<Account> list = new ArrayList<>();
 		list.add(result);
 		
-		WebMvcLinkBuilder selfLinkBuilder = linkTo(AccountController.class).slash(result.getAccountId());
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(result.getAccountId());
 		URI createdUri = selfLinkBuilder.toUri();
 		//event.setId(100);
 		EntityModel<Optional> eventResource = AccountResource.of(Optional.of(result));//생성자 대신 static of 사용
-		eventResource.add(linkTo(AccountController.class).slash(String.valueOf(result.getAccountId())).withSelfRel())
+		eventResource.add((selfLinkBuilder).withSelfRel())
 		.add(linkTo(AccountController.class).withRel("query-accounts"))
 		.add(selfLinkBuilder.withRel("update-account"))
 		.add(Link.of("/docs/index.html#resources-events-create").withRel("profile"));
 		return ResponseEntity.created(createdUri).body(eventResource);
+	}
+
+	/**
+	 * @methond getClassUri
+	 * @param accountId
+	 * @return
+	 * URI
+	 * @description 
+	 */
+	private WebMvcLinkBuilder getClassLink(Long accountId) {
+		return linkTo(AccountController.class).slash(accountId);
 	}
 
 	/**
@@ -69,6 +80,54 @@ public class AccountService {
 		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-account-list").withRel("profile")));
 		pagedResource.add(Link.of("/docs/index.html#resources-event-list").withRel("profile"));
 		return ResponseEntity.ok(pagedResource);
+	}
+
+	/**
+	 * @methond getAccount
+	 * @param id
+	 * @return
+	 * ResponseEntity
+	 * @description 
+	 */
+	public ResponseEntity getAccount(Long accountId) {
+		Optional<Account> optionalAccount = this.accountRepository.findByAccountId(accountId);
+		if(optionalAccount.isEmpty()){
+			return ResponseEntity.notFound().build();
+		}
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(accountId);
+		Account account = optionalAccount.get();
+		EntityModel<Account> accountResource = AccountResource.of(account)
+											  .add((selfLinkBuilder).withSelfRel())
+											  .add(Link.of("/docs/index.html#resources-account-get").withRel("profile"))
+											  .add(selfLinkBuilder.withRel("update-account"));
+		return ResponseEntity.ok(accountResource);
+	}
+
+	/**
+	 * @method updateAccount
+	 * @param accountDto
+	 * @param accountId 
+	 * @return
+	 * ResponseEntity
+	 * @description 계정을 업데이트한다
+	 */
+	public ResponseEntity updateAccount(AccountDto accountDto, Long accountId) {
+		
+		Optional<Account> optionalAccount = this.accountRepository.findByAccountId(accountId);
+		
+		//해당 계정으로 데이터가 없는 경우 return notFound
+		if(optionalAccount.isEmpty()){
+			return ResponseEntity.notFound().build();
+		}
+		Account account = optionalAccount.get();
+		//modelMapper로 dto 데이터 매핑 (입력값을 조회값에 매핑
+		modelMapper.map(accountDto, account);
+		accountRepository.save(account);
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(accountId);
+		EntityModel<Account> accountResource = AccountResource.of(account)
+											  .add((selfLinkBuilder).withSelfRel())
+											  .add(Link.of("/docs/index.html#resources-account-get").withRel("profile"));
+		return ResponseEntity.ok(accountResource);
 	}
 	
 }

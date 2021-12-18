@@ -125,7 +125,7 @@ public class EventController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		//수정 데이터 세팅 - modelMapper
-		this.modelMapper.map(eventDto, bfEvent);
+		this.modelMapper.map(event, bfEvent);
 
 		//free 상태값 갱신
 		bfEvent.update();

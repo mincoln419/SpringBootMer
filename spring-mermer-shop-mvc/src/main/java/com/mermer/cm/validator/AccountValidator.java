@@ -1,14 +1,10 @@
 
 package com.mermer.cm.validator;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.mermer.cm.entity.dto.AccountDto;
-import com.mermer.cm.exception.BizException;
-import com.mermer.cm.exception.BizExceptionCode;
 
 /**
  * @packageName : com.mermer.cm.validator
@@ -29,7 +25,7 @@ public class AccountValidator {
 	 * @param accountDto
 	 * @param errors
 	 */
-	public void accountValidate(AccountDto accountDto, Errors errors) {
+	public void validate(AccountDto accountDto, Errors errors) {
 		/*
 		 * @description:전화번호 유효성 검사 		 
 		 * */
