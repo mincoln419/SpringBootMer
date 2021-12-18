@@ -1,5 +1,7 @@
 package com.mermer.cm.entity.dto;
 
+import java.util.Set;
+
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
@@ -40,8 +42,8 @@ public class AccountDto {
 		private String hpNum;
 		
 		@Enumerated(EnumType.STRING)
-		private AccountRole accountRole;
+		private Set<AccountRole> accountRole;
 		
 		@Enumerated(EnumType.STRING)
-		private AccountPart accountPart;
+		private Set<AccountPart> accountPart;
 }

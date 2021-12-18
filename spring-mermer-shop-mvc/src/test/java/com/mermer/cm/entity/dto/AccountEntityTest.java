@@ -2,6 +2,8 @@ package com.mermer.cm.entity.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,8 +40,8 @@ public class AccountEntityTest extends BaseTest{
 		Account account = Account.builder()
 				.username(name)
 				.roleCd(200)
-				.accountRole(AccountRole.GOLD)
-				.accountPart(AccountPart.NOTION)
+				.accountRole(Set.of(AccountRole.GOLD))
+				.accountPart(Set.of(AccountPart.NOTION))
 				.email("mermer@naver.com")
 				.hpNum("01080139108")
 				.build();
@@ -58,8 +60,8 @@ public class AccountEntityTest extends BaseTest{
 				.accountId(accountId)
 				.username(name)
 				.roleCd(200)
-				.accountRole(AccountRole.GOLD)
-				.accountPart(AccountPart.NOTION)
+				.accountRole(Set.of(AccountRole.GOLD))
+				.accountPart(Set.of(AccountPart.NOTION))
 				.email("mermer@naver.com")
 				.hpNum("01080139108")
 				.build();

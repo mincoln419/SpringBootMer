@@ -17,6 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -203,8 +205,8 @@ public class AccountControllerTest extends BaseTest{
 				.username(name)
 				.hpNum("01012345656")
 				.roleCd(200)
-				.accountRole(AccountRole.ADMIN)
-				.accountPart(AccountPart.BULLETIN)
+				.accountRole(Set.of(AccountRole.ADMIN))
+				.accountPart(Set.of(AccountPart.BULLETIN))
 				.email("mermer@naver.com")
 				.build();
 		
@@ -268,8 +270,8 @@ public class AccountControllerTest extends BaseTest{
 				.username(name)
 				.hpNum("02312345656")
 				.roleCd(200)
-				.accountRole(AccountRole.ADMIN)
-				.accountPart(AccountPart.BULLETIN)
+				.accountRole(Set.of(AccountRole.ADMIN))
+				.accountPart(Set.of(AccountPart.BULLETIN))
 				.email("mermer@naver.com")
 				.build();
 		
@@ -290,8 +292,8 @@ public class AccountControllerTest extends BaseTest{
 				.username(name)
 				.hpNum("010312345656")
 				.roleCd(200)
-				.accountRole(AccountRole.ADMIN)
-				.accountPart(AccountPart.BULLETIN)
+				.accountRole(Set.of(AccountRole.ADMIN))
+				.accountPart(Set.of(AccountPart.BULLETIN))
 				.email("mermer@naver.com")
 				.build();
 		

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -15,6 +16,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +38,16 @@ public class AccountService {
 	private final AccountRepository accountRepository;//injection 받아야할 경우 private final로 선언
 	
 	private final ModelMapper modelMapper;
+		
+	private final PasswordEncoder passwordEncoder;
 	
 	@Transactional
 	public ResponseEntity createAccount(AccountDto accountDto) {
 		Account account = modelMapper.map(accountDto, Account.class);
-
+		
+		//비밀번호 암호화
+		account.setPass(this.passwordEncoder.encode(account.getPass()));
+		
 		Account result = accountRepository.save(account);
 		
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(result.getAccountId());
@@ -54,6 +61,8 @@ public class AccountService {
 		
 		return ResponseEntity.created(createdUri).body(accountResource);
 	}
+	
+
 
 	/**
 	 * getAccountAll
@@ -100,6 +109,7 @@ public class AccountService {
 	 * ResponseEntity
 	 * @description 계정을 업데이트한다
 	 */
+	@Transactional
 	public ResponseEntity updateAccount(AccountDto accountDto, Long accountId) {
 		
 		Optional<Account> optionalAccount = this.accountRepository.findByAccountId(accountId);
@@ -120,8 +130,12 @@ public class AccountService {
 	}
 
 	
+	
+	/******************************************************
+	 * Non-validated method
+	 ******************************************************/
 	/**
-	 * @methond getClassUri
+	 * @method getClassUri
 	 * @param accountId
 	 * @return
 	 * URI
@@ -129,5 +143,16 @@ public class AccountService {
 	 */
 	private WebMvcLinkBuilder getClassLink(Long accountId) {
 		return linkTo(AccountController.class).slash(accountId);
+	}
+
+	/**
+	 * @method createAccount
+	 * @param admin
+	 * void
+	 * @description 최초 계정 생성시에만 사용되는 save
+	 */
+	public Account createAccount(Account account) {
+		account.setPass(this.passwordEncoder.encode(account.getPass()));
+		return accountRepository.save(account);
 	}
 }

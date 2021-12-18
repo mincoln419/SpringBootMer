@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "mer-app.client-id",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.client-id'"
+  },
+  {
+    "name": "mer-app.client-secret",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.client-secret'"
+  },
+  {
+    "name": "mer-app.admin-name",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.admin-name'"
+  },
+  {
+    "name": "mer-app.admin-pass",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.admin-pass'"
+  },
+  {
+    "name": "mer-app.guest-name",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.guest-name'"
+  },
+  {
+    "name": "mer-app.guest-pass",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.guest-pass'"
+  }
+]}

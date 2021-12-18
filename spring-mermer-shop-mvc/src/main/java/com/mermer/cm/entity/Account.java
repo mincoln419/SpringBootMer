@@ -1,11 +1,14 @@
 package com.mermer.cm.entity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
@@ -40,6 +43,8 @@ public class Account {
 	
 	private String username;
 	
+	private String pass;
+	
 	private String email;
 	
 	private String hpNum;
@@ -51,9 +56,11 @@ public class Account {
 	private LocalDateTime mdfDtm;
 	
 	@Enumerated(EnumType.STRING)
-	private AccountRole accountRole;
+	@ElementCollection(fetch = FetchType.EAGER)// 자주가져오고, Role 데이터가 많지 않기 때문에 EAGER 모드로 패치(set, list의 기본은 LAZY 패치)
+	private Set<AccountRole> accountRole;
 	
+	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
-	private AccountPart accountPart;
+	private Set<AccountPart> accountPart;
 	
 }
