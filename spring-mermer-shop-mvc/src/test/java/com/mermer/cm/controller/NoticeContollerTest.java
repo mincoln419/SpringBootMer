@@ -37,9 +37,6 @@ import com.mermer.common.BaseTest;
  */
 public class NoticeContollerTest extends BaseTest {
 	
-	@Autowired
-	private NoticeRepository noticeRepository; 
-	
 	@Test
 	@DisplayName("Notice 조회")
 	public void createNotice() throws Exception {
@@ -82,6 +79,34 @@ public class NoticeContollerTest extends BaseTest {
 			.andExpect(jsonPath("title").value(title))
 			.andExpect(jsonPath("content").value(sb.toString()))
 			;
+	}
+	
+	@Test
+	@DisplayName("공지사항에 내용이 없는 경우")
+	public void createNotice400_BadRequest() throws Exception {
+		//Given
+		//계정생성
+		String name = "newAccount";
+		Account account = AccountEntityTest.getOneAccount(name);
+		accountRepository.save(account);
+		
+		//해당 계정으로 공지사항 글 작성
+		String title = "Notice Test";
+		String str = "";
+		NoticeDto notice = NoticeDto.builder()
+				.title(title)
+				.content(str)
+				//.content("sestet")
+				.build();
+		mockMvc.perform(post("/notice")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objMapper.writeValueAsString(notice))
+				.accept(MediaTypes.HAL_JSON)
+				)
+		.andDo(print())
+		.andExpect(status().isBadRequest())
+		;
+				
 	}
 
 }
