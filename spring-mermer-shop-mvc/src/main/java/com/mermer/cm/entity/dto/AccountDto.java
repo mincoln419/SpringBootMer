@@ -33,6 +33,9 @@ public class AccountDto {
 		private int roleCd;
 		
 		@NotBlank
+		private String loginId;//loginId 규칙: 영어 + 숫자 13자 미만
+		
+		@NotBlank
 		private String username;
 		
 		@Email

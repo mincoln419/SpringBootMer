@@ -3,12 +3,12 @@ package com.mermer.cm.service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -16,6 +16,11 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mermer.cm.controller.AccountController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
+import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.resource.AccountResource;
+import com.mermer.cm.util.AccountAdapter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor //=> 자동으로 AccountRepository를 injection 처리
 @Slf4j
 @SuppressWarnings("rawtypes")
-public class AccountService {
+public class AccountService implements UserDetailsService{
 	
 	private final AccountRepository accountRepository;//injection 받아야할 경우 private final로 선언
 	
@@ -155,4 +162,20 @@ public class AccountService {
 		account.setPass(this.passwordEncoder.encode(account.getPass()));
 		return accountRepository.save(account);
 	}
+
+
+	/**
+	 * @method loadUserByUsername
+	 * @param username
+	 * void
+	 * @description UserDetailsService 의 구현체
+	 */
+	@Override
+	public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+		Account account = accountRepository.findByLoginId(loginId)
+				.orElseThrow(()-> new UsernameNotFoundException(loginId));
+
+		return new AccountAdapter(account);
+	}
+
 }

@@ -39,6 +39,8 @@ public class Account {
 	@Id @GeneratedValue 
 	private Long accountId;
 	
+	private String loginId;
+	
 	private Integer roleCd;
 	
 	private String username;
