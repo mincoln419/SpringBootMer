@@ -70,10 +70,10 @@ public class AccountController {
 	 * @description 계정정보 단건 조회
 	 */
 	@GetMapping("/{id}")
-	public ResponseEntity getAccount(@PathVariable Long accountId) {
+	public ResponseEntity getAccount(@PathVariable Long id) {
 		log.debug("GET /account HTTP/1.1");
 		
-		ResponseEntity result = accountService.getAccount(accountId);
+		ResponseEntity result = accountService.getAccount(id);
 		
 		return result;
 	}
@@ -102,7 +102,7 @@ public class AccountController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity updateAccount(@PathVariable Long accountId,
+	public ResponseEntity updateAccount(@PathVariable Long id, //PathVariable은 param 이름을 인식하므로 일치시켜야함
 										@RequestBody @Validated AccountDto accountDto,
 										Errors errors
 										)
@@ -112,7 +112,7 @@ public class AccountController {
 		accountValidator.validate(accountDto, errors);
 		if(errors.hasErrors()) return badRequest(errors);
 		log.debug("POST /account/new HTTP/1.1");
-		ResponseEntity result = accountService.updateAccount(accountDto, accountId);
+		ResponseEntity result = accountService.updateAccount(accountDto, id);
 		
 		return result;
 	}

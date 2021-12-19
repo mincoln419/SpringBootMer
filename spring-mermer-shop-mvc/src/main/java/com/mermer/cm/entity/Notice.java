@@ -33,7 +33,7 @@ import lombok.experimental.SuperBuilder;
  * 2021.12.17 Mermer 최초 생성
  */
 @Entity @NoArgsConstructor @AllArgsConstructor
-@SuperBuilder @Getter @Setter @EqualsAndHashCode(of = "noiceId")
+@SuperBuilder @Getter @Setter
 @EntityListeners(AuditingEntityListener.class) // 이걸집어넣어줘야 instDtm, mdfDtm  자동으로 세팅해줌
 public class Notice extends CommonEntity{
 

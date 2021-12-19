@@ -49,7 +49,7 @@ public class AccountService implements UserDetailsService{
 		//비밀번호 암호화
 		account.setPass(this.passwordEncoder.encode(account.getPass()));
 		
-		Account result = accountRepository.save(account);
+		Account result = saveAccount(account);
 		
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(result.getId());
 		URI createdUri = selfLinkBuilder.toUri();
@@ -122,7 +122,7 @@ public class AccountService implements UserDetailsService{
 		Account account = optionalAccount.get();
 		//modelMapper로 dto 데이터 매핑 (입력값을 조회값에 매핑
 		modelMapper.map(accountDto, account);
-		accountRepository.save(account);
+		saveAccount(account);
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(accountId);
 		EntityModel<Account> accountResource = AccountResource.of(account)
 											  .add((selfLinkBuilder).withSelfRel())
@@ -152,7 +152,7 @@ public class AccountService implements UserDetailsService{
 	 * void
 	 * @description 최초 계정 생성시에만 사용되는 save
 	 */
-	public Account createAccount(Account account) {
+	public Account saveAccount(Account account) {//암호화 설정 이후 저장
 		account.setPass(this.passwordEncoder.encode(account.getPass()));
 		return accountRepository.save(account);
 	}

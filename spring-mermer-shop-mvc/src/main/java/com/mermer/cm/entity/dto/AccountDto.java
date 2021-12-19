@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.data.relational.core.mapping.Embedded.Empty;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,11 +30,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AccountDto {
 
-		@NonNull
-		private int roleCd;
-		
 		@NotBlank
 		private String loginId;//loginId 규칙: 영어 + 숫자 13자 미만
+		
+		@NotBlank
+		private String pass;//loginId 규칙: 영어 + 특수문자 + 숫자 13자 미만
+		
+		@NonNull
+		private Integer roleCd;
 		
 		@NotBlank
 		private String username;

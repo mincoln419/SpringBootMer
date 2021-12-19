@@ -3,6 +3,8 @@ package com.mermer.cm.util;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -23,7 +25,11 @@ public class AppConfig {
 
 	@Bean
 	public ModelMapper modelMapper() {
-		return new ModelMapper();
+	
+		ModelMapper mapper = new ModelMapper();
+		mapper.getConfiguration()
+			.setMatchingStrategy(MatchingStrategies.STRICT);
+		return mapper;
 	}
 	
 	@Bean
@@ -53,7 +59,7 @@ public class AppConfig {
 				log.debug("admin::" + appProperties.getAdminName());
 				log.debug("guest::" + appProperties.getGuestName());
 				
-				accountService.createAccount(admin);
+				accountService.saveAccount(admin);
 				
 				
 				Account user = Account.builder()
@@ -63,7 +69,7 @@ public class AppConfig {
 						.pass(appProperties.getGuestPass())
 						.accountRole(Set.of(AccountRole.USER))
 						.build();
-				accountService.createAccount(user);
+				accountService.saveAccount(user);
 			}
 		};
 	}
