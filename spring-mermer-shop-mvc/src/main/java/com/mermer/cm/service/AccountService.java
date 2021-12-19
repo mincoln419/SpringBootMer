@@ -3,10 +3,7 @@ package com.mermer.cm.service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -16,8 +13,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mermer.cm.controller.AccountController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
-import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.resource.AccountResource;
 import com.mermer.cm.util.AccountAdapter;
@@ -57,7 +51,7 @@ public class AccountService implements UserDetailsService{
 		
 		Account result = accountRepository.save(account);
 		
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(result.getAccountId());
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(result.getId());
 		URI createdUri = selfLinkBuilder.toUri();
 		//event.setId(100);
 		EntityModel<Optional> accountResource = AccountResource.of(Optional.of(result));//생성자 대신 static of 사용
@@ -95,7 +89,7 @@ public class AccountService implements UserDetailsService{
 	 * @description 
 	 */
 	public ResponseEntity getAccount(Long accountId) {
-		Optional<Account> optionalAccount = this.accountRepository.findByAccountId(accountId);
+		Optional<Account> optionalAccount = this.accountRepository.findById(accountId);
 		if(optionalAccount.isEmpty()){
 			return ResponseEntity.notFound().build();
 		}
@@ -119,7 +113,7 @@ public class AccountService implements UserDetailsService{
 	@Transactional
 	public ResponseEntity updateAccount(AccountDto accountDto, Long accountId) {
 		
-		Optional<Account> optionalAccount = this.accountRepository.findByAccountId(accountId);
+		Optional<Account> optionalAccount = this.accountRepository.findById(accountId);
 		
 		//해당 계정으로 데이터가 없는 경우 return notFound
 		if(optionalAccount.isEmpty()){
@@ -172,10 +166,12 @@ public class AccountService implements UserDetailsService{
 	 */
 	@Override
 	public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+		
 		Account account = accountRepository.findByLoginId(loginId)
 				.orElseThrow(()-> new UsernameNotFoundException(loginId));
 
 		return new AccountAdapter(account);
 	}
+
 
 }

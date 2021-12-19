@@ -37,7 +37,7 @@ public class Account {
 	 * */
 
 	@Id @GeneratedValue 
-	private Long accountId;
+	private Long id;
 	
 	private String loginId;
 	

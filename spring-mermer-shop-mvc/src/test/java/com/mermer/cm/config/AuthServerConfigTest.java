@@ -41,16 +41,19 @@ public class AuthServerConfigTest extends BaseTest{
 		String clientId = appProperties.getClientId();
 		String clientSecret = appProperties.getClientSecret();
 		
+		System.err.println(adminName);
+		System.err.println(clientId);
+		
 		this.mockMvc.perform(post("/oauth/token")
-					.with(httpBasic(clientId, clientSecret)
-				)
-				.param("loginId", adminName)
-				.param("pass", pass)
+					.with(httpBasic(clientId, clientSecret))
+				//TODO default가 username/password 임 - 수정필요함
+				.param("username", adminName)
+				.param("password", pass) 
 				.param("grant_type", "password")
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("").exists())
+		.andExpect(jsonPath("access_token").exists())
 		;
 		
 	}

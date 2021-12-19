@@ -57,7 +57,7 @@ public class AccountEntityTest extends BaseTest{
 	static public Account getOneAccount(String name, Long accountId) {
 		
 		Account account = Account.builder()
-				.accountId(accountId)
+				.id(accountId)
 				.username(name)
 				.roleCd(200)
 				.accountRole(Set.of(AccountRole.GOLD))

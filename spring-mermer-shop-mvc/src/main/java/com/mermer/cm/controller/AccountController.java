@@ -69,7 +69,7 @@ public class AccountController {
 	 * @return ResponseEntity
 	 * @description 계정정보 단건 조회
 	 */
-	@GetMapping("/{accountId}")
+	@GetMapping("/{id}")
 	public ResponseEntity getAccount(@PathVariable Long accountId) {
 		log.debug("GET /account HTTP/1.1");
 		
@@ -101,7 +101,7 @@ public class AccountController {
 		return result;
 	}
 	
-	@PutMapping("/{accountId}")
+	@PutMapping("/{id}")
 	public ResponseEntity updateAccount(@PathVariable Long accountId,
 										@RequestBody @Validated AccountDto accountDto,
 										Errors errors

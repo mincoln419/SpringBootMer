@@ -38,7 +38,7 @@ import lombok.experimental.SuperBuilder;
 public class Notice extends CommonEntity{
 
 	@Id @GeneratedValue
-	private Long noiceId;
+	private Long id;
 
 	private String title;
 	

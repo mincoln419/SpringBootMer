@@ -9,15 +9,6 @@ import com.mermer.cm.entity.Account;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
 	/**
-	 * @methond findByAccountId
-	 * @param id
-	 * @return
-	 * Optional<Account>
-	 * @description 
-	 */
-	Optional<Account> findByAccountId(Long id);
-
-	/**
 	 * @method findByLoginId
 	 * @param loginId
 	 * @return

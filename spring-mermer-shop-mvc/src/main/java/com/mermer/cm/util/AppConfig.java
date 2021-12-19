@@ -44,6 +44,7 @@ public class AppConfig {
 			@Override
 			public void run(ApplicationArguments args) throws Exception {	
 				Account admin = Account.builder()
+						.loginId(appProperties.getAdminName())
 						.username(appProperties.getAdminName())
 						.email("mincoln419@naver.com")
 						.pass(appProperties.getAdminPass())
@@ -56,7 +57,9 @@ public class AppConfig {
 				
 				
 				Account user = Account.builder()
-						.email(appProperties.getGuestName())
+						.loginId(appProperties.getGuestName())
+						.username(appProperties.getGuestName())
+						.email("mincoln0203@naver.com")
 						.pass(appProperties.getGuestPass())
 						.accountRole(Set.of(AccountRole.USER))
 						.build();

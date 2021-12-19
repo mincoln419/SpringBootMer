@@ -71,7 +71,7 @@ public class NoticeService {
 		Notice result = noticeRepository.save(notice);
 		
 		//TODO 게시글의 댓글 정보 link return  
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(result.getNoiceId());
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(result.getId());
 		URI createdUri = selfLinkBuilder.toUri();
 	
 		EntityModel<Optional> noticeResource = NoticeResource.of(Optional.of(result));//생성자 대신 static of 사용

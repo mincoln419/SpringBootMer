@@ -99,7 +99,7 @@ public class AccountControllerTest extends BaseTest{
 		account = accountRepository.save(account);
 		
 		//When & Then
-		mockMvc.perform(get("/account/{accountId}", account.getAccountId())
+		mockMvc.perform(get("/account/{accountId}", account.getId())
 				.accept(MediaTypes.HAL_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
@@ -146,7 +146,7 @@ public class AccountControllerTest extends BaseTest{
 		accountDto.setUsername(modified);
 		
 		//when & then
-		this.mockMvc.perform(put("/account/{accountId}", account.getAccountId())
+		this.mockMvc.perform(put("/account/{id}", account.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto))
 				.accept(MediaTypes.HAL_JSON)
@@ -179,7 +179,7 @@ public class AccountControllerTest extends BaseTest{
 				),
 				relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
 						//response only
-						fieldWithPath("accountId").description("Id of new account"),
+						fieldWithPath("id").description("Id of new account"),
 						fieldWithPath("instDtm").description("date time of created Account"),
 						fieldWithPath("mdfDtm").description("date time of modified Account information"),
 												
@@ -217,7 +217,7 @@ public class AccountControllerTest extends BaseTest{
 				)
 		.andExpect(status().isCreated())
 		.andDo(print())
-		.andExpect(jsonPath("accountId").exists())
+		.andExpect(jsonPath("id").exists())
 		.andExpect(jsonPath("username").isNotEmpty())
 		.andExpect(jsonPath("username").value(name))
 		.andDo(document("create-account", 
@@ -245,7 +245,7 @@ public class AccountControllerTest extends BaseTest{
 				),
 				relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
 						//response only
-						fieldWithPath("accountId").description("Id of new account"),
+						fieldWithPath("id").description("Id of new account"),
 												
 						//request +
 						fieldWithPath("username").description("User name of new account"),

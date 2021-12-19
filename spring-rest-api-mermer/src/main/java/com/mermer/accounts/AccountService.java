@@ -36,9 +36,6 @@ public class AccountService implements UserDetailsService{
 		return new AccountAdapter(account);
 	}
 
-	private Collection<? extends GrantedAuthority> authorities(Set<AccountRole> roles) {
-		return roles.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r.name()))
-				.collect(Collectors.toSet());
-	}
+
 
 }

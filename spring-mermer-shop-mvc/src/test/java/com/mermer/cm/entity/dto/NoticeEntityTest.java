@@ -51,7 +51,7 @@ public class NoticeEntityTest extends BaseTest{
 		
 		//then
 		assertThat(returnNotice.getTitle()).isEqualTo(title);
-		assertThat(returnNotice.getNoiceId()).isNotNull();
+		assertThat(returnNotice.getId()).isNotNull();
 		assertThat(returnNotice.getInstDtm()).isNotNull();
 		assertThat(returnNotice.getMdfDtm()).isNotNull();
 		assertThat(returnNotice.getInstId().getUsername()).isEqualTo(name);
