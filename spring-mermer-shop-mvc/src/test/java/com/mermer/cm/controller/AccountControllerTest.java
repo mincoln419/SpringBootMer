@@ -1,6 +1,5 @@
 package com.mermer.cm.controller;
 
-import static com.mermer.cm.entity.dto.AccountEntityTest.getOneAccount;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -20,10 +19,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
@@ -36,10 +36,8 @@ import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
-import com.mermer.cm.service.AccountService;
-import com.mermer.cm.util.AppProperties;
+import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.common.BaseTest;
-import com.mermer.common.TestAuhorAccess;
 /**
  * @packageName : com.mermer.cm.validator
  * @fileName : AccountControllerTest.java 
@@ -53,23 +51,25 @@ import com.mermer.common.TestAuhorAccess;
  */
 public class AccountControllerTest extends BaseTest{
 	
+	@Autowired
+	NoticeRepository noticeRepository;
+	
 	@BeforeEach
 	public void init() {
-		this.accountRepository.deleteAll();
+		noticeRepository.deleteAll();// 의존성때문에 noticeRepository를 먼저 clear해줘야함
+		accountRepository.deleteAll();
 	}
 	
 	@Test
 	@DisplayName("계정 전부 조회")
 	public void selectAccountAll() throws Exception {
 		//Given
-		String name = "mermer";
-		Account account = getOneAccount(name);
-		accountRepository.save(account);
+		String token = getBearerToken(getAccessToken(true));
 		//When & Then
 		mockMvc.perform(get("/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
@@ -109,14 +109,13 @@ public class AccountControllerTest extends BaseTest{
 	@DisplayName("계정 하나만 조회")
 	public void selectAccountOne() throws Exception {
 		//Given
-		String name = "mermer";
-		Account account = getOneAccount(name);
-		account = accountService.saveAccount(account);
+		Account account = generateAccount();
+		String token = getBearerToken(getAccessToken(false));
 		
 		//When & Then
 		mockMvc.perform(get("/account/{id}", account.getId())
 				.accept(MediaTypes.HAL_JSON)
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
@@ -154,12 +153,11 @@ public class AccountControllerTest extends BaseTest{
 	@DisplayName("계정 정보 수정")
 	public void updateAccount() throws Exception {
 		//Given
-		String name = "mermer";
-		Account account = getOneAccount(name);
-		account = accountService.saveAccount(account);
+		Account account = generateAccount();
+		String token = getBearerToken(getAccessToken(false));
 		
 		AccountDto accountDto = modelMapper.map(account, AccountDto.class);
-		String modified = name + "_modified";
+		String modified = account.getUsername() + "_modified";
 		accountDto.setUsername(modified);
 		
 		//when & then
@@ -167,7 +165,7 @@ public class AccountControllerTest extends BaseTest{
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto))
 				.accept(MediaTypes.HAL_JSON)
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 			.andDo(print())
 			.andExpect(status().isOk())
@@ -305,7 +303,6 @@ public class AccountControllerTest extends BaseTest{
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto)) //body parameter
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 		.andExpect(status().isBadRequest())
 		.andDo(print());
@@ -328,7 +325,6 @@ public class AccountControllerTest extends BaseTest{
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto)) //body parameter
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
-				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 		.andExpect(status().isBadRequest())
 		.andDo(print());
@@ -456,7 +452,7 @@ public class AccountControllerTest extends BaseTest{
 	 * Object
 	 * @description 
 	 */
-	public Object getBearerToken(String accessToken) {
+	public String getBearerToken(String accessToken) {
 		return "Bearer " + accessToken;
 	}
 	

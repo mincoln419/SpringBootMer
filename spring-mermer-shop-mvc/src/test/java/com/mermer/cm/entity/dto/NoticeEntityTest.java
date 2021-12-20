@@ -13,6 +13,7 @@ package com.mermer.cm.entity.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.After;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class NoticeEntityTest extends BaseTest{
 
 	@Autowired
 	NoticeRepository noticeRepository;
-	
+		
 	@Test
 	@DisplayName("Notice Entity 생성 테스트")
 	public void NoticeTestWithNoService() throws Exception {
@@ -43,7 +44,7 @@ public class NoticeEntityTest extends BaseTest{
 					.readCnt(0)
 					//.useYn("Y")
 					.content("대한민국은 위대하다. 이재명이 당선될까 윤석열이 당선될까 웃기지도 않는군")
-					.instId(account)
+					.inster(account)
 					.build();
 		//when
 		Notice returnNotice = noticeRepository.save(notice);
@@ -54,8 +55,8 @@ public class NoticeEntityTest extends BaseTest{
 		assertThat(returnNotice.getId()).isNotNull();
 		assertThat(returnNotice.getInstDtm()).isNotNull();
 		assertThat(returnNotice.getMdfDtm()).isNotNull();
-		assertThat(returnNotice.getInstId().getUsername()).isEqualTo(name);
-		assertThat(returnNotice.getInstId().getInstDtm()).isNotNull();
+		assertThat(returnNotice.getInster().getUsername()).isEqualTo(name);
+		assertThat(returnNotice.getInster().getInstDtm()).isNotNull();
 		assertThat(returnNotice.getUseYn()).isEqualTo(UseYn.Y);
 		
 	}	

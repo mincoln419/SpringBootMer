@@ -21,6 +21,7 @@ import org.springframework.lang.NonNull;
 
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.cm.entity.type.UseYn;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +53,9 @@ public class Account {
 	private String email;
 	
 	private String hpNum;
+	
+	@Builder.Default
+	protected UseYn useYn = UseYn.Y; //사용여부(default 값 Y);
 	
 	@CreatedDate
 	private LocalDateTime instDtm;

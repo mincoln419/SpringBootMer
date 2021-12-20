@@ -35,7 +35,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 		http.anonymous()//anonymous만 사용가능
 		.and()
 		.authorizeRequests()
-			.mvcMatchers(HttpMethod.POST, "/account")
+			.mvcMatchers("/account")
 				.permitAll()//모두 사용 가능
 			.mvcMatchers(HttpMethod.GET, "/notice/**")
 				.permitAll()//모두 사용 가능

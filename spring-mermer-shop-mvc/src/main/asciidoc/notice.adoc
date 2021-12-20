@@ -1,0 +1,93 @@
+= REST API - Notice
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+:operation-curl-request-title: Example request
+:operation-http-response-title: Example response
+
+[[resources-notice]]
+== Notice
+
+Notice 리소스는 Notice를 만들거나 조회할 때 사용한다.
+
+[[resources-notice-create]]
+=== Notice 생성
+
+`POST` 요청을 사용해서 새 Notice를 만들 수 있다.
+
+operation::create-account[snippets='request-fields,curl-request,http-request,request-headers,http-response,response-headers,response-fields,links']
+
+
+[[resources-notice-list]]
+=== Notice 목록 조회
+
+`GET` 요청을 사용하여 서비스의 모든 Notice를 조회할 수 있다.
+
+operation::get-account[snippets='response-fields,curl-request,http-response,links']
+
+
+[[resources-notice-get]]
+=== Notice 조회
+
+`Get` 요청을 사용해서 기존 Notice 하나를 조회할 수 있다.
+
+operation::get-notice[snippets='request-fields,curl-request,http-response,links']
+
+
+[[resources-notice-update]]
+=== Notice 수정
+
+`PUT` 요청을 사용해서 기존 Notice를 수정할 수 있다.
+
+operation::update-notice[snippets='request-fields,curl-request,http-response,links']
+
+
+[[resources-notice-delete]]
+=== Notice 삭제
+
+`DELETE` 요청을 사용해서 기존 Notice를 삭제할 수 있다.
+
+operation::delete-notice[snippets='request-fields,curl-request,http-response,links']
+
+[[resources-notice-reply-get]]
+=== Notice 댓글 목록 조회
+
+`Get` 요청을 사용해서 기존 Notice 댓글 모두를 조회할 수 있다.
+
+operation::query-notice-reply[snippets='request-fields,curl-request,http-response,links']
+
+
+[[resources-notice-get]]
+=== Notice 댓글 조회
+
+`Get` 요청을 사용해서 기존 Notice 댓글 하나를 조회할 수 있다.
+
+operation::get-notice-reply[snippets='request-fields,curl-request,http-response,links']
+
+
+[[resources-notice-reply-create]]
+=== Notice 댓글 추가
+
+`POST` 요청을 사용해서 기존 Notice에 댓글을 추가할 수 있다.
+
+operation::create-notice-reply[snippets='request-fields,curl-request,http-response,links']
+
+
+[[resources-notice-reply-update]]
+=== Notice 댓글 수정
+
+`PUT` 요청을 사용해서 기존 Notice에 댓글을 추가할 수 있다.
+
+operation::update-notice-reply[snippets='request-fields,curl-request,http-response,links']
+
+
+
+[[resources-notice-reply-delete]]
+=== Notice 댓글 삭제
+
+`DELETE` 요청을 사용해서 기존 Notice에 댓글을 추가할 수 있다.
+
+operation::update-notice-reply[snippets='request-fields,curl-request,http-response,links']

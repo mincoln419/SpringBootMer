@@ -66,8 +66,8 @@ public class NoticeController {
 		Notice notice = modelMapper.map(noticeDto, Notice.class);
 		log.debug("POST /notice/new HTTP/1.1");
 		//현재 사용자 정보 세팅 - AccountAdapter 사용
-		notice.setInstId(account);
-		notice.setMdfId(account);
+		notice.setInster(account);
+		notice.setMdfer(account);
 		//현재 작성하는 ip주소 세팅
 		notice.setWriterIp(req.getLocalAddr());
 		ResponseEntity result = noticeService.createNotice(notice);

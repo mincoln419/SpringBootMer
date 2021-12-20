@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,11 @@ public class NoticeContollerTest extends BaseTest {
 	public void init() {
 		noticeRepository.deleteAll();
 		accountRepository.deleteAll();
+	}
+	
+	@After
+	public void after() {
+		noticeRepository.deleteAll();
 	}
 	
 	@Test
@@ -132,8 +138,8 @@ public class NoticeContollerTest extends BaseTest {
 						fieldWithPath("writerIp").description("writer IP Port of new notice"),
 						fieldWithPath("instDtm").description("insert DateTime of new notice"),
 						fieldWithPath("mdfDtm").description("modified DateTime of new notice"),
-						fieldWithPath("instId").description("insert account ID of new notice"),
-						fieldWithPath("mdfId").description("modified account ID of new notice")
+						fieldWithPath("inster").description("insert account ID of new notice"),
+						fieldWithPath("mdfer").description("modified account ID of new notice")
 						
 					)
 				
@@ -186,9 +192,9 @@ public class NoticeContollerTest extends BaseTest {
 		Notice notice = Notice.builder()
 				.title(title)
 				.content(testDoc)
-				.instId(account)
+				.inster(account)
+				.mdfer(account)
 				.writerIp("127.0.0.1")
-				.mdfId(account)
 				.build();
 		noticeService.createNotice(notice);
 		
@@ -198,7 +204,7 @@ public class NoticeContollerTest extends BaseTest {
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("_embedded.noticeList[0].instId").exists())
+		.andExpect(jsonPath("_embedded.noticeList[0].inster").exists())
 		.andExpect(jsonPath("_embedded.noticeList[0].title").value(title))
 		.andExpect(jsonPath("_embedded.noticeList[0].content").value(testDoc))
 		.andDo(document("query-notice", links(
@@ -222,8 +228,8 @@ public class NoticeContollerTest extends BaseTest {
 					fieldWithPath("_embedded.noticeList[0].writerIp").description("writer IP Port of new notice"),
 					fieldWithPath("_embedded.noticeList[0].instDtm").description("insert DateTime of new notice"),
 					fieldWithPath("_embedded.noticeList[0].mdfDtm").description("modified DateTime of new notice"),
-					fieldWithPath("_embedded.noticeList[0].instId").description("insert account ID of new notice"),
-					fieldWithPath("_embedded.noticeList[0].mdfId").description("modified account ID of new notice")
+					fieldWithPath("_embedded.noticeList[0].inster").description("insert account ID of new notice"),
+					fieldWithPath("_embedded.noticeList[0].mdfer").description("modified account ID of new notice")
 					
 				)
 			

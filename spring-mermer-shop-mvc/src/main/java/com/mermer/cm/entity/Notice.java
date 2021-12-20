@@ -73,11 +73,11 @@ public class Notice {
 	//단방향(Account -> Notice)으로 참조하도록 매핑
 	@ManyToOne
 	@JsonSerialize(using = AccountSerializer.class)
-	protected Account instId;//생성자ID
+	protected Account inster;//생성자ID
 	
 	@ManyToOne
 	@JsonSerialize(using = AccountSerializer.class)
-	protected Account mdfId;//수정자ID
+	protected Account mdfer;//수정자ID
 	
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
