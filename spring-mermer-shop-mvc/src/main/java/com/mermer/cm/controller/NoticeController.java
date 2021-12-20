@@ -6,10 +6,13 @@ import static com.mermer.cm.exception.ErrorsResource.badRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,8 +53,8 @@ public class NoticeController {
 	@PostMapping
 	public ResponseEntity createNotice(HttpServletRequest req,
 									   @RequestBody @Validated NoticeDto noticeDto,
-									   Errors errors
-									   , @CurrentUser Account account
+									   Errors errors,
+									   @CurrentUser Account account
 	) 
 	{
 		if(errors.hasErrors()) return badRequest(errors);
@@ -66,10 +69,20 @@ public class NoticeController {
 		notice.setInstId(account);
 		notice.setMdfId(account);
 		//현재 작성하는 ip주소 세팅
-		notice.setWirterIp(req.getLocalAddr());
+		notice.setWriterIp(req.getLocalAddr());
 		ResponseEntity result = noticeService.createNotice(notice);
 		
 		return result;
+	}
+	
+	@GetMapping
+	public ResponseEntity queryNotice(Pageable pageable, 
+									  PagedResourcesAssembler assembler
+									 ) 
+	{
+		log.debug("GET /notice/new HTTP/1.1");
+		
+		return noticeService.queryNotice(pageable, assembler);
 	}
 	
 }

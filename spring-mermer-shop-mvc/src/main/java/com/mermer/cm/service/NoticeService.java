@@ -10,6 +10,9 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -47,6 +50,21 @@ public class NoticeService {
 	private final AccountRepository accountRepository;
 	private final NoticeRepository noticeRepository;
 	private final ModelMapper modelMapper;
+	
+	
+	/**
+	 * @method getClassLink
+	 * @param accountId
+	 * @return
+	 * WebMvcLinkBuilder
+	 * @description 
+	 */
+	private WebMvcLinkBuilder getClassLink(Long noticeId) {
+
+		return linkTo(AccountController.class).slash(noticeId);
+	}
+	
+	
 	/**
 	 * @methond createNotice
 	 * @param notice
@@ -72,16 +90,25 @@ public class NoticeService {
 		
 		return ResponseEntity.created(createdUri).body(noticeResource);
 	}
+	
 	/**
-	 * @method getClassLink
-	 * @param accountId
+	 * @param assembler 
+	 * @param pageable 
+	 * @method queryNotice
 	 * @return
-	 * WebMvcLinkBuilder
+	 * ResponseEntity
 	 * @description 
 	 */
-	private WebMvcLinkBuilder getClassLink(Long noticeId) {
+	public ResponseEntity queryNotice(Pageable pageable, 
+									  PagedResourcesAssembler assembler) 
+	{
 
-		return linkTo(AccountController.class).slash(noticeId);
+		Page<Notice> page = noticeRepository.findAll(pageable);
+		
+		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-get-notice").withRel("profile")));
+		pagedResource.add(Link.of("/docs/index.html#resources-notice-list").withRel("profile"));
+		
+		return ResponseEntity.ok(pagedResource);
 	}
 
 

@@ -2,15 +2,25 @@
 package com.mermer.cm.entity;
 
 import java.sql.Clob;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mermer.cm.entity.serializer.AccountSerializer;
+import com.mermer.cm.entity.type.UseYn;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,10 +42,13 @@ import lombok.experimental.SuperBuilder;
  * ----------------------------------------------------------- 
  * 2021.12.17 Mermer 최초 생성
  */
-@Entity @NoArgsConstructor @AllArgsConstructor
-@SuperBuilder @Getter @Setter
+@Entity 
+@Builder
+@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter
 @EntityListeners(AuditingEntityListener.class) // 이걸집어넣어줘야 instDtm, mdfDtm  자동으로 세팅해줌
-public class Notice extends CommonEntity{
+@EqualsAndHashCode(of = "id")
+public class Notice {
 
 	@Id @GeneratedValue
 	private Long id;
@@ -48,7 +61,27 @@ public class Notice extends CommonEntity{
 	@Builder.Default
 	private Integer readCnt = 0;
 	
-	private String wirterIp;
+	private String writerIp;
+	
+	/* Entity 공통부 */
+	@CreatedDate
+	protected LocalDateTime instDtm;//생성일시
+	
+	@LastModifiedDate
+	protected LocalDateTime mdfDtm;//수정일시
+	
+	//단방향(Account -> Notice)으로 참조하도록 매핑
+	@ManyToOne
+	@JsonSerialize(using = AccountSerializer.class)
+	protected Account instId;//생성자ID
+	
+	@ManyToOne
+	@JsonSerialize(using = AccountSerializer.class)
+	protected Account mdfId;//수정자ID
+	
+	@Enumerated(EnumType.STRING)
+	@Builder.Default
+	protected UseYn useYn = UseYn.Y; //사용여부(default 값 Y);
 	
 	
 	/* *

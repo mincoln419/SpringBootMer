@@ -76,8 +76,8 @@ public class AccountService implements UserDetailsService{
 			, PagedResourcesAssembler assembler) {
 		
 		Page<Account> page = this.accountRepository.findAll(pageable);
-		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-account-list").withRel("profile")));
-		pagedResource.add(Link.of("/docs/index.html#resources-event-list").withRel("profile"));
+		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-get-account").withRel("profile")));
+		pagedResource.add(Link.of("/docs/index.html#resources-account-list").withRel("profile"));
 		return ResponseEntity.ok(pagedResource);
 	}
 
