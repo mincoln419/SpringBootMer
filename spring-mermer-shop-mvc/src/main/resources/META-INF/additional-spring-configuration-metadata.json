@@ -28,5 +28,15 @@
     "name": "mer-app.guest-pass",
     "type": "java.lang.String",
     "description": "A description for 'mer-app.guest-pass'"
+  },
+  {
+    "name": "mer-app.user-name",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.user-name'"
+  },
+  {
+    "name": "mer-app.user-pass",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.user-pass'"
   }
 ]}

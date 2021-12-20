@@ -3,6 +3,9 @@ package com.mermer.cm.controller;
 
 import static com.mermer.cm.exception.ErrorsResource.badRequest;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -12,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mermer.cm.entity.Account;
+import com.mermer.cm.entity.Notice;
 import com.mermer.cm.entity.dto.NoticeDto;
-import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.cm.service.NoticeService;
+import com.mermer.cm.util.CurrentUser;
 import com.mermer.cm.validator.NoticeValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -40,10 +45,13 @@ public class NoticeController {
 
 	private final NoticeValidator noticeValidator;
 	private final NoticeService noticeService;
+	private final ModelMapper modelMapper;
 	
 	@PostMapping
-	public ResponseEntity createNotice(@RequestBody @Validated NoticeDto noticeDto,
+	public ResponseEntity createNotice(HttpServletRequest req,
+									   @RequestBody @Validated NoticeDto noticeDto,
 									   Errors errors
+									   , @CurrentUser Account account
 	) 
 	{
 		if(errors.hasErrors()) return badRequest(errors);
@@ -51,8 +59,15 @@ public class NoticeController {
 		noticeValidator.noticeValidate(noticeDto, errors);
 		if(errors.hasErrors()) return badRequest(errors);
 		
+
+		Notice notice = modelMapper.map(noticeDto, Notice.class);
 		log.debug("POST /notice/new HTTP/1.1");
-		ResponseEntity result = noticeService.createNotice(noticeDto);
+		//현재 사용자 정보 세팅 - AccountAdapter 사용
+		notice.setInstId(account);
+		notice.setMdfId(account);
+		//현재 작성하는 ip주소 세팅
+		notice.setWirterIp(req.getLocalAddr());
+		ResponseEntity result = noticeService.createNotice(notice);
 		
 		return result;
 	}

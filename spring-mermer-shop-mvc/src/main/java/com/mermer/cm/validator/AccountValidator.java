@@ -4,7 +4,9 @@ package com.mermer.cm.validator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
+import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
+import com.mermer.cm.entity.type.AccountRole;
 
 /**
  * @packageName : com.mermer.cm.validator
@@ -34,5 +36,22 @@ public class AccountValidator {
 			//BizExceptionCode.PHONE_NUMBER.getMessage()
 		}
 
+	}
+
+	/**
+	 * @method validateAccount
+	 * @param account
+	 * @return
+	 * boolean
+	 * @description 
+	 */
+	public boolean validateAccount(Account account, Errors errors) {
+		
+		if(!account.getAccountRole().contains(AccountRole.ADMIN)) {
+			//errors.rejectValue("accountRole", "관리자 권한이 필요합니다");
+			return true;
+		}
+		
+		return false;
 	}
 }

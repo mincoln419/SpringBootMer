@@ -69,4 +69,26 @@ public class AccountEntityTest extends BaseTest{
 				.build();
 		return account;
 	}
+
+	/**
+	 * @method getOneAccount
+	 * @param name
+	 * @param string
+	 * @return
+	 * Account
+	 * @description 
+	 */
+	public static Account getOneAccount(String loginId, String pass) {
+		Account account = Account.builder()
+				.loginId(loginId)
+				.pass(pass)
+				.username(pass)
+				.roleCd(200)
+				.accountRole(Set.of(AccountRole.GOLD))
+				.accountPart(Set.of(AccountPart.NOTION))
+				.email("mermer@naver.com")
+				.hpNum("01080139108")
+				.build();
+		return account;
+	}
 }

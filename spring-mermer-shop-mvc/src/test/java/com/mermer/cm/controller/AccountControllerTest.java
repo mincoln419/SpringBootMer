@@ -40,14 +40,18 @@ import com.mermer.cm.service.AccountService;
 import com.mermer.cm.util.AppProperties;
 import com.mermer.common.BaseTest;
 import com.mermer.common.TestAuhorAccess;
-
+/**
+ * @packageName : com.mermer.cm.validator
+ * @fileName : AccountControllerTest.java 
+ * @author : Mermer 
+ * @date : 2021.12.16 
+ * @description : 계정정보 Contorllertest
+ * =========================================================== 
+ * DATE AUTHOR NOTE 
+ * ----------------------------------------------------------- 
+ * 2021.12.16 Mermer 최초 생성
+ */
 public class AccountControllerTest extends BaseTest{
-
-	@Autowired
-	AppProperties appProperties;
-	
-	@Autowired
-	AccountService accountService;
 	
 	@BeforeEach
 	public void init() {
@@ -330,7 +334,77 @@ public class AccountControllerTest extends BaseTest{
 		.andDo(print());
 	}
 	
+	/* 관리자 권한만 가능한 기능에 대한 제어 테스트*/
+	@Test
+	@DisplayName("일반 사용자 계정으로 전체조회시 오류")
+	public void selectAccountAll_NoAdmin401() throws Exception {
+		//Given
+				
+		//When & Then
+		mockMvc.perform(get("/account")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
+				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessTokenGuest(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				)
+		.andDo(print())
+		.andExpect(status().isUnauthorized())
+		;
+	}
 	
+	
+	/**
+	 * @method getAccessTokenGuest
+	 * @param b
+	 * @return
+	 * String
+	 * @throws Exception 
+	 * @description 
+	 */
+	private String getAccessTokenGuest(boolean isAccount) throws Exception {
+
+		// Given
+		if (isAccount) {
+			generateUserAccount();
+		}
+		// com.mermer.config.AppConfig.applicationRunner() 에서 app 통해 최초 생성되는 계정과 겹치면 중복
+		// 에러 발생
+		if(appProperties == null)return "";
+		String username = appProperties.getUserName(); 
+		String password = appProperties.getUserPass();
+		String clientId = appProperties.getClientId();
+		String clientSecret = appProperties.getClientSecret();
+
+		ResultActions perform = mockMvc.perform(post("/oauth/token").with(httpBasic(clientId, clientSecret))
+				.param("username", username).param("password", password).param("grant_type", "password"));
+		var responseBody = perform.andReturn().getResponse().getContentAsString();
+		Jackson2JsonParser parser = new Jackson2JsonParser();
+
+		return parser.parseMap(responseBody).get("access_token").toString();
+	}
+
+
+	/**
+	 * @method generateUserAccount
+	 * void
+	 * @description 
+	 */
+	private Account generateUserAccount() {
+		String username = appProperties.getUserName(); 
+		String password = appProperties.getUserPass();
+		Account account = Account.builder()
+				.loginId(username)
+				.username(username)
+				.roleCd(200)
+				.hpNum("01012345678")
+				.email("admin@naver.com")
+				.pass(password)
+				.accountRole(Set.of(AccountRole.USER))
+				.build();
+		account = accountService.saveAccount(account);
+		return account;
+		
+	}
+
 	public String getAccessToken(boolean isAccount) throws Exception {
 		// Given
 		if (isAccount) {

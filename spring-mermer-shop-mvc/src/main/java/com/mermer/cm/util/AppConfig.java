@@ -19,13 +19,26 @@ import com.mermer.cm.service.AccountService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @packageName : com.mermer.cm.util
+ * @fileName : AppConfig.java 
+ * @author : Mermer 
+ * @date : 2021.12.16 
+ * @description : App configuration
+ * =========================================================== 
+ * DATE AUTHOR NOTE 
+ * ----------------------------------------------------------- 
+ * 2021.12.16 Mermer 최초 생성
+ */
 @Component
 @Slf4j
 public class AppConfig {
 
 	@Bean
 	public ModelMapper modelMapper() {
-	
+		//모델 매핑 정책 : strict -> dto -> entity layer 변경시 없는 필드에 대해서는 entity를 엄격히 따름
+		//STANDARD -> 글자가 포함됐을 경우(id 가 포함된 loginId -> id) 매핑된다... 
+		//이름이 겹쳐지는 필드일 경우에는 Strict로 구성해야 함
 		ModelMapper mapper = new ModelMapper();
 		mapper.getConfiguration()
 			.setMatchingStrategy(MatchingStrategies.STRICT);

@@ -49,24 +49,13 @@ public class NoticeService {
 	private final ModelMapper modelMapper;
 	/**
 	 * @methond createNotice
-	 * @param noticeDto
+	 * @param notice
 	 * @return
 	 * ResponseEntity
 	 * @description 
 	 */
 	@Transactional
-	public ResponseEntity createNotice(NoticeDto noticeDto) {
-		
-		//TODO 사용자 정보 가져오기
-		//일단 있는 계정에서 가장 빠른 값을 꺼내서 사용
-		Account account = accountRepository.findAll().get(0);
-		/*
-		 * 데이터 저장  
-		 */
-		Notice notice = modelMapper.map(noticeDto, Notice.class);
-		notice.setInstId(account);
-		notice.setMdfId(account);
-		notice.setWirterIp("127.0.0.1");
+	public ResponseEntity createNotice(Notice notice) {	
 		
 		Notice result = noticeRepository.save(notice);
 		

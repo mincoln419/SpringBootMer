@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mermer.cm.repository.AccountRepository;
+import com.mermer.cm.service.AccountService;
+import com.mermer.cm.util.AppProperties;
 
 /**
  * @packageName : com.mermer.common
@@ -37,6 +39,9 @@ public class BaseTest {
 	protected AccountRepository accountRepository;
 	
 	@Autowired
+	protected AccountService accountService;
+	
+	@Autowired
 	protected MockMvc mockMvc;
 	
 	@Autowired
@@ -44,4 +49,9 @@ public class BaseTest {
 	
 	@Autowired
 	protected ModelMapper modelMapper;
+	
+	@Autowired
+	protected AppProperties appProperties;
+	
+	
 }

@@ -57,5 +57,7 @@ public class AuthServerConfigTest extends BaseTest{
 		;
 		
 	}
+	
+
 
 }

@@ -36,5 +36,21 @@ public class ErrorsResource extends EntityModel<Errors>{
 						.add(linkTo(methodOn(IndexController.class).index()).withRel("index")));
 				
 	}
+	
+	
+	/**
+	 * @method unAuthorizedRequest
+	 * @param errors
+	 * @return
+	 * ResponseEntity
+	 * @description 
+	 */
+	static public ResponseEntity unAuthorizedRequest(Errors errors) {
+		
+		return ResponseEntity.status(401)
+				.body(ErrorsResource
+						.of(errors)
+						.add(linkTo(methodOn(IndexController.class).index()).withRel("index")));
+	}
 		 
 }

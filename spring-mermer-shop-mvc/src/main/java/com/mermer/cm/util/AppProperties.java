@@ -32,6 +32,11 @@ public class AppProperties {
 	private String adminPass;
 	
 	@NotBlank
+	private String userName;
+	@NotBlank
+	private String userPass;
+	
+	@NotBlank
 	private String guestName;
 	@NotBlank
 	private String guestPass;

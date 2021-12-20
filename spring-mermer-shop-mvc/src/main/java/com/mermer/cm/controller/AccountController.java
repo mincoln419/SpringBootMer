@@ -1,7 +1,9 @@
 package com.mermer.cm.controller;
 
 import static com.mermer.cm.exception.ErrorsResource.badRequest;
+import static com.mermer.cm.exception.ErrorsResource.unAuthorizedRequest;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
@@ -14,12 +16,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
+import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.cm.exception.ErrorsIpml;
 import com.mermer.cm.service.AccountService;
+import com.mermer.cm.util.AccountAdapter;
+import com.mermer.cm.util.CurrentUser;
 import com.mermer.cm.validator.AccountValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +50,7 @@ public class AccountController {
 
 	private final AccountService accountService;
 	private final AccountValidator accountValidator;
+	private final ModelMapper modelMapper;
 	
 	/**@param Pageable
 	 * @param PagedResourcesAssembler<Account>
@@ -54,8 +60,18 @@ public class AccountController {
 	 */
 	@GetMapping
 	public ResponseEntity getAccountAll(Pageable pageable, 
-			PagedResourcesAssembler<Account> assembler) {
+			PagedResourcesAssembler<Account> assembler,
+			@CurrentUser Account account
+			) {
+		Errors errors = new ErrorsIpml();
 		log.debug("GET /account HTTP/1.1");
+		log.debug("CurrentUser::" 
+				+ account.getUsername() + ","
+				+ account.getLoginId() + ","
+				+ account.getAccountRole().contains(AccountRole.ADMIN)
+				);
+		if(accountValidator.validateAccount(account, errors))return unAuthorizedRequest(errors);
+		
 		
 		ResponseEntity result = accountService.getAccountAll(pageable, 
 				 assembler);
@@ -86,7 +102,8 @@ public class AccountController {
 	 */
 	@PostMapping
 	public ResponseEntity newAccount(@RequestBody @Validated AccountDto accountDto
-									, Errors errors) 
+									, Errors errors
+									) 
 	{
 		
 		/* validation start */
@@ -116,5 +133,5 @@ public class AccountController {
 		
 		return result;
 	}
-	
+
 }
