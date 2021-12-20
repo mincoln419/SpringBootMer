@@ -4,9 +4,12 @@ package com.mermer.cm.exception;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.io.Serializable;
+
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
 import com.mermer.cm.controller.IndexController;
 /**
@@ -43,13 +46,15 @@ public class ErrorsResource extends EntityModel<Errors>{
 	 * @param errors
 	 * @return
 	 * ResponseEntity
-	 * @description 
+	 * @description 권한이 없는 주소에 접근했을 때 오류 리턴
 	 */
-	static public ResponseEntity unAuthorizedRequest(Errors errors) {
+	static public ResponseEntity unAuthorizedRequest() {
 		
+		Serializable err = new FieldError("accountRole", "authorization", null, true,
+				new String[] {"code"}, null, "no author for access");
 		return ResponseEntity.status(401)
 				.body(ErrorsResource
-						.of(errors)
+						.of(err)
 						.add(linkTo(methodOn(IndexController.class).index()).withRel("index")));
 	}
 		 

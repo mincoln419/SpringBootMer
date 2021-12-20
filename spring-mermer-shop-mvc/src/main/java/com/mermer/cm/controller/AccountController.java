@@ -3,12 +3,15 @@ package com.mermer.cm.controller;
 import static com.mermer.cm.exception.ErrorsResource.badRequest;
 import static com.mermer.cm.exception.ErrorsResource.unAuthorizedRequest;
 
+import java.io.Serializable;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,11 +25,13 @@ import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.exception.ErrorsIpml;
+import com.mermer.cm.exception.ErrorsResource;
 import com.mermer.cm.service.AccountService;
 import com.mermer.cm.util.AccountAdapter;
 import com.mermer.cm.util.CurrentUser;
 import com.mermer.cm.validator.AccountValidator;
 
+import antlr.Parser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,15 +68,14 @@ public class AccountController {
 			PagedResourcesAssembler<Account> assembler,
 			@CurrentUser Account account
 			) {
-		Errors errors = new ErrorsIpml();
+		
 		log.debug("GET /account HTTP/1.1");
 		log.debug("CurrentUser::" 
 				+ account.getUsername() + ","
 				+ account.getLoginId() + ","
 				+ account.getAccountRole().contains(AccountRole.ADMIN)
 				);
-		if(accountValidator.validateAccount(account, errors))return unAuthorizedRequest(errors);
-		
+		if(!account.getAccountRole().contains(AccountRole.ADMIN))return unAuthorizedRequest();
 		
 		ResponseEntity result = accountService.getAccountAll(pageable, 
 				 assembler);
