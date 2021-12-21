@@ -95,4 +95,8 @@ include::{snippets}/errors/http-response.adoc[]
 operation::index[snippets='response-body,http-response,links']
 
 
+[[resources-get-access-token]]
+= 엑세스 키 발급
+
+operation::access-token[snippets='http-request,request-headers,response-body,http-response']
 

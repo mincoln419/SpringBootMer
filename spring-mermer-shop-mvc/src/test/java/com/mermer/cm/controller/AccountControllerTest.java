@@ -9,6 +9,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -305,7 +306,21 @@ public class AccountControllerTest extends BaseTest{
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
 				)
 		.andExpect(status().isBadRequest())
-		.andDo(print());
+		.andDo(print())
+		.andDo(document("errors", links(
+					linkWithRel("index").description("link to index")
+				),
+				responseHeaders(
+						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				relaxedResponseFields(
+						fieldWithPath("errors[0].field").description("Access Token for this API"),
+						fieldWithPath("errors[0].objectName").description("Access Token Type"),
+						fieldWithPath("errors[0].code").description("Refresh Access Token"),
+						fieldWithPath("errors[0].defaultMessage").description("Expire of this Token")
+			)
+				
+			));
 	}
 	
 	@Test
