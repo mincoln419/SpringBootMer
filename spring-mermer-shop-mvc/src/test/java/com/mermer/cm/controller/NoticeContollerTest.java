@@ -12,6 +12,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedR
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -143,8 +144,7 @@ public class NoticeContollerTest extends BaseTest {
 						
 					)
 				
-			))
-			;
+			));
 	}
 	
 	@Test
@@ -196,6 +196,7 @@ public class NoticeContollerTest extends BaseTest {
 				.mdfer(account)
 				.writerIp("127.0.0.1")
 				.build();
+		
 		noticeService.createNotice(notice);
 		
 		mockMvc.perform(get("/notice")
@@ -204,9 +205,9 @@ public class NoticeContollerTest extends BaseTest {
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("_embedded.noticeList[0].inster").exists())
-		.andExpect(jsonPath("_embedded.noticeList[0].title").value(title))
-		.andExpect(jsonPath("_embedded.noticeList[0].content").value(testDoc))
+		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].insterId").exists())
+		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].title").value(title))
+		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].content").value(testDoc))
 		.andDo(document("query-notice", links(
 				linkWithRel("self").description("link to self"),
 			    linkWithRel("profile").description("link to profile")
@@ -219,24 +220,98 @@ public class NoticeContollerTest extends BaseTest {
 			),
 			relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
 					//response only
-					fieldWithPath("_embedded.noticeList[0].id").description("Id of new notice"),
+					fieldWithPath("_embedded.tupleBackedMapList[0].id").description("Id of new notice"),
 											
 					//request +
-					fieldWithPath("_embedded.noticeList[0].title").description("title of new notice"),
-					fieldWithPath("_embedded.noticeList[0].content").description("content of new notice"),
-					fieldWithPath("_embedded.noticeList[0].readCnt").description("read count of new notice"),
-					fieldWithPath("_embedded.noticeList[0].writerIp").description("writer IP Port of new notice"),
-					fieldWithPath("_embedded.noticeList[0].instDtm").description("insert DateTime of new notice"),
-					fieldWithPath("_embedded.noticeList[0].mdfDtm").description("modified DateTime of new notice"),
-					fieldWithPath("_embedded.noticeList[0].inster").description("insert account ID of new notice"),
-					fieldWithPath("_embedded.noticeList[0].mdfer").description("modified account ID of new notice")
+					fieldWithPath("_embedded.tupleBackedMapList[0].title").description("title of new notice"),
+					//fieldWithPath("_embedded.noticeList[0].content").description("content of new notice"), //목록조회에서는 content 안나오게함
+					fieldWithPath("_embedded.tupleBackedMapList[0].readCnt").description("read count of new notice"),
+					//fieldWithPath("_embedded.noticeList[0].writerIp").description("writer IP Port of new notice"),
+					//fieldWithPath("_embedded.tupleBackedMapList[0].instDtm").description("insert DateTime of new notice"),
+					//fieldWithPath("_embedded.tupleBackedMapList[0].mdfDtm").description("modified DateTime of new notice"),
+					fieldWithPath("_embedded.tupleBackedMapList[0].insterId").description("insert account ID of new notice")
+					//fieldWithPath("_embedded.tupleBackedMapList[0].mdfer").description("modified account ID of new notice")
 					
 				)
 			
-		))
-		
-		;
+		));
 	}
+	
+	
+	@Test
+	@DisplayName("Notice 수정")
+	public void updasteNotice() throws Exception {
+		
+		//밖에서 account 안 꺼낼때는 parameter에 true
+		String token = getBearerToken(getAccessToken(true));
+		
+		
+		//해당 계정으로 공지사항 글 작성
+		String title = "Notice Test";
+		StringBuilder sb = new StringBuilder();
+		File f = new File("src/test/resource/test1.html");
+		BufferedReader br = new BufferedReader(
+				new FileReader(f, Charset.forName("UTF-8")),
+				16 * 1024
+				);
+		String str = null;
+		while((str = br.readLine())!= null) {
+			sb.append(str);
+		}
+		
+		br.close();
+		
+		NoticeDto notice = NoticeDto.builder()
+				.title(title)
+				//.content(sb.toString())
+				.content("sestet")
+				.build();
+		
+		mockMvc.perform(put("/notice")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objMapper.writeValueAsString(notice))
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+						)
+			.andDo(print())
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("title").value(title))
+			//.andExpect(jsonPath("content").value(sb.toString()))
+			.andExpect(jsonPath("content").value("sestet"))
+			.andDo(document("create-notice", links(
+					linkWithRel("self").description("link to self"),
+				    linkWithRel("profile").description("link to profile"),
+				    linkWithRel("query-notice").description("link for query notices"),
+					linkWithRel("update-notice").description("link for updating the notice"),
+					linkWithRel("notice-reply-create").description("link for reply to the notice")
+				),
+				requestHeaders(
+					headerWithName(HttpHeaders.ACCEPT).description("accept header"),
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				responseHeaders(
+						headerWithName(HttpHeaders.LOCATION).description("location header"),
+						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+						//response only
+						fieldWithPath("id").description("Id of new notice"),
+												
+						//request +
+						fieldWithPath("title").description("title of new notice"),
+						fieldWithPath("content").description("content of new notice"),
+						fieldWithPath("readCnt").description("read count of new notice"),
+						fieldWithPath("writerIp").description("writer IP Port of new notice"),
+						fieldWithPath("instDtm").description("insert DateTime of new notice"),
+						fieldWithPath("mdfDtm").description("modified DateTime of new notice"),
+						fieldWithPath("inster").description("insert account ID of new notice"),
+						fieldWithPath("mdfer").description("modified account ID of new notice")
+						
+					)
+				
+			));
+	}
+	
 	
 	
 	/**
@@ -263,6 +338,8 @@ public class NoticeContollerTest extends BaseTest {
 				
 		
 	}
+	
+	
 
 	/**
 	 * @method getAccessToken
