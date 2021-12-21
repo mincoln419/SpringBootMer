@@ -303,15 +303,31 @@ public class NoticeContollerTest extends BaseTest {
 	@Test
 	@DisplayName("Notice 수정")
 	public void updasteNotice() throws Exception {
-		
-		//밖에서 account 안 꺼낼때는 parameter에 true
-		String token = getBearerToken(getAccessToken(true));
-		
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));//토큰은 필요없음..
 		
 		//해당 계정으로 공지사항 글 작성
 		String title = "Notice Test";
+		String testDoc = "test";//getTestDoc();
+
+		Notice notice = Notice.builder()
+				.title(title)
+				.content(testDoc)
+				.inster(account)
+				.mdfer(account)
+				.writerIp("127.0.0.1")
+				.build();
+		
+		notice = noticeRepository.save(notice);
+		
+		
+		//When
+		//해당 계정으로 공지사항 글 작성
+		String newtitle = "Notice Test modified";
 		StringBuilder sb = new StringBuilder();
-		File f = new File("src/test/resource/test1.html");
+		File f = new File("src/test/resource/test2.html");
 		BufferedReader br = new BufferedReader(
 				new FileReader(f, Charset.forName("UTF-8")),
 				16 * 1024
@@ -320,39 +336,33 @@ public class NoticeContollerTest extends BaseTest {
 		while((str = br.readLine())!= null) {
 			sb.append(str);
 		}
-		
 		br.close();
 		
-		NoticeDto notice = NoticeDto.builder()
-				.title(title)
-				//.content(sb.toString())
-				.content("sestet")
+		NoticeDto newNotice = NoticeDto.builder()
+				.title(newtitle)
+				.content(sb.toString())
 				.build();
 		
-		mockMvc.perform(put("/notice")
+		//Then
+		mockMvc.perform(put("/notice/{id}", notice.getId())
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objMapper.writeValueAsString(notice))
+						.content(objMapper.writeValueAsString(newNotice))
 						.accept(MediaTypes.HAL_JSON)
 						.header(HttpHeaders.AUTHORIZATION, token)
 						)
 			.andDo(print())
-			.andExpect(status().isCreated())
-			.andExpect(jsonPath("title").value(title))
-			//.andExpect(jsonPath("content").value(sb.toString()))
-			.andExpect(jsonPath("content").value("sestet"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("title").value(newtitle))
+			.andExpect(jsonPath("content").value(sb.toString()))
 			.andDo(document("create-notice", links(
 					linkWithRel("self").description("link to self"),
-				    linkWithRel("profile").description("link to profile"),
-				    linkWithRel("query-notice").description("link for query notices"),
-					linkWithRel("update-notice").description("link for updating the notice"),
-					linkWithRel("notice-reply-create").description("link for reply to the notice")
+				    linkWithRel("profile").description("link to profile")
 				),
 				requestHeaders(
 					headerWithName(HttpHeaders.ACCEPT).description("accept header"),
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
 				),
 				responseHeaders(
-						headerWithName(HttpHeaders.LOCATION).description("location header"),
 						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
 				),
 				relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로

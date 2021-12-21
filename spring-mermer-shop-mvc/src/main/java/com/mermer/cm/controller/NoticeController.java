@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -93,6 +94,22 @@ public class NoticeController {
 		log.debug("GET /notice/1 HTTP/1.1");
 		
 		return noticeService.getNoticeDetail(id);
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity updateNotice(@PathVariable Long id,
+									   @RequestBody @Validated NoticeDto noticeDto,
+									   Errors errors,
+									   @CurrentUser Account account
+									  ) 
+	{
+		log.debug("GET /notice/1 HTTP/1.1");
+		if(errors.hasErrors())return badRequest(errors);
+		
+		noticeValidator.noticeValidate(noticeDto, errors);
+		if(errors.hasErrors())return badRequest(errors);
+		
+		return noticeService.updateNotice(noticeDto, account, id);
 	}
 	
 }
