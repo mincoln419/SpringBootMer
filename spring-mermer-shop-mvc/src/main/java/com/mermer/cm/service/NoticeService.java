@@ -116,4 +116,32 @@ public class NoticeService {
 	}
 
 
+	/**
+	 * @method getNoticeDetail
+	 * @param noticeId
+	 * @return
+	 * ResponseEntity
+	 * @description 
+	 */
+	public ResponseEntity getNoticeDetail(Long noticeId) {
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
+		Notice notice = optionalNotice.get();
+		
+		//한번 읽을 때마다 조회수 1증가
+		notice.updateReadCnt();
+		notice = noticeRepository.save(notice);
+		
+		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
+											.add((selfLinkBuilder).withSelfRel())
+											.add(Link.of("/docs/index.html#resources-notice-get").withRel("profile"))
+											.add(selfLinkBuilder.withRel("update-notice"));
+		
+		return ResponseEntity.ok(noticeResource);
+	}
+
+
 }

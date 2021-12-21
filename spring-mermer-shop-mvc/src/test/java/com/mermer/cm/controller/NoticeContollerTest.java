@@ -197,7 +197,7 @@ public class NoticeContollerTest extends BaseTest {
 				.writerIp("127.0.0.1")
 				.build();
 		
-		noticeService.createNotice(notice);
+		noticeRepository.save(notice);
 		
 		mockMvc.perform(get("/notice")
 				.accept(MediaTypes.HAL_JSON)
@@ -231,6 +231,68 @@ public class NoticeContollerTest extends BaseTest {
 					//fieldWithPath("_embedded.tupleBackedMapList[0].mdfDtm").description("modified DateTime of new notice"),
 					fieldWithPath("_embedded.tupleBackedMapList[0].insterId").description("insert account ID of new notice")
 					//fieldWithPath("_embedded.tupleBackedMapList[0].mdfer").description("modified account ID of new notice")
+					
+				)
+			
+		));
+	}
+	
+	@Test
+	@DisplayName("Notice 단건 상세 조회")
+	public void getNoticeDetail() throws Exception {
+		
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));//토큰은 필요없음..
+		
+		//해당 계정으로 공지사항 글 작성
+		String title = "Notice Test";
+		String testDoc = "test";//getTestDoc();
+
+		Notice notice = Notice.builder()
+				.title(title)
+				.content(testDoc)
+				.inster(account)
+				.mdfer(account)
+				.writerIp("127.0.0.1")
+				.build();
+		
+		notice = noticeRepository.save(notice);
+		
+		mockMvc.perform(get("/notice/{id}", notice.getId())
+				.accept(MediaTypes.HAL_JSON)
+				.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				)
+		.andDo(print())
+		.andExpect(status().isOk())
+		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].insterId").exists())
+		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].title").value(title))
+		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].content").value(testDoc))
+		.andDo(document("get-notice", links(
+				linkWithRel("self").description("link to self"),
+			    linkWithRel("profile").description("link to profile"),
+			    linkWithRel("update-notice").description("link to update notice")
+			),
+			requestHeaders(
+				headerWithName(HttpHeaders.ACCEPT).description("accept header")
+			),
+			responseHeaders(
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+			),
+			relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+					//response only
+					fieldWithPath("id").description("Id of new notice"),
+											
+					//request +
+					fieldWithPath("title").description("title of new notice"),
+					fieldWithPath("content").description("content of new notice"), //목록조회에서는 content 안나오게함
+					fieldWithPath("readCnt").description("read count of new notice"),
+					fieldWithPath("writerIp").description("writer IP Port of new notice"),
+					fieldWithPath("instDtm").description("insert DateTime of new notice"),
+					fieldWithPath("mdfDtm").description("modified DateTime of new notice"),
+					fieldWithPath("inster").description("insert account ID of new notice"),
+					fieldWithPath("mdfer").description("modified account ID of new notice"),
+					fieldWithPath("useYn").description("use status of the data")
 					
 				)
 			

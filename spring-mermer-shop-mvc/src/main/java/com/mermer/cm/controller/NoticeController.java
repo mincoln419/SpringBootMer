@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,6 +84,15 @@ public class NoticeController {
 		log.debug("GET /notice/new HTTP/1.1");
 		
 		return noticeService.queryNotice(pageable, assembler);
+	}
+	
+	
+	@GetMapping("/{id}")
+	public ResponseEntity getNoticeDetail(@PathVariable Long id) 
+	{
+		log.debug("GET /notice/1 HTTP/1.1");
+		
+		return noticeService.getNoticeDetail(id);
 	}
 	
 }

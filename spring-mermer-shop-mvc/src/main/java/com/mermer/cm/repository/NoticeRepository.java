@@ -1,6 +1,8 @@
 
 package com.mermer.cm.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,4 +43,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>{
 				  countQuery = "select * from notice where n.use_yn = 'Y'"
 				  )
 	Page<NoticeList> findAllNoContent(Pageable pageable);
+	
+	Optional<Notice> findById(Long noticeId);
 }
