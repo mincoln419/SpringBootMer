@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import com.mermer.cm.controller.AccountController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
+import com.mermer.cm.entity.NoticeList;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.repository.NoticeRepository;
@@ -103,7 +104,10 @@ public class NoticeService {
 									  PagedResourcesAssembler assembler) 
 	{
 
-		Page<Notice> page = noticeRepository.findAll(pageable);
+		//Page<Notice> page = noticeRepository.findAll(pageable);
+		
+		//전체 조회시 content 는 나오지 않도록 수정 
+		Page<NoticeList> page = noticeRepository.findAllNoContent(pageable);
 		
 		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-get-notice").withRel("profile")));
 		pagedResource.add(Link.of("/docs/index.html#resources-notice-list").withRel("profile"));
