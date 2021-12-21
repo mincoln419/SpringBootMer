@@ -1,0 +1,388 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=ks_c_5601-1987">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 15">
+<link id=Main-File rel=Main-File href="../형량계산기_도메인_설계_v0.0.1.htm">
+<link rel=File-List href=filelist.xml>
+<link rel=Stylesheet href=stylesheet.css>
+<style>
+<!--table
+	{mso-displayed-decimal-separator:"\.";
+	mso-displayed-thousand-separator:"\,";}
+@page
+	{margin:.75in .7in .75in .7in;
+	mso-header-margin:.3in;
+	mso-footer-margin:.3in;}
+ruby
+	{ruby-align:left;}
+rt
+	{color:windowtext;
+	font-size:8.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:"맑은 고딕", monospace;
+	mso-font-charset:129;
+	mso-char-type:none;
+	display:none;}
+-->
+</style>
+<![if !supportTabStrip]><script language="JavaScript">
+<!--
+function fnUpdateTabs()
+ {
+  if (parent.window.g_iIEVer>=4) {
+   if (parent.document.readyState=="complete"
+    && parent.frames['frTabs'].document.readyState=="complete")
+   parent.fnSetActiveSheet(0);
+  else
+   window.setTimeout("fnUpdateTabs();",150);
+ }
+}
+
+if (window.name!="frSheet")
+ window.location.replace("../형량계산기_도메인_설계_v0.0.1.htm");
+else
+ fnUpdateTabs();
+//-->
+</script>
+<![endif]>
+</head>
+
+<body link="#0563C1" vlink="#954F72">
+
+<table border=0 cellpadding=0 cellspacing=0 width=1171 style='border-collapse:
+ collapse;table-layout:fixed;width:879pt'>
+ <col width=72 style='width:54pt'>
+ <col width=370 style='mso-width-source:userset;mso-width-alt:11840;width:278pt'>
+ <col width=72 style='width:54pt'>
+ <col width=313 style='mso-width-source:userset;mso-width-alt:10016;width:235pt'>
+ <col width=344 style='mso-width-source:userset;mso-width-alt:11008;width:258pt'>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl69 width=72 style='height:16.5pt;width:54pt'>종류</td>
+  <td class=xl69 width=370 style='border-left:none;width:278pt'>uri</td>
+  <td class=xl69 width=72 style='border-left:none;width:54pt'>method</td>
+  <td class=xl69 width=313 style='border-left:none;width:235pt'>설명</td>
+  <td class=xl69 width=344 style='border-left:none;width:258pt'>비고</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td rowspan=8 height=176 class=xl66 style='height:132.0pt;border-top:none'>뷰</td>
+  <td class=xl65 style='border-top:none;border-left:none'>/</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>index 페이지</td>
+  <td class=xl65 style='border-top:none;border-left:none'>　</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/error</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>오류 페이지</td>
+  <td class=xl65 style='border-top:none;border-left:none'>　</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/login</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>로그인 페이지</td>
+  <td class=xl65 style='border-top:none;border-left:none'>　</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/sign-up</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>회원가입 페이지</td>
+  <td class=xl65 style='border-top:none;border-left:none'>　</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/mypage</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>회원정보 수정 페이지</td>
+  <td class=xl65 style='border-top:none;border-left:none'>　</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/notice</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 페이지</td>
+  <td class=xl65 style='border-top:none;border-left:none'>　</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/bulletin</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>자유게시판 페이지</td>
+  <td class=xl65 style='border-top:none;border-left:none'>　</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/calculator</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>형량계산기 페이지</td>
+  <td class=xl65 style='border-top:none;border-left:none'>　</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td rowspan=39 height=858 class=xl66 style='height:643.5pt;border-top:none'>API</td>
+  <td class=xl65 style='border-top:none;border-left:none'>/api/account</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>계정 전체 조회</td>
+  <td rowspan=5 class=xl67 style='border-top:none'>계정 관리 - 관리자, 사용자 로 나누어 권한관리</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/account</td>
+  <td class=xl65 style='border-top:none;border-left:none'>POST</td>
+  <td class=xl65 style='border-top:none;border-left:none'>계정 신규 생성</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/account/{account-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>계정 단일 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/account/{account-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>PUT</td>
+  <td class=xl65 style='border-top:none;border-left:none'>계정 단일 수정</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/account/{account-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>DELETE</td>
+  <td class=xl65 style='border-top:none;border-left:none'>계정 단일 삭제</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 조회</td>
+  <td rowspan=10 class=xl67 style='border-top:none'>형량계산기 운영관련 공지사항</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice</td>
+  <td class=xl65 style='border-top:none;border-left:none'>POST</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 신규 생성</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice/{notice-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 단건 상세 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice/{notice-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>PUT</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 단건 상세 수정</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice/{notice-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>DELETE</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 단건 삭제</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice/{notice-id}/reply</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 댓글 전체 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice/{notice-id}/reply</td>
+  <td class=xl65 style='border-top:none;border-left:none'>POST</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 댓글 신규 생성</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice/{notice-id}/reply/{reply-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 댓글 단건 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice/{notice-id}/reply/{reply-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>PUT</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 댓글 단건 수정</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/notice/{notice-id}/reply/{reply-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>DELETE</td>
+  <td class=xl65 style='border-top:none;border-left:none'>공지사항 댓글 단건 삭제</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 조회</td>
+  <td rowspan=10 class=xl68 width=344 style='border-top:none;width:258pt'>형량
+  계산기에 대한 개선사항, 실제사례 등에 대한 토론, 현재 법현실에 대한 비판적 논의를 할 수 있는 공간<br>
+    댓글 이외에 답글 기능 - 게시판 사이에 tree layer를 두고 답글 구성 가능</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin</td>
+  <td class=xl65 style='border-top:none;border-left:none'>POST</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 신규 생성</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin/{bulletin-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 단건 상세 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin/{bulletin-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>PUT</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 단건 상세 수정</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin/{bulletin-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>DELETE</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 단건 삭제</td>
+ </tr>
+ <tr height=22 style='mso-height-source:userset;height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin/{bulletin-id}/reply</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 댓글 전체 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin/{bulletin-id}/reply</td>
+  <td class=xl65 style='border-top:none;border-left:none'>POST</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 댓글 신규 생성</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin/{bulletin-id}/reply/{reply-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 댓글 단건 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin/{bulletin-id}/reply/{reply-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>PUT</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 댓글 단건 수정</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/bulletin/{bulletin-id}/reply/{reply-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>DELETE</td>
+  <td class=xl65 style='border-top:none;border-left:none'>게시판 댓글 단건 삭제</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>비즈니스 이벤트 조회</td>
+  <td rowspan=5 class=xl68 width=344 style='border-top:none;width:258pt'>사실관계 +
+  적용법령에 따라 나온 결과</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz</td>
+  <td class=xl65 style='border-top:none;border-left:none'>POST</td>
+  <td class=xl65 style='border-top:none;border-left:none'>비즈니스 이벤트 신규 생성</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>비즈니스 이벤트 단건 상세 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>PUT</td>
+  <td class=xl65 style='border-top:none;border-left:none'>비즈니스 이벤트 단건 상세 수정</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>DELETE</td>
+  <td class=xl65 style='border-top:none;border-left:none'>비즈니스 이벤트 단건 삭제</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/sit</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>사실관계 조회</td>
+  <td rowspan=4 class=xl68 width=344 style='border-top:none;width:258pt'>주체(가해자),
+  객체(피해자), 수단, 피해결과, 정상참작사유 등의 요건을 근거로 구성요건 성립, 위법성 조각, 책임유무, 형량감경 등을 판단 + 주요
+  판례들의 형량을 나타냄</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/sit</td>
+  <td class=xl65 style='border-top:none;border-left:none'>POST</td>
+  <td class=xl65 style='border-top:none;border-left:none'>사실관계 생성</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/sit</td>
+  <td class=xl65 style='border-top:none;border-left:none'>PUT</td>
+  <td class=xl65 style='border-top:none;border-left:none'>사실관계 수정</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/sit</td>
+  <td class=xl65 style='border-top:none;border-left:none'>DELETE</td>
+  <td class=xl65 style='border-top:none;border-left:none'>사실관계 삭제</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/law</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>적용법령 전체 조회</td>
+  <td rowspan=5 class=xl68 width=344 style='border-top:none;width:258pt'>일반법,
+  특별법 적용 가능여부 판단(또는 선택)</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/law</td>
+  <td class=xl65 style='border-top:none;border-left:none'>POST</td>
+  <td class=xl65 style='border-top:none;border-left:none'>적용법령 생성</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/law/{law-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>GET</td>
+  <td class=xl65 style='border-top:none;border-left:none'>적용법령 단건 조회</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/law/{law-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>PUT</td>
+  <td class=xl65 style='border-top:none;border-left:none'>적용법령 수정</td>
+ </tr>
+ <tr height=22 style='height:16.5pt'>
+  <td height=22 class=xl65 style='height:16.5pt;border-top:none;border-left:
+  none'>/api/biz/{biz-id}/law/{law-id}</td>
+  <td class=xl65 style='border-top:none;border-left:none'>DELETE</td>
+  <td class=xl65 style='border-top:none;border-left:none'>적용법령 삭제</td>
+ </tr>
+ <![if supportMisalignedColumns]>
+ <tr height=0 style='display:none'>
+  <td width=72 style='width:54pt'></td>
+  <td width=370 style='width:278pt'></td>
+  <td width=72 style='width:54pt'></td>
+  <td width=313 style='width:235pt'></td>
+  <td width=344 style='width:258pt'></td>
+ </tr>
+ <![endif]>
+</table>
+
+</body>
+
+</html>
