@@ -261,7 +261,7 @@ public class NoticeContollerTest extends BaseTest {
 		
 		mockMvc.perform(get("/notice/{id}", notice.getId())
 				.accept(MediaTypes.HAL_JSON)
-				.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				//.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
@@ -380,7 +380,6 @@ public class NoticeContollerTest extends BaseTest {
 						fieldWithPath("mdfer").description("modified account ID of new notice")
 						
 					)
-				
 			));
 	}
 	

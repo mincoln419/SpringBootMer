@@ -53,6 +53,7 @@ public class Account {
 	private String hpNum;
 	
 	@Builder.Default
+	@Enumerated(EnumType.STRING)
 	protected UseYn useYn = UseYn.Y; //사용여부(default 값 Y);
 	
 	@CreatedDate

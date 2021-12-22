@@ -32,22 +32,19 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.anonymous()//anonymous만 사용가능
+		http
+			.authorizeRequests()
+				.antMatchers(HttpMethod.POST,"/account").permitAll()
+				.antMatchers(HttpMethod.GET,"/notice/**").permitAll()
+				.antMatchers(HttpMethod.GET,"/bulletin/**").permitAll()
+				.anyRequest().authenticated()
+				.and()
+			.formLogin()
+				.loginPage("/login")
+				.permitAll()
 		.and()
-		.authorizeRequests()
-			.mvcMatchers("/account")
-				.permitAll()//모두 사용 가능
-			.mvcMatchers(HttpMethod.GET, "/notice/**")
-				.permitAll()//모두 사용 가능
-			.anyRequest()
-				.authenticated()
-			.and()
 		.exceptionHandling()
 			.accessDeniedHandler(new OAuth2AccessDeniedHandler());
 	}
-	
-	
-	
-	
-	
+
 }
