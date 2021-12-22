@@ -102,7 +102,7 @@ public class NoticeContollerTest extends BaseTest {
 				.content("sestet")
 				.build();
 		
-		mockMvc.perform(post("/notice")
+		mockMvc.perform(post("/api/notice")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objMapper.writeValueAsString(notice))
 						.accept(MediaTypes.HAL_JSON)
@@ -164,7 +164,7 @@ public class NoticeContollerTest extends BaseTest {
 				.content(str)
 				//.content("sestet")
 				.build();
-		mockMvc.perform(post("/notice")
+		mockMvc.perform(post("/api/notice")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(notice))
 				.accept(MediaTypes.HAL_JSON)
@@ -199,7 +199,7 @@ public class NoticeContollerTest extends BaseTest {
 		
 		noticeRepository.save(notice);
 		
-		mockMvc.perform(get("/notice")
+		mockMvc.perform(get("/api/notice")
 				.accept(MediaTypes.HAL_JSON)
 				//.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(account))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
@@ -259,7 +259,7 @@ public class NoticeContollerTest extends BaseTest {
 		
 		notice = noticeRepository.save(notice);
 		
-		mockMvc.perform(get("/notice/{id}", notice.getId())
+		mockMvc.perform(get("/api/notice/{id}", notice.getId())
 				.accept(MediaTypes.HAL_JSON)
 				//.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
@@ -344,7 +344,7 @@ public class NoticeContollerTest extends BaseTest {
 				.build();
 		
 		//Then
-		mockMvc.perform(put("/notice/{id}", notice.getId())
+		mockMvc.perform(put("/api/notice/{id}", notice.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objMapper.writeValueAsString(newNotice))
 						.accept(MediaTypes.HAL_JSON)

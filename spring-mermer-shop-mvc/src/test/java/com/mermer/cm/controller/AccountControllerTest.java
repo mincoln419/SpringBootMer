@@ -67,7 +67,7 @@ public class AccountControllerTest extends BaseTest{
 		//Given
 		String token = getBearerToken(getAccessToken(true));
 		//When & Then
-		mockMvc.perform(get("/account")
+		mockMvc.perform(get("/api/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
 				.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
@@ -113,7 +113,7 @@ public class AccountControllerTest extends BaseTest{
 		String token = getBearerToken(getAccessToken(false));
 		
 		//When & Then
-		mockMvc.perform(get("/account/{id}", account.getId())
+		mockMvc.perform(get("/api/account/{id}", account.getId())
 				.accept(MediaTypes.HAL_JSON)
 				.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
 				)
@@ -160,7 +160,7 @@ public class AccountControllerTest extends BaseTest{
 		accountDto.setUsername(modified);
 		
 		//when & then
-		this.mockMvc.perform(put("/account/{id}", account.getId())
+		this.mockMvc.perform(put("/api/account/{id}", account.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto))
 				.accept(MediaTypes.HAL_JSON)
@@ -226,7 +226,7 @@ public class AccountControllerTest extends BaseTest{
 				.email("mermer@naver.com")
 				.build();
 		
-		mockMvc.perform(post("/account")
+		mockMvc.perform(post("/api/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto)) //body parameter
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
@@ -292,7 +292,7 @@ public class AccountControllerTest extends BaseTest{
 				.email("mermer@naver.com")
 				.build();
 		
-		mockMvc.perform(post("/account")
+		mockMvc.perform(post("/api/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto)) //body parameter
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
@@ -327,7 +327,7 @@ public class AccountControllerTest extends BaseTest{
 				.email("mermer@naver.com")
 				.build();
 		
-		mockMvc.perform(post("/account")
+		mockMvc.perform(post("/api/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objMapper.writeValueAsString(accountDto)) //body parameter
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
@@ -343,7 +343,7 @@ public class AccountControllerTest extends BaseTest{
 		//Given
 				
 		//When & Then
-		mockMvc.perform(get("/account")
+		mockMvc.perform(get("/api/account")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
 				.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessTokenGuest(true))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
