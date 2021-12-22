@@ -47,7 +47,7 @@ public class AccountService implements UserDetailsService{
 		Account account = modelMapper.map(accountDto, Account.class);
 		
 		//비밀번호 암호화
-		account.setPass(this.passwordEncoder.encode(account.getPass()));
+		//account.setPass(this.passwordEncoder.encode(account.getPass())); --> 비밀번호 암호화를 한번 더 꼬아서 문제였음...
 		
 		Account result = saveAccount(account);
 		
