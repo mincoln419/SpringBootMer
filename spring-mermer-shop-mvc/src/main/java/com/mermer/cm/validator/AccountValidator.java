@@ -47,7 +47,7 @@ public class AccountValidator {
 	 */
 	public boolean validateAccount(Account account, Errors errors) {
 		
-		if(!account.getAccountRole().contains(AccountRole.ADMIN)) {
+		if(!account.getRole().contains(AccountRole.ADMIN)) {
 			//errors.rejectValue("accountRole", "관리자 권한이 필요합니다");
 			return true;
 		}

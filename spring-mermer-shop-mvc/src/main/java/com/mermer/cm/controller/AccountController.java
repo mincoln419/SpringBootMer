@@ -69,13 +69,14 @@ public class AccountController {
 			@CurrentUser Account account
 			) {
 		
+		if(account == null)return ResponseEntity.badRequest().build();
 		log.debug("GET /account HTTP/1.1");
 		log.debug("CurrentUser::" 
 				+ account.getUsername() + ","
 				+ account.getLoginId() + ","
-				+ account.getAccountRole().contains(AccountRole.ADMIN)
+				+ account.getRole().contains(AccountRole.ADMIN)
 				);
-		if(!account.getAccountRole().contains(AccountRole.ADMIN))return unAuthorizedRequest();
+		if(!account.getRole().contains(AccountRole.ADMIN))return unAuthorizedRequest();
 		
 		ResponseEntity result = accountService.getAccountAll(pageable, 
 				 assembler);

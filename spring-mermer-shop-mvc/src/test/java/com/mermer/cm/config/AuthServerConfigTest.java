@@ -2,6 +2,15 @@
 package com.mermer.cm.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -12,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.http.HttpHeaders;
 
 import com.mermer.cm.util.AppProperties;
 import com.mermer.common.BaseTest;
@@ -54,7 +64,22 @@ public class AuthServerConfigTest extends BaseTest{
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("access_token").exists())
-		;
+		.andDo(document("access-token",
+			requestHeaders(
+				headerWithName(HttpHeaders.AUTHORIZATION).description("Basic Auth Key")
+			),
+			responseHeaders(
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+			),
+			responseFields(
+					fieldWithPath("access_token").description("Access Token for this API"),
+					fieldWithPath("token_type").description("Access Token Type"),
+					fieldWithPath("refresh_token").description("Refresh Access Token"),
+					fieldWithPath("expires_in").description("Expire of this Token"),
+					fieldWithPath("scope").description("Token scope")
+				)
+			
+		));
 		
 	}
 	

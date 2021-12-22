@@ -36,9 +36,6 @@ public class AccountDto {
 		@NotBlank
 		private String pass;//loginId 규칙: 영어 + 특수문자 + 숫자 13자 미만
 		
-		@NonNull
-		private Integer roleCd;
-		
 		@NotBlank
 		private String username;
 		
@@ -49,8 +46,8 @@ public class AccountDto {
 		private String hpNum;
 		
 		@Enumerated(EnumType.STRING)
-		private Set<AccountRole> accountRole;
+		private Set<AccountRole> role;
 		
 		@Enumerated(EnumType.STRING)
-		private Set<AccountPart> accountPart;
+		private Set<AccountPart> part;
 }

@@ -4,7 +4,6 @@ package com.mermer.cm.service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.mermer.cm.controller.AccountController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
+import com.mermer.cm.entity.NoticeList;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.repository.NoticeRepository;
@@ -103,12 +103,78 @@ public class NoticeService {
 									  PagedResourcesAssembler assembler) 
 	{
 
-		Page<Notice> page = noticeRepository.findAll(pageable);
+		//Page<Notice> page = noticeRepository.findAll(pageable);
+		
+		//전체 조회시 content 는 나오지 않도록 수정 
+		Page<NoticeList> page = noticeRepository.findAllNoContent(pageable);
 		
 		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-get-notice").withRel("profile")));
 		pagedResource.add(Link.of("/docs/index.html#resources-notice-list").withRel("profile"));
 		
 		return ResponseEntity.ok(pagedResource);
+	}
+
+
+	/**
+	 * @method getNoticeDetail
+	 * @param noticeId
+	 * @return
+	 * ResponseEntity
+	 * @description 
+	 */
+	public ResponseEntity getNoticeDetail(Long noticeId) {
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
+		Notice notice = optionalNotice.get();
+		
+		//한번 읽을 때마다 조회수 1증가
+		notice.updateReadCnt();
+		notice = noticeRepository.save(notice);
+		
+		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
+											.add((selfLinkBuilder).withSelfRel())
+											.add(Link.of("/docs/index.html#resources-notice-get").withRel("profile"))
+											.add(selfLinkBuilder.withRel("update-notice"));
+		
+		return ResponseEntity.ok(noticeResource);
+	}
+
+
+	/**
+	 * @method updateNotice
+	 * @param noticeDto
+	 * @param account 
+	 * @param id
+	 * @return
+	 * ResponseEntity
+	 * @description notice update - 작성자 본인만 수정할 수 있음
+	 */
+	public ResponseEntity updateNotice(NoticeDto noticeDto, Account account, Long noticeId) {
+
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		Notice notice = optionalNotice.get();
+		//본인 작성한 글이 아닌경우
+		if(notice.getInster().getId() != account.getId()) {
+			//권한 없음 리턴
+			return ResponseEntity.status(401).build();
+		}
+		
+		modelMapper.map(noticeDto, notice);
+		noticeRepository.save(notice);
+		
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
+		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
+				.add((selfLinkBuilder).withSelfRel())
+				.add(Link.of("/docs/index.html#resources-notice-update").withRel("profile"));
+
+		return ResponseEntity.ok(noticeResource);
 	}
 
 
