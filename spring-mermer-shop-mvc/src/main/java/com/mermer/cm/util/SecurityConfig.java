@@ -60,6 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().mvcMatchers("/docs/*");
 		web.ignoring().mvcMatchers("/h2-console/*");
+		web.ignoring().mvcMatchers("/*");
 		web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 	
 	}
