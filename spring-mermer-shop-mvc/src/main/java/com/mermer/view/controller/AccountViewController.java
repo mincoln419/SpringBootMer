@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * 2021.12.22 Mermer 최초 생성
  */
 @Controller
-public class AuthController {
+public class AccountViewController {
 
 	@GetMapping("/login")
 	public String login() {

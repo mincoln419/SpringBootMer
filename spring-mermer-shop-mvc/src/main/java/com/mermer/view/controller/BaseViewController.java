@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 2021.12.22 Mermer 최초 생성
  */
 @Controller(value = "/")
-public class BaseController implements ErrorController{// implements 해야 error 페이지에 대한 주도권을 가져온다
+public class BaseViewController implements ErrorController{// implements 해야 error 페이지에 대한 주도권을 가져온다
 
 	@GetMapping
 	public String index() {

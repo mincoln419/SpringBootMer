@@ -6,43 +6,45 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @packageName : com.mermer.view.controller
- * @fileName : BulletinController.java 
+ * @fileName : NoticeController.java 
  * @author : Mermer 
  * @date : 2021.12.22 
- * @description : 자유게시판 view controller
+ * @description :
  * =========================================================== 
  * DATE AUTHOR NOTE 
  * ----------------------------------------------------------- 
  * 2021.12.22 Mermer 최초 생성
  */
-@Controller("/bulletin")
-public class BulletinController {
+@RequestMapping("/notice")
+@Controller
+public class NoticeViewController {
 	
 	@GetMapping
-	public String bulletin() {
+	public String noticeList() {
 	
-		return "bulletin/list";
+		return "/notice/list";
 	}
 	
 	@GetMapping("/{id}")
-	public String bulletinDetail(@PathVariable Long id) {
+	public String noticeDetail(@PathVariable Long id) {
 		
-		return "/bulletin/detail";
+		return "/notice/detail";
 	}
 	
 	@PostMapping
-	public String bulletinCreate() {
+	public String noticeCreate() {
 		
-		return "/bulletin/edit";
+		return "/notice/edit";
 	}
 	
 	@PutMapping("/{id}")
-	public String bulletinDetailEdit(@PathVariable Long id) {
+	public String noticeDetailEdit(@PathVariable Long id) {
 		
-		return "/bulletin/edit";
+		return "/notice/edit";
 	}
 
 }

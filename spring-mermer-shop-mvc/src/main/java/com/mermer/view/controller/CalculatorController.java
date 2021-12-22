@@ -13,13 +13,15 @@ package com.mermer.view.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller("/calulator")
+@RequestMapping("/calculator")
+@Controller
 public class CalculatorController {
 
 	@GetMapping
 	public String lawCal() {
-		return "main";
+		return "/calculator/main";
 	}
 	
 }
