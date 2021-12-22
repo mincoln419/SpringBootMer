@@ -456,11 +456,10 @@ public class NoticeContollerTest extends BaseTest {
 		Account account = Account.builder()
 				.loginId(username)
 				.username(username)
-				.roleCd(200)
 				.hpNum("01012345678")
 				.email("admin@naver.com")
 				.pass(password)
-				.accountRole(Set.of(AccountRole.ADMIN, AccountRole.USER))
+				.role(Set.of(AccountRole.ADMIN, AccountRole.USER))
 				.build();
 	
 		account = accountService.saveAccount(account);
