@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(value = "/notice", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/api/notice", produces = MediaTypes.HAL_JSON_VALUE)
 @SuppressWarnings("rawtypes")
 public class NoticeController {
 
