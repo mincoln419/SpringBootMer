@@ -26,7 +26,8 @@ public class IndexController {
 	@GetMapping("/api")
 	public RepresentationModel index() {
 		var index = new RepresentationModel();
-		index.add(linkTo(AccountController.class).withRel("index"));
+		// api 접근시 잘못된 주소인 경우는 공지사항 조회 link return
+		index.add(linkTo(NoticeController.class).withRel("index"));
 		return index;
 	}
 }
