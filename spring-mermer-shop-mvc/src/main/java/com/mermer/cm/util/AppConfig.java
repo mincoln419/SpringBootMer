@@ -67,7 +67,7 @@ public class AppConfig {
 						.username(appProperties.getAdminName())
 						.email("mincoln419@naver.com")
 						.pass(appProperties.getAdminPass())
-						.accountRole(Set.of(AccountRole.ADMIN, AccountRole.GOLD))
+						.role(Set.of(AccountRole.ADMIN, AccountRole.GOLD))
 						.build();
 				log.debug("admin::" + appProperties.getAdminName());
 				log.debug("guest::" + appProperties.getGuestName());
@@ -80,7 +80,7 @@ public class AppConfig {
 						.username(appProperties.getGuestName())
 						.email("mincoln0203@naver.com")
 						.pass(appProperties.getGuestPass())
-						.accountRole(Set.of(AccountRole.USER))
+						.role(Set.of(AccountRole.USER))
 						.build();
 				accountService.saveAccount(user);
 			}

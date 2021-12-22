@@ -95,11 +95,10 @@ public class AccountControllerTest extends BaseTest{
 						fieldWithPath("_embedded.accountList[0].username").description("User name of new account"),
 						fieldWithPath("_embedded.accountList[0].instDtm").description("date time of created Account"),
 						fieldWithPath("_embedded.accountList[0].mdfDtm").description("date time of modified Account information"),
-						fieldWithPath("_embedded.accountList[0].roleCd").description("role code"),
 						fieldWithPath("_embedded.accountList[0].email").description("User email of new account"),
 						fieldWithPath("_embedded.accountList[0].hpNum").description("User cellphone number of new account"),
-						fieldWithPath("_embedded.accountList[0].accountRole").description("User role level"),
-						fieldWithPath("_embedded.accountList[0].accountPart").description("working part which User participate in")
+						fieldWithPath("_embedded.accountList[0].role").description("User role level"),
+						fieldWithPath("_embedded.accountList[0].part").description("working part which User participate in")
 					)
 				
 			))
@@ -140,11 +139,10 @@ public class AccountControllerTest extends BaseTest{
 					fieldWithPath("username").description("User name of new account"),
 					fieldWithPath("instDtm").description("date time of created Account"),
 					fieldWithPath("mdfDtm").description("date time of modified Account information"),
-					fieldWithPath("roleCd").description("role code"),
 					fieldWithPath("email").description("User email of new account"),
 					fieldWithPath("hpNum").description("User cellphone number of new account"),
-					fieldWithPath("accountRole").description("User role level"),
-					fieldWithPath("accountPart").description("working part which User participate in")
+					fieldWithPath("role").description("User role level"),
+					fieldWithPath("part").description("working part which User participate in")
 				)
 			
 		));
@@ -186,11 +184,10 @@ public class AccountControllerTest extends BaseTest{
 						fieldWithPath("loginId").description("loginId for updated-account"),						
 						fieldWithPath("pass").description("password for login"),
 						fieldWithPath("username").description("User name of new account"),						
-						fieldWithPath("roleCd").description("role code"),
 						fieldWithPath("email").description("User email of new account"),
 						fieldWithPath("hpNum").description("User cellphone number of new account"),
-						fieldWithPath("accountRole").description("User role level"),
-						fieldWithPath("accountPart").description("working part which User participate in")
+						fieldWithPath("role").description("User role level"),
+						fieldWithPath("part").description("working part which User participate in")
 				),
 				responseHeaders(
 						headerWithName(HttpHeaders.CONTENT_TYPE).description("accept header")
@@ -203,11 +200,10 @@ public class AccountControllerTest extends BaseTest{
 												
 						//request +
 						fieldWithPath("username").description("User name of new account"),
-						fieldWithPath("roleCd").description("role code"),
 						fieldWithPath("email").description("User email of new account"),
 						fieldWithPath("hpNum").description("User cellphone number of new account"),
-						fieldWithPath("accountRole").description("User role level"),
-						fieldWithPath("accountPart").description("working part which User participate in")
+						fieldWithPath("role").description("User role level"),
+						fieldWithPath("part").description("working part which User participate in")
 					)
 				
 			));
@@ -225,9 +221,8 @@ public class AccountControllerTest extends BaseTest{
 				.pass(pass)
 				.username(name)
 				.hpNum("01012345656")
-				.roleCd(200)
-				.accountRole(Set.of(AccountRole.ADMIN))
-				.accountPart(Set.of(AccountPart.BULLETIN))
+				.role(Set.of(AccountRole.ADMIN))
+				.part(Set.of(AccountPart.BULLETIN))
 				.email("mermer@naver.com")
 				.build();
 		
@@ -257,11 +252,10 @@ public class AccountControllerTest extends BaseTest{
 					fieldWithPath("username").description("User name of new account"),
 					fieldWithPath("loginId").description("login ID of new account"),
 					fieldWithPath("pass").description("password for login"),
-					fieldWithPath("roleCd").description("role code"),
 					fieldWithPath("email").description("User email of new account"),
 					fieldWithPath("hpNum").description("User cellphone number of new account"),
-					fieldWithPath("accountRole").description("User role level"),
-					fieldWithPath("accountPart").description("working part which User participate in")
+					fieldWithPath("role").description("User role level"),
+					fieldWithPath("part").description("working part which User participate in")
 				),
 				responseHeaders(
 						headerWithName(HttpHeaders.LOCATION).description("location header"),
@@ -276,11 +270,10 @@ public class AccountControllerTest extends BaseTest{
 						fieldWithPath("username").description("User name of new account"),
 						fieldWithPath("instDtm").description("date time of created Account"),
 						fieldWithPath("mdfDtm").description("date time of modified Account information"),
-						fieldWithPath("roleCd").description("role code"),
 						fieldWithPath("email").description("User email of new account"),
 						fieldWithPath("hpNum").description("User cellphone number of new account"),
-						fieldWithPath("accountRole").description("User role level"),
-						fieldWithPath("accountPart").description("working part which User participate in")
+						fieldWithPath("role").description("User role level"),
+						fieldWithPath("part").description("working part which User participate in")
 					)
 				
 			));
@@ -294,9 +287,8 @@ public class AccountControllerTest extends BaseTest{
 		AccountDto accountDto = AccountDto.builder()
 				.username(name)
 				.hpNum("02312345656")
-				.roleCd(200)
-				.accountRole(Set.of(AccountRole.ADMIN))
-				.accountPart(Set.of(AccountPart.BULLETIN))
+				.role(Set.of(AccountRole.ADMIN))
+				.part(Set.of(AccountPart.BULLETIN))
 				.email("mermer@naver.com")
 				.build();
 		
@@ -330,9 +322,8 @@ public class AccountControllerTest extends BaseTest{
 		AccountDto accountDto = AccountDto.builder()
 				.username(name)
 				.hpNum("010312345656")
-				.roleCd(200)
-				.accountRole(Set.of(AccountRole.ADMIN))
-				.accountPart(Set.of(AccountPart.BULLETIN))
+				.role(Set.of(AccountRole.ADMIN))
+				.part(Set.of(AccountPart.BULLETIN))
 				.email("mermer@naver.com")
 				.build();
 		
@@ -405,11 +396,10 @@ public class AccountControllerTest extends BaseTest{
 		Account account = Account.builder()
 				.loginId(username)
 				.username(username)
-				.roleCd(200)
 				.hpNum("01012345678")
 				.email("admin@naver.com")
 				.pass(password)
-				.accountRole(Set.of(AccountRole.USER))
+				.role(Set.of(AccountRole.USER))
 				.build();
 		account = accountService.saveAccount(account);
 		return account;
@@ -449,11 +439,10 @@ public class AccountControllerTest extends BaseTest{
 		Account account = Account.builder()
 				.loginId(username)
 				.username(username)
-				.roleCd(200)
 				.hpNum("01012345678")
 				.email("admin@naver.com")
 				.pass(password)
-				.accountRole(Set.of(AccountRole.ADMIN, AccountRole.USER))
+				.role(Set.of(AccountRole.ADMIN, AccountRole.USER))
 				.build();
 		account = accountService.saveAccount(account);
 		return account;

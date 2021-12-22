@@ -28,7 +28,7 @@ public class AccountAdapter extends User {
 	private Account account;
 		
 	public AccountAdapter(Account account) {
-		super(account.getLoginId(), account.getPass(), authorities(account.getAccountRole()));
+		super(account.getLoginId(), account.getPass(), authorities(account.getRole()));
 		this.account = account;
 	}
 

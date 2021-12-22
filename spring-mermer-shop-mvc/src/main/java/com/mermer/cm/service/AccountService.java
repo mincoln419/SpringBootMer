@@ -122,6 +122,7 @@ public class AccountService implements UserDetailsService{
 		Account account = optionalAccount.get();
 		//modelMapper로 dto 데이터 매핑 (입력값을 조회값에 매핑
 		modelMapper.map(accountDto, account);
+		//비밀번호 암호화
 		saveAccount(account);
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(accountId);
 		EntityModel<Account> accountResource = AccountResource.of(account)

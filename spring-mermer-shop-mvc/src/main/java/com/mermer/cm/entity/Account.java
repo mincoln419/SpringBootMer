@@ -45,9 +45,7 @@ public class Account {
 	private String loginId;//loginId 규칙: 영어 + 숫자 13자 미만
 	
 	private String pass;//loginId 규칙: 영어 + 특수문자 + 숫자 13자 미만
-	
-	private Integer roleCd;
-	
+		
 	private String username;
 	
 	private String email;
@@ -65,10 +63,10 @@ public class Account {
 	
 	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.EAGER)// 자주가져오고, Role 데이터가 많지 않기 때문에 EAGER 모드로 패치(set, list의 기본은 LAZY 패치)
-	private Set<AccountRole> accountRole;
+	private Set<AccountRole> role;
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
-	private Set<AccountPart> accountPart;
+	private Set<AccountPart> part;
 	
 }
