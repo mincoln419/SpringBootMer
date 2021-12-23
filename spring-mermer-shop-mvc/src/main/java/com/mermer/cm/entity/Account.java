@@ -10,7 +10,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -34,12 +36,13 @@ import lombok.Setter;
 @Entity @NoArgsConstructor @AllArgsConstructor
 @Builder @Getter @Setter @EqualsAndHashCode(of = "id")
 @EntityListeners(AuditingEntityListener.class)
+@SequenceGenerator(name = "ACCOUNT_ID_GENERATOR", sequenceName = "ACCOUNT_GENERATOR", initialValue = 1, allocationSize = 1)
 public class Account {
 	/* 
 	 * IN-MEMORY-DB LOG
 	 *  o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:06ebbc3d-c434-48bf-8a65-8ce51c56005c'
 	 * */
-	@Id @GeneratedValue 
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_ID_GENERATOR")
 	private Long id;
 	
 	private String loginId;//loginId 규칙: 영어 + 숫자 13자 미만

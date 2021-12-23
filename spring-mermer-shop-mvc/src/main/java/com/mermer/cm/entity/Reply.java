@@ -8,8 +8,10 @@ import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -44,9 +46,10 @@ import lombok.Setter;
 @Getter @Setter
 @EntityListeners(AuditingEntityListener.class) // 이걸집어넣어줘야 instDtm, mdfDtm  자동으로 세팅해줌
 @EqualsAndHashCode(of = "id")
+@SequenceGenerator(name = "REPLY_ID_GENERATOR", sequenceName = "REPLY_GENERATOR", initialValue = 1, allocationSize = 1)
 public class Reply {
 	
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "REPLY_ID_GENERATOR")
 	private Long id;
 	
 	private String content;

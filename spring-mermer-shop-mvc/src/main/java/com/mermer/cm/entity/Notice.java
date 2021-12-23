@@ -9,9 +9,11 @@ import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
@@ -48,9 +50,10 @@ import lombok.experimental.SuperBuilder;
 @Getter @Setter
 @EntityListeners(AuditingEntityListener.class) // 이걸집어넣어줘야 instDtm, mdfDtm  자동으로 세팅해줌
 @EqualsAndHashCode(of = "id")
+@SequenceGenerator(name = "NOTICE_ID_GENERATOR", sequenceName = "NOTICE_GENERATOR", initialValue = 1, allocationSize = 1)
 public class Notice {
 
-	@Id @GeneratedValue
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "NOTICE_ID_GENERATOR")
 	private Long id;
 
 	private String title;
