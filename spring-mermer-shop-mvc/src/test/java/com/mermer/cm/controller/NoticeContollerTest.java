@@ -41,6 +41,7 @@ import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.cm.service.NoticeService;
 import com.mermer.common.BaseTest;
@@ -62,10 +63,15 @@ public class NoticeContollerTest extends BaseTest {
 	NoticeRepository noticeRepository;
 	
 	@Autowired
+	NoticeReplyRepository noticeReplyRepository;
+	
+	@Autowired
 	NoticeService noticeService;
 	
 	@BeforeEach
 	public void init() {
+		//repo 초기화는 의존성 역순으로 제거
+		noticeReplyRepository.deleteAll();
 		noticeRepository.deleteAll();
 		accountRepository.deleteAll();
 	}
@@ -331,23 +337,24 @@ public class NoticeContollerTest extends BaseTest {
 		}
 		br.close();
 		
-		NoticeDto newNotice = NoticeDto.builder()
+		String changed = "changed";
+		NoticeDto noticeDto = NoticeDto.builder()
 				.title(newtitle)
-				.content(sb.toString())
+				.content(changed)
 				.build();
 		
 		//Then
 		mockMvc.perform(put("/api/notice/{id}", notice.getId())
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objMapper.writeValueAsString(newNotice))
+						.content(objMapper.writeValueAsString(noticeDto))
 						.accept(MediaTypes.HAL_JSON)
 						.header(HttpHeaders.AUTHORIZATION, token)
 						)
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("title").value(newtitle))
-			.andExpect(jsonPath("content").value(sb.toString()))
-			.andDo(document("create-notice", links(
+			.andExpect(jsonPath("content").value(changed))
+			.andDo(document("update-notice", links(
 					linkWithRel("self").description("link to self"),
 				    linkWithRel("profile").description("link to profile")
 				),
@@ -406,6 +413,73 @@ public class NoticeContollerTest extends BaseTest {
 					linkWithRel("self").description("link to self"),
 				    linkWithRel("profile").description("link to profile"),
 				    linkWithRel("query-notice-reply").description("link for query notices"),
+					linkWithRel("update-notice-reply").description("link for updating the notice"),
+					linkWithRel("create-notice-reply-re").description("link for create the re-reply to notice")
+				),
+				requestHeaders(
+					headerWithName(HttpHeaders.ACCEPT).description("accept header"),
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				responseHeaders(
+						headerWithName(HttpHeaders.LOCATION).description("location header"),
+						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+						//response only
+						fieldWithPath("id").description("Id of new notice"),
+												
+						//request +
+						fieldWithPath("content").description("content of new notice"),
+						fieldWithPath("writerIp").description("writer IP Port of new notice"),
+						fieldWithPath("instDtm").description("insert DateTime of new notice"),
+						fieldWithPath("mdfDtm").description("modified DateTime of new notice"),
+						fieldWithPath("inster").description("insert account ID of new notice"),
+						fieldWithPath("mdfer").description("modified account ID of new notice")
+						
+					)
+				
+			))
+			;
+	}
+	
+	@Test
+	@DisplayName("Notice 대-댓글 작성")
+	public void noticeReplyCreateRE() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		//공지사항 글작성
+		Notice notice = generateNotice(account);
+		
+		String replyText = "reply test";
+		//reply Entity - notice, bulletin의 댓글 entity
+		Reply reply= Reply.builder()
+					.content(replyText)
+					.build();
+		reply = noticeReplyRepository.save(reply);
+		
+		//댓글에 대한 댓글
+		String re_replyText = replyText + "_re";
+		ReplyDto replyDto = ReplyDto.builder()
+					.content(re_replyText)
+					.build();
+		
+		
+		mockMvc.perform(post("/api/notice/{id}/reply/{replyId}", notice.getId(), reply.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objMapper.writeValueAsString(replyDto))
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+			.andDo(print())
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("content").value(re_replyText))
+			.andDo(document("create-notice-reply-re", links(
+					linkWithRel("self").description("link to self"),
+				    linkWithRel("profile").description("link to profile"),
+				    linkWithRel("query-notice-reply").description("link for query notices"),
 					linkWithRel("update-notice-reply").description("link for updating the notice")
 				),
 				requestHeaders(
@@ -458,8 +532,6 @@ public class NoticeContollerTest extends BaseTest {
 				
 		
 	}
-	
-	
 
 	/**
 	 * @method getAccessToken
