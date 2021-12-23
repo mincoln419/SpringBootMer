@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mermer.cm.entity.serializer.AccountSerializer;
 import com.mermer.cm.entity.serializer.NoticeSerializer;
+import com.mermer.cm.entity.serializer.ReplySerializer;
 import com.mermer.cm.entity.type.UseYn;
 
 import lombok.AllArgsConstructor;
@@ -53,6 +54,10 @@ public class Reply {
 	private Long id;
 	
 	private String content;
+	
+	@ManyToOne
+	@JsonSerialize(using = ReplySerializer.class)
+	private Reply parent;
 	
 	@ManyToOne
 	@JsonSerialize(using = NoticeSerializer.class)

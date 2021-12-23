@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 
+import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
 
@@ -31,5 +32,7 @@ public class ReplyDto {
 	
 	@NotBlank
 	private String content;
+	
+	private String writerIp;//Controller에서 자동세팅
 
 }

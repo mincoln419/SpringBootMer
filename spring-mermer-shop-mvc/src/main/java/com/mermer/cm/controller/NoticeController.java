@@ -111,18 +111,39 @@ public class NoticeController {
 		
 		noticeValidator.noticeValidate(noticeDto, errors);
 		if(errors.hasErrors())return badRequest(errors);
-		Notice notice = modelMapper.map(noticeDto, Notice.class);
-		notice.setMdfer(account);
+
 		//현재 작성하는 ip주소 세팅
-		notice.setWriterIp(req.getLocalAddr());
+		noticeDto.setWriterIp(req.getLocalAddr());
 		
-		return noticeService.updateNotice(notice, account, id);
+		return noticeService.updateNotice(noticeDto, account, id);
 	}
 
 	/* 댓글작성 기능 */
 	@PostMapping("/{id}/reply")
 	public ResponseEntity createNoticeReply(HttpServletRequest req,
 											@PathVariable Long id,
+											@RequestBody @Validated ReplyDto replyDto,
+											Errors errors,
+											@CurrentUser Account account
+	) 
+	{
+		if(errors.hasErrors()) return badRequest(errors);	
+
+		log.debug("POST /notice/new HTTP/1.1");
+		//현재 사용자 정보 세팅 - AccountAdapter 사용
+		replyDto.setWriterIp(req.getLocalAddr());
+		
+		//댓글 달기
+		ResponseEntity result = noticeService.createNoticeReply(id, replyDto, account);
+		
+		return result;
+	}
+	
+	/* 댓글작성 기능 */
+	@PostMapping("/{id}/reply/{replyId}")
+	public ResponseEntity createNoticeReplyRe(HttpServletRequest req,
+											@PathVariable Long id,
+											@PathVariable Long replyId,
 											@RequestBody @Validated ReplyDto replyDto,
 											Errors errors,
 											@CurrentUser Account account
@@ -138,7 +159,7 @@ public class NoticeController {
 		reply.setWriterIp(req.getLocalAddr());
 		
 		//댓글 달기
-		ResponseEntity result = noticeService.createNoticeReply(id, reply);
+		ResponseEntity result = noticeService.createNoticeReplyRe(id, replyId, reply);
 		
 		return result;
 	}
