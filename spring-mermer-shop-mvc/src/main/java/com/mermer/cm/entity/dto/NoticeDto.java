@@ -41,4 +41,6 @@ public class NoticeDto {
 	@NotBlank
 	private String content;
 	
+	private String writerIp;
+	
 }

@@ -25,6 +25,7 @@ import com.mermer.cm.entity.Notice;
 import com.mermer.cm.entity.NoticeList;
 import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
+import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
@@ -159,22 +160,24 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description notice update - 작성자 본인만 수정할 수 있음
 	 */
-	public ResponseEntity updateNotice(Notice notice, Account account, Long noticeId) {
+	public ResponseEntity updateNotice(NoticeDto noticeDto, Account account, Long noticeId) {
 
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
 		
 		if(optionalNotice.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		Notice asNotice = optionalNotice.get();
+		Notice notice = optionalNotice.get();
+		
 		//본인 작성한 글이 아닌경우
 		if(notice.getInster().getId() != account.getId()) {
 			//권한 없음 리턴
 			return ResponseEntity.status(401).build();
 		}
 		
-		modelMapper.map(notice, asNotice);
-		noticeRepository.save(asNotice);
+		modelMapper.map(noticeDto, notice);
+	
+		noticeRepository.save(notice);
 		
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
@@ -193,15 +196,19 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description 
 	 */
-	public ResponseEntity createNoticeReply(Long noticeId, Reply reply) {
+	public ResponseEntity createNoticeReply(Long noticeId, ReplyDto replyDto, Account account) {
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		
+		Reply reply = modelMapper.map(replyDto, Reply.class);
 		
 		if(optionalNotice.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 		reply.setNotice(optionalNotice.get());
-		
 		Reply result = noticeReplyRepository.save(reply);
+		
+		
+		/* 링크정보 hateous */
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply");
 		URI createdUri = selfLinkBuilder.toUri();
 	
@@ -209,7 +216,44 @@ public class NoticeService {
 		noticeReplyResource.add((selfLinkBuilder).withSelfRel())
 		.add(selfLinkBuilder.withRel("query-notice-reply"))
 		.add(selfLinkBuilder.slash(result.getId()).withRel("update-notice-reply"))
+		.add(selfLinkBuilder.slash(result.getId()).withRel("create-notice-reply-re")) //대댓글 링크 추가
 		.add(Link.of("/docs/index.html#resources-notice-reply-create").withRel("profile"));
+		
+		return ResponseEntity.created(createdUri).body(noticeReplyResource);
+	}
+
+
+	/**
+	 * @method createNoticeReplyRe
+	 * @param id
+	 * @param replyId
+	 * @param reply
+	 * @return
+	 * ResponseEntity
+	 * @description 대댓글 작성 - 대댓글 조회, 수정, 삭제의 경우는 일반 댓글 수정과 동일한 로직으로 처리
+	 */
+	public ResponseEntity createNoticeReplyRe(Long noticeId, Long replyId, Reply reply) {
+
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		reply.setNotice(optionalNotice.get());
+		
+		//대댓글 작성을 위한 세팅
+		Optional<Reply> optionalNoticeReply = noticeReplyRepository.findById(replyId);
+		reply.setParent(optionalNoticeReply.get());
+		
+		Reply result = noticeReplyRepository.save(reply);
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(result.getId());
+		URI createdUri = selfLinkBuilder.toUri();
+	
+		EntityModel<Optional> noticeReplyResource = NoticeReplyResource.of(Optional.of(result));//생성자 대신 static of 사용
+		noticeReplyResource.add((selfLinkBuilder).withSelfRel())
+		.add(selfLinkBuilder.withRel("query-notice-reply"))
+		.add(selfLinkBuilder.withRel("update-notice-reply"))
+		.add(Link.of("/docs/index.html#resources-notice-reply-create-re").withRel("profile"));
 		
 		return ResponseEntity.created(createdUri).body(noticeReplyResource);
 	}
