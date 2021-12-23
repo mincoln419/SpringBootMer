@@ -20,11 +20,17 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/* 
- * TB_CMAC_ACOUNT 의 DTO
- * 
- * */
-
+/**
+ * @packageName : com.mermer.cm.entity.dto
+ * @fileName : AccountDto.java 
+ * @author : Mermer 
+ * @date : 2021.12.08
+ * @description : 계정 생성시 validation 위한 Dto
+ * =========================================================== 
+ * DATE AUTHOR NOTE 
+ * ----------------------------------------------------------- 
+ * 2021.12.08 Mermer 최초 생성
+ */
 @Data
 @NoArgsConstructor @AllArgsConstructor
 @Builder
