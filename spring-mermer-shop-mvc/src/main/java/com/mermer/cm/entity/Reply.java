@@ -65,6 +65,7 @@ public class Reply {
 	@LastModifiedDate
 	private LocalDateTime mdfDtm;//수정일시
 	
+	private String writerIp;
 	//단방향(Account -> Notice)으로 참조하도록 매핑
 	@ManyToOne
 	@JsonSerialize(using = AccountSerializer.class)

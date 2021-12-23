@@ -29,6 +29,7 @@ import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.cm.resource.AccountResource;
+import com.mermer.cm.resource.NoticeReplyResource;
 import com.mermer.cm.resource.NoticeResource;
 
 import lombok.RequiredArgsConstructor;
@@ -158,22 +159,22 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description notice update - 작성자 본인만 수정할 수 있음
 	 */
-	public ResponseEntity updateNotice(NoticeDto noticeDto, Account account, Long noticeId) {
+	public ResponseEntity updateNotice(Notice notice, Account account, Long noticeId) {
 
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
 		
 		if(optionalNotice.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		Notice notice = optionalNotice.get();
+		Notice asNotice = optionalNotice.get();
 		//본인 작성한 글이 아닌경우
 		if(notice.getInster().getId() != account.getId()) {
 			//권한 없음 리턴
 			return ResponseEntity.status(401).build();
 		}
 		
-		modelMapper.map(noticeDto, notice);
-		noticeRepository.save(notice);
+		modelMapper.map(notice, asNotice);
+		noticeRepository.save(asNotice);
 		
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
@@ -201,13 +202,13 @@ public class NoticeService {
 		reply.setNotice(optionalNotice.get());
 		
 		Reply result = noticeReplyRepository.save(reply);
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(result.getId());
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply");
 		URI createdUri = selfLinkBuilder.toUri();
 	
-		EntityModel<Optional> noticeReplyResource = NoticeResource.of(Optional.of(result));//생성자 대신 static of 사용
+		EntityModel<Optional> noticeReplyResource = NoticeReplyResource.of(Optional.of(result));//생성자 대신 static of 사용
 		noticeReplyResource.add((selfLinkBuilder).withSelfRel())
-		.add(linkTo(NoticeController.class).withRel("query-notice-reply"))
-		.add(selfLinkBuilder.withRel("update-notice-reply"))
+		.add(selfLinkBuilder.withRel("query-notice-reply"))
+		.add(selfLinkBuilder.slash(result.getId()).withRel("update-notice-reply"))
 		.add(Link.of("/docs/index.html#resources-notice-reply-create").withRel("profile"));
 		
 		return ResponseEntity.created(createdUri).body(noticeReplyResource);

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.hateoas.EntityModel;
 
 import com.mermer.cm.entity.Account;
+import com.mermer.cm.entity.Notice;
 /**
  * @packageName : com.mermer.cm.resource
  * @fileName : NoticeResource.java 
@@ -17,6 +18,6 @@ import com.mermer.cm.entity.Account;
  * ----------------------------------------------------------- 
  * 2021.12.18 Mermer 최초 생성
  */
-public class NoticeResource extends EntityModel<Optional<Account>>{
+public class NoticeResource extends EntityModel<Optional<Notice>>{
 	
 }
