@@ -37,7 +37,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
+import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
+import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.cm.service.NoticeService;
@@ -306,22 +308,13 @@ public class NoticeContollerTest extends BaseTest {
 		//Given
 		Account account = generateAccount();
 		//밖에서 account 꺼낼때는 parameter에 false
-		String token = getBearerToken(getAccessToken(false));//토큰은 필요없음..
+		String token = getBearerToken(getAccessToken(false));
 		
 		//해당 계정으로 공지사항 글 작성
 		String title = "Notice Test";
 		String testDoc = "test";//getTestDoc();
 
-		Notice notice = Notice.builder()
-				.title(title)
-				.content(testDoc)
-				.inster(account)
-				.mdfer(account)
-				.writerIp("127.0.0.1")
-				.build();
-		
-		notice = noticeRepository.save(notice);
-		
+		Notice notice = generateNotice(account);
 		
 		//When
 		//해당 계정으로 공지사항 글 작성
@@ -383,7 +376,63 @@ public class NoticeContollerTest extends BaseTest {
 			));
 	}
 	
-	
+	@Test
+	@DisplayName("Notice 댓글 작성")
+	public void noticeReplyCreate() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		//공지사항 글작성
+		Notice notice = generateNotice(account);
+		
+		String replyText = "reply test";
+		//reply Entity - notice, bulletin의 댓글 entity
+		ReplyDto replyDto= ReplyDto.builder()
+					.content(replyText)
+					.build();
+		
+		mockMvc.perform(post("/api/notice/{id}/reply", notice.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objMapper.writeValueAsString(replyDto))
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+			.andDo(print())
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("content").value(replyText))
+			.andDo(document("create-notice-reply", links(
+					linkWithRel("self").description("link to self"),
+				    linkWithRel("profile").description("link to profile"),
+				    linkWithRel("query-notice-reply").description("link for query notices"),
+					linkWithRel("update-notice-reply").description("link for updating the notice")
+				),
+				requestHeaders(
+					headerWithName(HttpHeaders.ACCEPT).description("accept header"),
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				responseHeaders(
+						headerWithName(HttpHeaders.LOCATION).description("location header"),
+						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+						//response only
+						fieldWithPath("id").description("Id of new notice"),
+												
+						//request +
+						fieldWithPath("content").description("content of new notice"),
+						fieldWithPath("writerIp").description("writer IP Port of new notice"),
+						fieldWithPath("instDtm").description("insert DateTime of new notice"),
+						fieldWithPath("mdfDtm").description("modified DateTime of new notice"),
+						fieldWithPath("inster").description("insert account ID of new notice"),
+						fieldWithPath("mdfer").description("modified account ID of new notice")
+						
+					)
+				
+			))
+			;
+	}
 	
 	/**
 	 * @method getTestDoc
@@ -464,6 +513,27 @@ public class NoticeContollerTest extends BaseTest {
 		account = accountService.saveAccount(account);
 		return account;
 		
+	}
+	
+	/**
+	 * @method generateNotice
+	 * @return Notice
+	 * @description 테스트 공지사항 작성
+	 */
+	private Notice generateNotice(Account account) {
+		//해당 계정으로 공지사항 글 작성
+		String title = "Notice Test";
+		String testDoc = "test";//getTestDoc();
+
+		Notice notice = Notice.builder()
+				.title(title)
+				.content(testDoc)
+				.inster(account)
+				.mdfer(account)
+				.writerIp("127.0.0.1")
+				.build();
+		
+		return noticeRepository.save(notice);
 	}
 
 	/**

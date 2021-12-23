@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
+import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
+import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.service.NoticeService;
 import com.mermer.cm.util.CurrentUser;
 import com.mermer.cm.validator.NoticeValidator;
@@ -97,7 +99,8 @@ public class NoticeController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity updateNotice(@PathVariable Long id,
+	public ResponseEntity updateNotice(HttpServletRequest req,
+									   @PathVariable Long id,
 									   @RequestBody @Validated NoticeDto noticeDto,
 									   Errors errors,
 									   @CurrentUser Account account
@@ -108,8 +111,36 @@ public class NoticeController {
 		
 		noticeValidator.noticeValidate(noticeDto, errors);
 		if(errors.hasErrors())return badRequest(errors);
+		Notice notice = modelMapper.map(noticeDto, Notice.class);
+		notice.setMdfer(account);
+		//현재 작성하는 ip주소 세팅
+		notice.setWriterIp(req.getLocalAddr());
 		
-		return noticeService.updateNotice(noticeDto, account, id);
+		return noticeService.updateNotice(notice, account, id);
+	}
+
+	/* 댓글작성 기능 */
+	@PostMapping("/{id}/reply")
+	public ResponseEntity createNoticeReply(HttpServletRequest req,
+											@PathVariable Long id,
+											@RequestBody @Validated ReplyDto replyDto,
+											Errors errors,
+											@CurrentUser Account account
+	) 
+	{
+		if(errors.hasErrors()) return badRequest(errors);	
+
+		Reply reply = modelMapper.map(replyDto, Reply.class);
+		log.debug("POST /notice/new HTTP/1.1");
+		//현재 사용자 정보 세팅 - AccountAdapter 사용
+		reply.setInster(account);
+		reply.setMdfer(account);
+		reply.setWriterIp(req.getLocalAddr());
+		
+		//댓글 달기
+		ResponseEntity result = noticeService.createNoticeReply(id, reply);
+		
+		return result;
 	}
 	
 }
