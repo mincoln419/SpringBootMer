@@ -37,7 +37,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
+import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
+import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.cm.service.NoticeService;
@@ -306,22 +308,13 @@ public class NoticeContollerTest extends BaseTest {
 		//Given
 		Account account = generateAccount();
 		//밖에서 account 꺼낼때는 parameter에 false
-		String token = getBearerToken(getAccessToken(false));//토큰은 필요없음..
+		String token = getBearerToken(getAccessToken(false));
 		
 		//해당 계정으로 공지사항 글 작성
 		String title = "Notice Test";
 		String testDoc = "test";//getTestDoc();
 
-		Notice notice = Notice.builder()
-				.title(title)
-				.content(testDoc)
-				.inster(account)
-				.mdfer(account)
-				.writerIp("127.0.0.1")
-				.build();
-		
-		notice = noticeRepository.save(notice);
-		
+		Notice notice = generateNotice(account);
 		
 		//When
 		//해당 계정으로 공지사항 글 작성
@@ -383,7 +376,32 @@ public class NoticeContollerTest extends BaseTest {
 			));
 	}
 	
-	
+	@Test
+	@DisplayName("Notice 댓글 작성")
+	public void noticeReplyCreate() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		//공지사항 글작성
+		Notice notice = generateNotice(account);
+		
+		//reply Entity - notice, bulletin의 댓글 entity
+		ReplyDto replyDto= ReplyDto.builder()
+					.content("reply test")
+					.build();
+		
+		mockMvc.perform(post("/api/notice/{id}/reply", notice.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objMapper.writeValueAsString(replyDto))
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+			.andDo(print())
+			.andExpect(status().isCreated())
+			;
+	}
 	
 	/**
 	 * @method getTestDoc
@@ -464,6 +482,27 @@ public class NoticeContollerTest extends BaseTest {
 		account = accountService.saveAccount(account);
 		return account;
 		
+	}
+	
+	/**
+	 * @method generateNotice
+	 * @return Notice
+	 * @description 테스트 공지사항 작성
+	 */
+	private Notice generateNotice(Account account) {
+		//해당 계정으로 공지사항 글 작성
+		String title = "Notice Test";
+		String testDoc = "test";//getTestDoc();
+
+		Notice notice = Notice.builder()
+				.title(title)
+				.content(testDoc)
+				.inster(account)
+				.mdfer(account)
+				.writerIp("127.0.0.1")
+				.build();
+		
+		return noticeRepository.save(notice);
 	}
 
 	/**
