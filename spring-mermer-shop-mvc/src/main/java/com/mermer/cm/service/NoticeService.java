@@ -19,11 +19,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.mermer.cm.controller.AccountController;
+import com.mermer.cm.controller.NoticeController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
 import com.mermer.cm.entity.NoticeList;
+import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.repository.AccountRepository;
+import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.cm.resource.AccountResource;
 import com.mermer.cm.resource.NoticeResource;
@@ -49,7 +52,10 @@ public class NoticeService {
 
 	private final AccountRepository accountRepository;
 	private final NoticeRepository noticeRepository;
+	private final NoticeReplyRepository noticeReplyRepository;
+	
 	private final ModelMapper modelMapper;
+	
 	
 	
 	/**
@@ -61,7 +67,7 @@ public class NoticeService {
 	 */
 	private WebMvcLinkBuilder getClassLink(Long noticeId) {
 
-		return linkTo(AccountController.class).slash(noticeId);
+		return linkTo(NoticeController.class).slash(noticeId);
 	}
 	
 	
@@ -83,7 +89,7 @@ public class NoticeService {
 	
 		EntityModel<Optional> noticeResource = NoticeResource.of(Optional.of(result));//생성자 대신 static of 사용
 		noticeResource.add((selfLinkBuilder).withSelfRel())
-		.add(linkTo(AccountController.class).withRel("query-notice"))
+		.add(linkTo(NoticeController.class).withRel("query-notice"))
 		.add(selfLinkBuilder.withRel("update-notice"))
 		.add(selfLinkBuilder.slash("reply").withRel("notice-reply-create"))
 		.add(Link.of("/docs/index.html#resources-notice-create").withRel("profile"));
@@ -108,7 +114,7 @@ public class NoticeService {
 		//전체 조회시 content 는 나오지 않도록 수정 
 		Page<NoticeList> page = noticeRepository.findAllNoContent(pageable);
 		
-		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-get-notice").withRel("profile")));
+		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/index.html#resources-get-notice").withRel("profile")));
 		pagedResource.add(Link.of("/docs/index.html#resources-notice-list").withRel("profile"));
 		
 		return ResponseEntity.ok(pagedResource);
@@ -175,6 +181,36 @@ public class NoticeService {
 				.add(Link.of("/docs/index.html#resources-notice-update").withRel("profile"));
 
 		return ResponseEntity.ok(noticeResource);
+	}
+
+
+	/**
+	 * @method createNoticeReply
+	 * @param id
+	 * @param reply
+	 * @return notice-id 에 대한 reply 작성
+	 * ResponseEntity
+	 * @description 
+	 */
+	public ResponseEntity createNoticeReply(Long noticeId, Reply reply) {
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		reply.setNotice(optionalNotice.get());
+		
+		Reply result = noticeReplyRepository.save(reply);
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(result.getId());
+		URI createdUri = selfLinkBuilder.toUri();
+	
+		EntityModel<Optional> noticeReplyResource = NoticeResource.of(Optional.of(result));//생성자 대신 static of 사용
+		noticeReplyResource.add((selfLinkBuilder).withSelfRel())
+		.add(linkTo(NoticeController.class).withRel("query-notice-reply"))
+		.add(selfLinkBuilder.withRel("update-notice-reply"))
+		.add(Link.of("/docs/index.html#resources-notice-reply-create").withRel("profile"));
+		
+		return ResponseEntity.created(createdUri).body(noticeReplyResource);
 	}
 
 

@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
+import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
+import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.service.NoticeService;
 import com.mermer.cm.util.CurrentUser;
 import com.mermer.cm.validator.NoticeValidator;
@@ -110,6 +112,29 @@ public class NoticeController {
 		if(errors.hasErrors())return badRequest(errors);
 		
 		return noticeService.updateNotice(noticeDto, account, id);
+	}
+
+	/* 댓글작성 기능 */
+	@PostMapping("/{id}/reply")
+	public ResponseEntity createNoticeReply(@PathVariable Long id,
+										HttpServletRequest req,
+									   @RequestBody @Validated ReplyDto replyDto,
+									   Errors errors,
+									   @CurrentUser Account account
+	) 
+	{
+		if(errors.hasErrors()) return badRequest(errors);	
+
+		Reply reply = modelMapper.map(replyDto, Reply.class);
+		log.debug("POST /notice/new HTTP/1.1");
+		//현재 사용자 정보 세팅 - AccountAdapter 사용
+		reply.setInster(account);
+		reply.setMdfer(account);
+		
+		//댓글 달기
+		ResponseEntity result = noticeService.createNoticeReply(id, reply);
+		
+		return result;
 	}
 	
 }

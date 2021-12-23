@@ -1,22 +1,21 @@
 
 package com.mermer.cm.resource;
 
-import java.util.Optional;
-
 import org.springframework.hateoas.EntityModel;
 
-import com.mermer.cm.entity.Account;
+import com.mermer.cm.entity.Reply;
+
 /**
  * @packageName : com.mermer.cm.resource
- * @fileName : NoticeResource.java 
+ * @fileName : NoticeReplyResource.java 
  * @author : Mermer 
- * @date : 2021.12.18 
- * @description : return body 역할 해줄 resource
+ * @date : 2021.12.23 
+ * @description :
  * =========================================================== 
  * DATE AUTHOR NOTE 
  * ----------------------------------------------------------- 
- * 2021.12.18 Mermer 최초 생성
+ * 2021.12.23 Mermer 최초 생성
  */
-public class NoticeResource extends EntityModel<Optional<Account>>{
-	
+public class NoticeReplyResource extends EntityModel<Reply>{
+
 }
