@@ -11,10 +11,31 @@
  */
 package com.mermer.cm.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import com.mermer.cm.entity.NoticeList;
 import com.mermer.cm.entity.Reply;
 
 public interface NoticeReplyRepository extends JpaRepository<Reply, Long> {
+
+	/**
+	 * @method findAllReplyByNoticeId
+	 * @param pageable
+	 * @param noticeId
+	 * @return
+	 * Page<Reply>
+	 * @description 
+	 */
+	@Query(nativeQuery = true
+		, value = "select *"
+		          + "from reply r "
+		         + "where r.use_Yn = 'Y'"
+		         + " and r.notice_id = ?1", 
+		  countQuery = "select * from reply where use_yn = 'Y'"
+		  )
+	Page<Reply> findAllReplyByNoticeId(Long noticeId, Pageable pageable);
 
 }

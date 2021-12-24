@@ -164,15 +164,16 @@ public class NoticeController {
 		return result;
 	}
 	
-	/* 댓글 조회 */
-	@GetMapping("/{id}/reply/{replyId}")
+	/* 특정 공지사항에 대한 댓글 전체 조회 */
+	@GetMapping("/{id}/reply")
 	public ResponseEntity queryNoticeReply(HttpServletRequest req,
 											@PathVariable Long id,
-											@PathVariable Long replyId,
-											@CurrentUser Account account
+											@CurrentUser Account account,
+											Pageable pageable, 
+											PagedResourcesAssembler assembler
 	) 
 	{
-		ResponseEntity result = noticeService.queryNoticeReply(id, replyId);
+		ResponseEntity result = noticeService.queryNoticeReply(id, pageable, assembler);
 		
 		return result;
 	}

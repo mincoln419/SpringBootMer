@@ -52,7 +52,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NoticeService {
 
-	private final AccountRepository accountRepository;
 	private final NoticeRepository noticeRepository;
 	private final NoticeReplyRepository noticeReplyRepository;
 	
@@ -266,26 +265,35 @@ public class NoticeService {
 		return ResponseEntity.created(createdUri).body(noticeReplyResource);
 	}
 
-
 	/**
 	 * @method queryNoticeReply
 	 * @param id
-	 * @param replyId
-	 * @return 댓글 조회
+	 * @param pageable
+	 * @param assembler
+	 * @return
 	 * ResponseEntity
 	 * @description 
 	 */
-	public ResponseEntity queryNoticeReply(Long noticeId, Long replyId) {
-
+	public ResponseEntity queryNoticeReply(Long noticeId, Pageable pageable, PagedResourcesAssembler assembler) {
 		//notice 검색
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
-		
 		if(optionalNotice.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		//notice ID로 해당 댓글 전부 검색
+		//전체 조회시 content 는 나오지 않도록 수정 
+		Page<Reply> page = noticeReplyRepository.findAllReplyByNoticeId(noticeId, pageable);
 		
-		return null;
+		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/index.html#resources-get-notice-reply").withRel("profile")));
+		pagedResource.add(Link.of("/docs/index.html#resources-query-notice-reply").withRel("profile"));
+		
+		//페이지가 안넘어갈 경우 first, next, last 링크 별도로 세팅
+		if(page.getTotalElements() < page.getSize()) {
+			Link sefLink = (Link)pagedResource.getLink("self").get();
+			pagedResource.add(sefLink.withRel("first"));
+			pagedResource.add(sefLink.withRel("next"));
+			pagedResource.add(sefLink.withRel("last"));
+		}
+		return ResponseEntity.ok(pagedResource);
 	}
 
 

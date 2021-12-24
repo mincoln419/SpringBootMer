@@ -515,7 +515,7 @@ public class NoticeContollerTest extends BaseTest {
 	}
 	
 	@Test
-	@DisplayName("Notice 댓글 조회")
+	@DisplayName("Notice 댓글 전체 조회")
 	public void queryNoticeReply() throws Exception {
 		//Given
 		Account account = generateAccount();
@@ -525,7 +525,9 @@ public class NoticeContollerTest extends BaseTest {
 		//공지사항 글작성
 		Notice notice = generateNotice(account);
 		
-		IntStream.range(0, 30).forEach(this::generateReply);
+		
+		
+		IntStream.range(0, 30).forEach(index -> generateReply(index, notice, account));
 		
 		mockMvc.perform(get("/api/notice/{id}/reply", notice.getId())
 						.accept(MediaTypes.HAL_JSON)
@@ -533,6 +535,57 @@ public class NoticeContollerTest extends BaseTest {
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
+		.andDo(document("query-notice-reply", links(
+				linkWithRel("self").description("link to self"),
+			    linkWithRel("profile").description("link to profile"),
+			    linkWithRel("first").description("link to first page of this list"),
+			    linkWithRel("next").description("link to next page of this list"),
+			    linkWithRel("last").description("link to last page of this list")
+			),
+			requestHeaders(
+				headerWithName(HttpHeaders.ACCEPT).description("accept header")
+			),
+			responseHeaders(
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+			),
+			relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+					//response only
+					fieldWithPath("_embedded.replyList[0].id").description("Id of new notice-reply"),
+											
+					//request +
+					fieldWithPath("_embedded.replyList[0].content").description("content of new notice-reply"),
+					fieldWithPath("_embedded.replyList[0].parent").description("parent reply of this reply"),
+					fieldWithPath("_embedded.replyList[0].writerIp").description("writer IP Port of new notice-reply"),
+					fieldWithPath("_embedded.replyList[0].instDtm").description("insert DateTime of new notice-reply"),
+					fieldWithPath("_embedded.replyList[0].mdfDtm").description("modified DateTime of new notice-reply"),
+					fieldWithPath("_embedded.replyList[0].inster").description("insert account ID of new notice-reply"),
+					fieldWithPath("_embedded.replyList[0].mdfer").description("modified account ID of new notice-reply")
+				)
+			
+		))
+		;
+	}
+	
+	@Test
+	@DisplayName("Notice 댓글 단건 조회")
+	public void getNoticeReply() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		//공지사항 글작성
+		Notice notice = generateNotice(account);
+		
+		Reply reply = generateReply(1, notice, account);
+		
+		mockMvc.perform(get("/api/notice/{id}/reply/{replyId}", notice.getId(), reply.getId())
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("content").value("test1"))
 		;
 	}
 	
@@ -544,11 +597,14 @@ public class NoticeContollerTest extends BaseTest {
 	 * Reply
 	 * @description 댓글생성 
 	 */
-	private Reply generateReply(int index) {
+	private Reply generateReply(int index, Notice notice, Account account) {
 		Reply reply= Reply.builder()
 				.content("test" + index)
+				.writerIp("127.0.0.1")
+				.inster(account)
+				.mdfer(account)
+				.notice(notice)
 				.build();
-		
 		return noticeReplyRepository.save(reply);
 	}
 
