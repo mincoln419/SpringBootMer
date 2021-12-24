@@ -40,7 +40,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>{
 				      + ", n.inster_id "
 				   + "from notice n "
 				  + "where n.use_Yn = 'Y'", 
-				  countQuery = "select * from notice where n.use_yn = 'Y'"
+				  countQuery = "select * from notice where use_yn = 'Y'"
 				  )
 	Page<NoticeList> findAllNoContent(Pageable pageable);
 	

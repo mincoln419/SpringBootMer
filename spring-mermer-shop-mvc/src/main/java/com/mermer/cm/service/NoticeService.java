@@ -119,6 +119,14 @@ public class NoticeService {
 		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/index.html#resources-get-notice").withRel("profile")));
 		pagedResource.add(Link.of("/docs/index.html#resources-notice-list").withRel("profile"));
 		
+		//페이지가 안넘어갈 경우 first, next, last 링크 별도로 세팅
+		if(page.getTotalElements() < page.getSize()) {
+			Link sefLink = (Link)pagedResource.getLink("self").get();
+			pagedResource.add(sefLink.withRel("first"));
+			pagedResource.add(sefLink.withRel("next"));
+			pagedResource.add(sefLink.withRel("last"));
+		}
+		
 		return ResponseEntity.ok(pagedResource);
 	}
 
@@ -256,6 +264,28 @@ public class NoticeService {
 		.add(Link.of("/docs/index.html#resources-notice-reply-create-re").withRel("profile"));
 		
 		return ResponseEntity.created(createdUri).body(noticeReplyResource);
+	}
+
+
+	/**
+	 * @method queryNoticeReply
+	 * @param id
+	 * @param replyId
+	 * @return 댓글 조회
+	 * ResponseEntity
+	 * @description 
+	 */
+	public ResponseEntity queryNoticeReply(Long noticeId, Long replyId) {
+
+		//notice 검색
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		//notice ID로 해당 댓글 전부 검색
+		
+		return null;
 	}
 
 

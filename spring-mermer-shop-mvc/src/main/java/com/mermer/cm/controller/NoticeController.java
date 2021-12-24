@@ -139,7 +139,7 @@ public class NoticeController {
 		return result;
 	}
 	
-	/* 댓글작성 기능 */
+	/* 대-댓글작성 기능 */
 	@PostMapping("/{id}/reply/{replyId}")
 	public ResponseEntity createNoticeReplyRe(HttpServletRequest req,
 											@PathVariable Long id,
@@ -160,6 +160,19 @@ public class NoticeController {
 		
 		//댓글 달기
 		ResponseEntity result = noticeService.createNoticeReplyRe(id, replyId, reply);
+		
+		return result;
+	}
+	
+	/* 댓글 조회 */
+	@GetMapping("/{id}/reply/{replyId}")
+	public ResponseEntity queryNoticeReply(HttpServletRequest req,
+											@PathVariable Long id,
+											@PathVariable Long replyId,
+											@CurrentUser Account account
+	) 
+	{
+		ResponseEntity result = noticeService.queryNoticeReply(id, replyId);
 		
 		return result;
 	}

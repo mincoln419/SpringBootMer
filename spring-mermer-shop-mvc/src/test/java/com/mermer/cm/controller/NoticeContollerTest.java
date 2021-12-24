@@ -23,6 +23,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
@@ -207,6 +208,8 @@ public class NoticeContollerTest extends BaseTest {
 		
 		noticeRepository.save(notice);
 		
+		//IntStream.range(0, 30).forEach(this::generateNotice);
+		
 		mockMvc.perform(get("/api/notice")
 				.accept(MediaTypes.HAL_JSON)
 				//.header(HttpHeaders.AUTHORIZATION, getBearerToken(getAccessToken(account))) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
@@ -218,7 +221,10 @@ public class NoticeContollerTest extends BaseTest {
 		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].content").value(testDoc))
 		.andDo(document("query-notice", links(
 				linkWithRel("self").description("link to self"),
-			    linkWithRel("profile").description("link to profile")
+			    linkWithRel("profile").description("link to profile"),
+			    linkWithRel("first").description("link to first page of this list"),
+			    linkWithRel("next").description("link to next page of this list"),
+			    linkWithRel("last").description("link to last page of this list")
 			),
 			requestHeaders(
 				headerWithName(HttpHeaders.ACCEPT).description("accept header")
@@ -508,6 +514,44 @@ public class NoticeContollerTest extends BaseTest {
 			;
 	}
 	
+	@Test
+	@DisplayName("Notice 댓글 조회")
+	public void queryNoticeReply() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		//공지사항 글작성
+		Notice notice = generateNotice(account);
+		
+		IntStream.range(0, 30).forEach(this::generateReply);
+		
+		mockMvc.perform(get("/api/notice/{id}/reply", notice.getId())
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+		.andDo(print())
+		.andExpect(status().isOk())
+		;
+	}
+	
+	
+	/**
+	 * @method generateReply
+	 * @param index
+	 * @return
+	 * Reply
+	 * @description 댓글생성 
+	 */
+	private Reply generateReply(int index) {
+		Reply reply= Reply.builder()
+				.content("test" + index)
+				.build();
+		
+		return noticeReplyRepository.save(reply);
+	}
+
 	/**
 	 * @method getTestDoc
 	 * @return
@@ -607,6 +651,26 @@ public class NoticeContollerTest extends BaseTest {
 		
 		return noticeRepository.save(notice);
 	}
+	
+	/**
+	 * @method generateNotice
+	 * @return Notice
+	 * @description 테스트 공지사항 작성
+	 */
+	private Notice generateNotice(Integer index) {
+		//해당 계정으로 공지사항 글 작성
+		String title = "Notice Test";
+		String testDoc = "test";//getTestDoc();
+
+		Notice notice = Notice.builder()
+				.title(title + index)
+				.content(testDoc)
+				.writerIp("127.0.0.1")
+				.build();
+		
+		return noticeRepository.save(notice);
+	}
+	
 
 	/**
 	 * @method getBearerToken
