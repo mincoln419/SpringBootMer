@@ -34,8 +34,27 @@ public interface NoticeReplyRepository extends JpaRepository<Reply, Long> {
 		          + "from reply r "
 		         + "where r.use_Yn = 'Y'"
 		         + " and r.notice_id = ?1", 
-		  countQuery = "select * from reply where use_yn = 'Y'"
+		  countQuery = "select * from reply where use_yn = 'Y' and notice_id = ?1"
 		  )
 	Page<Reply> findAllReplyByNoticeId(Long noticeId, Pageable pageable);
+
+	/**
+	 * @method getByIdAndNotice
+	 * @param noticeId
+	 * @param replyId
+	 * @return
+	 * Reply
+	 * @description 
+	 */
+	@Query(nativeQuery = true
+			, value = "select *"
+			          + "from reply r "
+			          + "where r.use_Yn = 'Y'"
+			          + " and r.notice_id = ?1"
+			          + " and r.id = ?2"
+			          , 
+			  countQuery = "select * from reply where use_yn = 'Y' and notice_id = ?1 and id = ?2"
+			  )
+	Reply getByIdAndNotice(Long noticeId, Long replyId);
 
 }

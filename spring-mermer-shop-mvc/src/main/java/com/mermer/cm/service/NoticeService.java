@@ -297,4 +297,31 @@ public class NoticeService {
 	}
 
 
+	/**
+	 * @method getNoticeReply
+	 * @param id
+	 * @param replyId
+	 * @return
+	 * ResponseEntity
+	 * @description 댓글 한건 조회
+	 */
+	public ResponseEntity getNoticeReply(Long noticeId, Long replyId) {
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		Notice notice = optionalNotice.get();
+		Reply result = noticeReplyRepository.getByIdAndNotice(noticeId, replyId);
+		
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(replyId);
+				
+		EntityModel<Reply> replyResource = NoticeResource.of(result)
+											.add((selfLinkBuilder).withSelfRel())
+											.add(Link.of("/docs/index.html#resources-get-notice-reply").withRel("profile"))
+											.add(selfLinkBuilder.withRel("update-notice-reply"));
+		
+		return ResponseEntity.ok(replyResource);
+	}
+
+
 }

@@ -178,4 +178,17 @@ public class NoticeController {
 		return result;
 	}
 	
+	/* 특정 공지사항에 대한 댓글 전체 조회 */
+	@GetMapping("/{id}/reply/{replyId}")
+	public ResponseEntity getNoticeReply(HttpServletRequest req,
+											@PathVariable Long id,
+											@PathVariable Long replyId,
+											@CurrentUser Account account
+	) 
+	{
+		ResponseEntity result = noticeService.getNoticeReply(id, replyId);
+		
+		return result;
+	}
+	
 }
