@@ -57,7 +57,7 @@ operation::delete-notice[snippets='request-fields,curl-request,http-response,lin
 
 `Get` 요청을 사용해서 기존 Notice 댓글 모두를 조회할 수 있다.
 
-operation::query-notice-reply[snippets='request-fields,curl-request,http-response,links']
+operation::query-notice-reply[snippets='curl-request,http-response,links']
 
 
 [[resources-notice-get]]
