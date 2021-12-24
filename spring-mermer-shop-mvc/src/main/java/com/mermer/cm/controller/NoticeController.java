@@ -55,6 +55,7 @@ public class NoticeController {
 	private final NoticeService noticeService;
 	private final ModelMapper modelMapper;
 	
+	/* 공지사항 신규 생성 */
 	@PostMapping
 	public ResponseEntity createNotice(HttpServletRequest req,
 									   @RequestBody @Validated NoticeDto noticeDto,
@@ -80,6 +81,7 @@ public class NoticeController {
 		return result;
 	}
 	
+	/* 공지사항 전체 조회 */
 	@GetMapping
 	public ResponseEntity queryNotice(Pageable pageable, 
 									  PagedResourcesAssembler assembler
@@ -90,7 +92,7 @@ public class NoticeController {
 		return noticeService.queryNotice(pageable, assembler);
 	}
 	
-	
+	/* 공지사항 상세 조회*/
 	@GetMapping("/{id}")
 	public ResponseEntity getNoticeDetail(@PathVariable Long id) 
 	{
@@ -99,6 +101,7 @@ public class NoticeController {
 		return noticeService.getNoticeDetail(id);
 	}
 	
+	/* 공지사항 수정 */
 	@PutMapping("/{id}")
 	public ResponseEntity updateNotice(HttpServletRequest req,
 									   @PathVariable Long id,
@@ -118,6 +121,17 @@ public class NoticeController {
 		
 		return noticeService.updateNotice(noticeDto, account, id);
 	}
+	
+	/* 공지사항 삭제 */
+	@DeleteMapping("/{id}")
+	public ResponseEntity deleteNotice(@PathVariable Long id,
+									   @CurrentUser Account account
+									  ) 
+	{
+
+		return noticeService.deleteNotice(account, id);
+	}
+	
 
 	/* 댓글작성 기능 */
 	@PostMapping("/{id}/reply")

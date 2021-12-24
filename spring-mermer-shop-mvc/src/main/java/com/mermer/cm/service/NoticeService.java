@@ -4,6 +4,7 @@ package com.mermer.cm.service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -51,6 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor //=> 자동으로 AccountRepository를 injection 처리
 @Slf4j
+@SuppressWarnings("rawtypes")
 public class NoticeService {
 
 	private final NoticeRepository noticeRepository;
@@ -107,6 +109,7 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description 
 	 */
+	@SuppressWarnings("unchecked")
 	public ResponseEntity queryNotice(Pageable pageable, 
 									  PagedResourcesAssembler assembler) 
 	{
@@ -138,6 +141,7 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description 
 	 */
+	@Transactional
 	public ResponseEntity getNoticeDetail(Long noticeId) {
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
 		if(optionalNotice.isEmpty()) {
@@ -168,6 +172,7 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description notice update - 작성자 본인만 수정할 수 있음
 	 */
+	@Transactional
 	public ResponseEntity updateNotice(NoticeDto noticeDto, Account account, Long noticeId) {
 
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
@@ -195,6 +200,48 @@ public class NoticeService {
 		return ResponseEntity.ok(noticeResource);
 	}
 
+	
+	/**
+	 * @method deleteNotice
+	 * @param account
+	 * @param id
+	 * @return
+	 * ResponseEntity
+	 * @description 공지사항 삭제 - 작성 본인만 삭제 가능 
+	 */
+	@Transactional
+	public ResponseEntity deleteNotice(Account account, Long noticeId) {
+
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		Notice notice = optionalNotice.get();
+		
+		//본인 작성한 글이 아닌경우
+		if(notice.getInster().getId() != account.getId()) {
+			//권한 없음 리턴
+			return ResponseEntity.status(401).build();
+		}
+		
+		notice.setUseYn(UseYn.N);
+		noticeRepository.save(notice);
+		
+		//공지사항에 달린 댓글도 삭제
+		List<Reply> children = noticeReplyRepository.findAllByNoticeId(noticeId);
+		for(Reply reply : children) {
+			reply.setUseYn(UseYn.N);
+			noticeReplyRepository.save(reply);
+		}
+		
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
+		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
+				.add((selfLinkBuilder).withSelfRel())
+				.add(Link.of("/docs/index.html#resources-notice-delete").withRel("profile"));
+
+		return ResponseEntity.ok(noticeResource);
+	}
 
 	/**
 	 * @method createNoticeReply
@@ -204,6 +251,7 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description 
 	 */
+	@Transactional
 	public ResponseEntity createNoticeReply(Long noticeId, ReplyDto replyDto, Account account) {
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
 		
@@ -240,6 +288,7 @@ public class NoticeService {
 	 * ResponseEntity
 	 * @description 대댓글 작성 - 대댓글 조회, 수정, 삭제의 경우는 일반 댓글 수정과 동일한 로직으로 처리
 	 */
+	@Transactional
 	public ResponseEntity createNoticeReplyRe(Long noticeId, Long replyId, Reply reply) {
 
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
@@ -273,8 +322,9 @@ public class NoticeService {
 	 * @param assembler
 	 * @return
 	 * ResponseEntity
-	 * @description 
+	 * @description 댓글 전체 조회
 	 */
+	@SuppressWarnings("unchecked")
 	public ResponseEntity queryNoticeReply(Long noticeId, Pageable pageable, PagedResourcesAssembler assembler) {
 		//notice 검색
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
@@ -361,10 +411,10 @@ public class NoticeService {
 	 * @param id
 	 * @param replyId
 	 * @param account
-	 * @return
-	 * ResponseEntity
-	 * @description 
+	 * @return ResponseEntity
+	 * @description 댓글 삭제
 	 */
+	@Transactional
 	public ResponseEntity deleteNoticeReply(Long noticeId, Long replyId, Account account) {
 
 		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
@@ -382,15 +432,24 @@ public class NoticeService {
 		
 		Reply result = noticeReplyRepository.save(reply);
 		
+		//대댓글 삭제 -> reply가 부모인 데이터가 있으면 자식 데이터의 경우 cascade 처리
+		List<Reply> children = noticeReplyRepository.findAllReplyByNoticeId(noticeId, replyId);
+		for(Reply child : children) {
+			child.setUseYn(UseYn.N);
+			noticeReplyRepository.save(child);
+		}
+		
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply");
 		
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add(selfLinkBuilder.slash(replyId).withSelfRel())
 											.add(Link.of("/docs/index.html#resources-delete-notice-reply").withRel("profile"))
-											.add(selfLinkBuilder.withRel("query-notice-reply"))
 											;
 		return ResponseEntity.ok(replyResource);
 	}
+
+
+
 
 
 }

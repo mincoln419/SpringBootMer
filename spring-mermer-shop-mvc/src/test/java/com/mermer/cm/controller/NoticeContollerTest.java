@@ -43,6 +43,7 @@ import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.cm.entity.type.UseYn;
 import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.cm.service.NoticeService;
@@ -391,6 +392,54 @@ public class NoticeContollerTest extends BaseTest {
 	}
 	
 	@Test
+	@DisplayName("Notice 삭제")
+	public void deleteNotice() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		//해당 계정으로 공지사항 글 작성
+		Notice notice = generateNotice(account);
+			
+		//Then
+		mockMvc.perform(delete("/api/notice/{id}", notice.getId())
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+						)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("useYn").value(UseYn.N.toString()))
+			.andDo(document("delete-notice", links(
+					linkWithRel("self").description("link to self"),
+				    linkWithRel("profile").description("link to profile")
+				),
+				requestHeaders(
+					headerWithName(HttpHeaders.ACCEPT).description("accept header")
+				),
+				responseHeaders(
+						headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+				),
+				relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+						//response only
+						fieldWithPath("id").description("Id of new notice"),
+												
+						//request +
+						fieldWithPath("title").description("title of new notice"),
+						fieldWithPath("content").description("content of new notice"),
+						fieldWithPath("readCnt").description("read count of new notice"),
+						fieldWithPath("writerIp").description("writer IP Port of new notice"),
+						fieldWithPath("instDtm").description("insert DateTime of new notice"),
+						fieldWithPath("mdfDtm").description("modified DateTime of new notice"),
+						fieldWithPath("inster").description("insert account ID of new notice"),
+						fieldWithPath("mdfer").description("modified account ID of new notice")
+					)
+			));
+		;
+	}
+	
+	
+	@Test
 	@DisplayName("Notice 댓글 작성")
 	public void noticeReplyCreate() throws Exception {
 		//Given
@@ -692,8 +741,7 @@ public class NoticeContollerTest extends BaseTest {
 		.andExpect(status().isOk())
 		.andDo(document("delete-notice-reply", links(
 				linkWithRel("self").description("link to self"),
-			    linkWithRel("profile").description("link to profile"),
-			    linkWithRel("query-notice-reply").description("link to query all reply list")
+			    linkWithRel("profile").description("link to profile")
 			),
 			requestHeaders(
 				headerWithName(HttpHeaders.ACCEPT).description("accept header")
