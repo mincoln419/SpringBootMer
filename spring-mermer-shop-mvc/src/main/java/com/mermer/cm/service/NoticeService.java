@@ -26,6 +26,7 @@ import com.mermer.cm.entity.NoticeList;
 import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.entity.dto.ReplyDto;
+import com.mermer.cm.entity.type.UseYn;
 import com.mermer.cm.repository.AccountRepository;
 import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
@@ -310,7 +311,7 @@ public class NoticeService {
 		if(optionalNotice.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		Reply result = noticeReplyRepository.getByIdAndNotice(noticeId, replyId);
+		Reply result = noticeReplyRepository.getByIdAndNotice(noticeId, replyId).get();
 		
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(replyId);
 				
@@ -339,7 +340,7 @@ public class NoticeService {
 			return ResponseEntity.notFound().build();
 		}
 
-		Reply reply = noticeReplyRepository.getByIdAndNotice(noticeId, replyId);
+		Reply reply = noticeReplyRepository.getByIdAndNotice(noticeId, replyId).get();
 		
 		modelMapper.map(replyDto, reply);
 		
@@ -350,6 +351,43 @@ public class NoticeService {
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add((selfLinkBuilder).withSelfRel())
 											.add(Link.of("/docs/index.html#resources-update-notice-reply").withRel("profile"))
+											;
+		return ResponseEntity.ok(replyResource);
+	}
+
+
+	/**
+	 * @method deleteNoticeReply
+	 * @param id
+	 * @param replyId
+	 * @param account
+	 * @return
+	 * ResponseEntity
+	 * @description 
+	 */
+	public ResponseEntity deleteNoticeReply(Long noticeId, Long replyId, Account account) {
+
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		Reply reply = noticeReplyRepository.getByIdAndNotice(noticeId, replyId).get();
+		//본인 작성한 글이 아닌경우
+		if(reply.getInster().getId() != account.getId()) {
+			//권한 없음 리턴
+			return ResponseEntity.status(401).build();
+		}
+		//사용여부 N으로 변경
+		reply.setUseYn(UseYn.N);
+		
+		Reply result = noticeReplyRepository.save(reply);
+		
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply");
+		
+		EntityModel<Reply> replyResource = NoticeResource.of(result)
+											.add(selfLinkBuilder.slash(replyId).withSelfRel())
+											.add(Link.of("/docs/index.html#resources-delete-notice-reply").withRel("profile"))
+											.add(selfLinkBuilder.withRel("query-notice-reply"))
 											;
 		return ResponseEntity.ok(replyResource);
 	}

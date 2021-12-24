@@ -10,6 +10,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -666,6 +667,40 @@ public class NoticeContollerTest extends BaseTest {
 					fieldWithPath("mdfer").description("modified account ID of new notice")
 					
 				)
+		))
+		;
+	}
+	
+	@Test
+	@DisplayName("Notice 댓글 단건 삭제")
+	public void deleteNoticeReply() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		//공지사항 글작성
+		Notice notice = generateNotice(account);
+		
+		Reply reply = generateReply(1, notice, account);
+		
+		mockMvc.perform(delete("/api/notice/{id}/reply/{replyId}", notice.getId(), reply.getId())
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andDo(document("delete-notice-reply", links(
+				linkWithRel("self").description("link to self"),
+			    linkWithRel("profile").description("link to profile"),
+			    linkWithRel("query-notice-reply").description("link to query all reply list")
+			),
+			requestHeaders(
+				headerWithName(HttpHeaders.ACCEPT).description("accept header")
+			),
+			responseHeaders(
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+			)
 		))
 		;
 	}

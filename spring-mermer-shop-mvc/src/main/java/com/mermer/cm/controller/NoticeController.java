@@ -12,6 +12,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -211,4 +212,18 @@ public class NoticeController {
 		return result;
 	}
 	
+	
+	/* 특정 공지사항에 대한 댓글 단건 수정 */
+	@DeleteMapping("/{id}/reply/{replyId}")
+	public ResponseEntity deleteNoticeReply(HttpServletRequest req,
+											@PathVariable Long id,
+											@PathVariable Long replyId,
+											@CurrentUser Account account
+	) 
+	{
+
+		ResponseEntity result = noticeService.deleteNoticeReply(id, replyId, account);
+		
+		return result;
+	}
 }

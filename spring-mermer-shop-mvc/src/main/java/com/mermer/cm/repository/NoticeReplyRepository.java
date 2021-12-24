@@ -11,6 +11,8 @@
  */
 package com.mermer.cm.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,6 +57,6 @@ public interface NoticeReplyRepository extends JpaRepository<Reply, Long> {
 			          , 
 			  countQuery = "select * from reply where use_yn = 'Y' and notice_id = ?1 and id = ?2"
 			  )
-	Reply getByIdAndNotice(Long noticeId, Long replyId);
+	Optional<Reply> getByIdAndNotice(Long noticeId, Long replyId);
 
 }
