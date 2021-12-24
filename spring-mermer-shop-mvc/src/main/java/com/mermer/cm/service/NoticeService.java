@@ -310,7 +310,6 @@ public class NoticeService {
 		if(optionalNotice.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		Notice notice = optionalNotice.get();
 		Reply result = noticeReplyRepository.getByIdAndNotice(noticeId, replyId);
 		
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(replyId);
@@ -320,6 +319,38 @@ public class NoticeService {
 											.add(Link.of("/docs/index.html#resources-get-notice-reply").withRel("profile"))
 											.add(selfLinkBuilder.withRel("update-notice-reply"));
 		
+		return ResponseEntity.ok(replyResource);
+	}
+
+
+	/**
+	 * @method updateNoticeReply
+	 * @param id
+	 * @param replyId
+	 * @param replyDto
+	 * @return ResponseEntity  
+	 * 
+	 * @description 댓글 단건 수정 
+	 */
+	public ResponseEntity updateNoticeReply(Long noticeId, Long replyId, ReplyDto replyDto) {
+
+		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
+		if(optionalNotice.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Reply reply = noticeReplyRepository.getByIdAndNotice(noticeId, replyId);
+		
+		modelMapper.map(replyDto, reply);
+		
+		Reply result = noticeReplyRepository.save(reply);
+		
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(replyId);
+		
+		EntityModel<Reply> replyResource = NoticeResource.of(result)
+											.add((selfLinkBuilder).withSelfRel())
+											.add(Link.of("/docs/index.html#resources-update-notice-reply").withRel("profile"))
+											;
 		return ResponseEntity.ok(replyResource);
 	}
 

@@ -611,10 +611,65 @@ public class NoticeContollerTest extends BaseTest {
 					fieldWithPath("mdfer").description("modified account ID of new notice")
 					
 				)
-			
 		))
 		;
 	}
+	
+	@Test
+	@DisplayName("Notice 댓글 단건 수정")
+	public void updateNoticeReply() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		//공지사항 글작성
+		Notice notice = generateNotice(account);
+		
+		Reply reply = generateReply(1, notice, account);
+		
+		String context = "modified-complete";
+		ReplyDto replyDto = ReplyDto.builder()
+							.content(context)
+							.build();
+				
+		mockMvc.perform(put("/api/notice/{id}/reply/{replyId}", notice.getId(), reply.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objMapper.writeValueAsString(replyDto))
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("content").value(context))
+		.andDo(document("update-notice-reply", links(
+				linkWithRel("self").description("link to self"),
+			    linkWithRel("profile").description("link to profile")
+			),
+			requestHeaders(
+				headerWithName(HttpHeaders.ACCEPT).description("accept header")
+			),
+			responseHeaders(
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+			),
+			relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+					//response only
+					fieldWithPath("id").description("Id of new notice"),
+											
+					//request +
+					fieldWithPath("content").description("content of new notice"),
+					fieldWithPath("parent").description("parent reply of this reply"),
+					fieldWithPath("writerIp").description("writer IP Port of new notice"),
+					fieldWithPath("instDtm").description("insert DateTime of new notice"),
+					fieldWithPath("mdfDtm").description("modified DateTime of new notice"),
+					fieldWithPath("inster").description("insert account ID of new notice"),
+					fieldWithPath("mdfer").description("modified account ID of new notice")
+					
+				)
+		))
+		;
+	}
+	
 	
 	
 	/**

@@ -63,7 +63,7 @@ public class NoticeController {
 	{
 		if(errors.hasErrors()) return badRequest(errors);
 		
-		noticeValidator.noticeValidate(noticeDto, errors);
+		noticeValidator.noticeValidate(noticeDto, account, errors);
 		if(errors.hasErrors()) return badRequest(errors);
 		
 
@@ -109,7 +109,7 @@ public class NoticeController {
 		log.debug("GET /notice/1 HTTP/1.1");
 		if(errors.hasErrors())return badRequest(errors);
 		
-		noticeValidator.noticeValidate(noticeDto, errors);
+		noticeValidator.noticeValidate(noticeDto, account, errors);
 		if(errors.hasErrors())return badRequest(errors);
 
 		//현재 작성하는 ip주소 세팅
@@ -178,7 +178,7 @@ public class NoticeController {
 		return result;
 	}
 	
-	/* 특정 공지사항에 대한 댓글 전체 조회 */
+	/* 특정 공지사항에 대한 댓글 단건 조회 */
 	@GetMapping("/{id}/reply/{replyId}")
 	public ResponseEntity getNoticeReply(HttpServletRequest req,
 											@PathVariable Long id,
@@ -187,6 +187,26 @@ public class NoticeController {
 	) 
 	{
 		ResponseEntity result = noticeService.getNoticeReply(id, replyId);
+		
+		return result;
+	}
+	
+	/* 특정 공지사항에 대한 댓글 단건 수정 */
+	@PutMapping("/{id}/reply/{replyId}")
+	public ResponseEntity updateNoticeReply(HttpServletRequest req,
+											@PathVariable Long id,
+											@PathVariable Long replyId,
+											@RequestBody @Validated ReplyDto replyDto,
+											Errors errors,
+											@CurrentUser Account account
+	) 
+	{
+		//validation
+		if(errors.hasErrors())return badRequest(errors);
+		
+		noticeValidator.replyValidation(replyDto, account, errors);
+		if(errors.hasErrors())return badRequest(errors);
+		ResponseEntity result = noticeService.updateNoticeReply(id, replyId, replyDto);
 		
 		return result;
 	}

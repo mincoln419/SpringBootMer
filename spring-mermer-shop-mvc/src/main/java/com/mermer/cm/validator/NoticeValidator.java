@@ -4,7 +4,9 @@ package com.mermer.cm.validator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
+import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.NoticeDto;
+import com.mermer.cm.entity.dto.ReplyDto;
 
 /**
  * @packageName : com.mermer.cm.validator
@@ -26,7 +28,19 @@ public class NoticeValidator {
 	 * @param errors
 	 * void
 	 */
-	public void noticeValidate(NoticeDto noticeDto, Errors errors) {
+	public void noticeValidate(NoticeDto noticeDto, Account account, Errors errors) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @method replyValidation
+	 * @param replyDto
+	 * @param errors
+	 * void
+	 * @description 
+	 */
+	public void replyValidation(ReplyDto replyDto, Account account, Errors errors) {
 		// TODO Auto-generated method stub
 		
 	}
