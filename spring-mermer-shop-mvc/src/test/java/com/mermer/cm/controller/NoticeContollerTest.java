@@ -332,7 +332,7 @@ public class NoticeContollerTest extends BaseTest {
 		
 		//When
 		//해당 계정으로 공지사항 글 작성
-		String newtitle = "Notice Test modified";
+		
 		StringBuilder sb = new StringBuilder();
 		File f = new File("src/test/resource/test2.html");
 		BufferedReader br = new BufferedReader(
@@ -344,7 +344,7 @@ public class NoticeContollerTest extends BaseTest {
 			sb.append(str);
 		}
 		br.close();
-		
+		String newtitle = "Notice Test modified";
 		String changed = "changed";
 		NoticeDto noticeDto = NoticeDto.builder()
 				.title(newtitle)
@@ -389,6 +389,36 @@ public class NoticeContollerTest extends BaseTest {
 						
 					)
 			));
+	}
+	
+	@Test
+	@DisplayName("Notice 권한없는 사람 update")
+	public void updateNotice_UnAuth_401() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		Account unauth = generateAccount_arg("unauth", "pass");
+		//공지사항 글작성
+		Notice notice = generateNotice(unauth);
+		
+		String newtitle = "Notice Test modified";
+		String changed = "changed";
+		NoticeDto noticeDto = NoticeDto.builder()
+				.title(newtitle)
+				.content(changed)
+				.build();
+				
+		mockMvc.perform(put("/api/notice/{id}", notice.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objMapper.writeValueAsString(noticeDto))
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+		.andDo(print())
+		.andExpect(status().is(401))
+		;
 	}
 	
 	@Test
