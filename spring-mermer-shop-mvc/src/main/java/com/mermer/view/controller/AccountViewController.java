@@ -20,11 +20,11 @@ public class AccountViewController {
 
 	@GetMapping("/login")
 	public String login() {
-		return "auth/login"; // 설정된 경로의 login.jsp 또는 login.html 화면으로 리턴 
+		return "/auth/login"; // 설정된 경로의 login.jsp 또는 login.html 화면으로 리턴 
 	}
 	
 	@GetMapping("/sign-up")
 	public String signUp() {
-		return "auth/signUp"; // 설정된 경로의 login.jsp 또는 login.html 화면으로 리턴 
+		return "/auth/signUp"; // 설정된 경로의 login.jsp 또는 login.html 화면으로 리턴 
 	}
 }
