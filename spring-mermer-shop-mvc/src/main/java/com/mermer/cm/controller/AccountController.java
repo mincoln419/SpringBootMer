@@ -2,12 +2,15 @@ package com.mermer.cm.controller;
 
 import static com.mermer.cm.exception.ErrorsResource.badRequest;
 import static com.mermer.cm.exception.ErrorsResource.unAuthorizedRequest;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.io.Serializable;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -29,6 +32,7 @@ import com.mermer.cm.exception.ErrorsResource;
 import com.mermer.cm.service.AccountService;
 import com.mermer.cm.util.AccountAdapter;
 import com.mermer.cm.util.CurrentUser;
+import com.mermer.cm.util.DevUtil;
 import com.mermer.cm.validator.AccountValidator;
 
 import antlr.Parser;
@@ -76,7 +80,10 @@ public class AccountController {
 				+ account.getLoginId() + ","
 				+ account.getRole().contains(AccountRole.ADMIN)
 				);
-		if(!account.getRole().contains(AccountRole.ADMIN))return unAuthorizedRequest();
+		if(!account.getRole().contains(AccountRole.ADMIN)) {
+			Link link = linkTo(methodOn(IndexController.class)).withRel("index");
+			return unAuthorizedRequest(link);
+		}
 		
 		ResponseEntity result = accountService.getAccountAll(pageable, 
 				 assembler);

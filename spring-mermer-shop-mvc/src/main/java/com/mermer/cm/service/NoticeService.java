@@ -34,6 +34,7 @@ import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.cm.resource.AccountResource;
 import com.mermer.cm.resource.NoticeReplyResource;
 import com.mermer.cm.resource.NoticeResource;
+import com.mermer.cm.util.DevUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,17 +63,7 @@ public class NoticeService {
 	
 	
 	
-	/**
-	 * @method getClassLink
-	 * @param accountId
-	 * @return
-	 * WebMvcLinkBuilder
-	 * @description 
-	 */
-	private WebMvcLinkBuilder getClassLink(Long noticeId) {
 
-		return linkTo(NoticeController.class).slash(noticeId);
-	}
 	
 	
 	/**
@@ -88,7 +79,7 @@ public class NoticeService {
 		Notice result = noticeRepository.save(notice);
 		
 		//TODO 게시글의 댓글 정보 link return  
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(result.getId());
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, result.getId());
 		URI createdUri = selfLinkBuilder.toUri();
 	
 		EntityModel<Optional> noticeResource = NoticeResource.of(Optional.of(result));//생성자 대신 static of 사용
@@ -147,7 +138,7 @@ public class NoticeService {
 		if(optionalNotice.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
 		Notice notice = optionalNotice.get();
 		
 		//한번 읽을 때마다 조회수 1증가
@@ -192,7 +183,7 @@ public class NoticeService {
 	
 		noticeRepository.save(notice);
 		
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
 				.add((selfLinkBuilder).withSelfRel())
 				.add(Link.of("/docs/index.html#resources-notice-update").withRel("profile"));
@@ -235,7 +226,7 @@ public class NoticeService {
 			noticeReplyRepository.save(reply);
 		}
 		
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId);
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
 				.add((selfLinkBuilder).withSelfRel())
 				.add(Link.of("/docs/index.html#resources-notice-delete").withRel("profile"));
@@ -265,7 +256,7 @@ public class NoticeService {
 		
 		
 		/* 링크정보 hateous */
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply");
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
 		URI createdUri = selfLinkBuilder.toUri();
 	
 		EntityModel<Optional> noticeReplyResource = NoticeReplyResource.of(Optional.of(result));//생성자 대신 static of 사용
@@ -303,7 +294,7 @@ public class NoticeService {
 		reply.setParent(optionalNoticeReply.get());
 		
 		Reply result = noticeReplyRepository.save(reply);
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(result.getId());
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId).slash("reply").slash(result.getId());
 		URI createdUri = selfLinkBuilder.toUri();
 	
 		EntityModel<Optional> noticeReplyResource = NoticeReplyResource.of(Optional.of(result));//생성자 대신 static of 사용
@@ -363,7 +354,7 @@ public class NoticeService {
 		}
 		Reply result = noticeReplyRepository.getByIdAndNotice(noticeId, replyId).get();
 		
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(replyId);
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId, "reply").slash(replyId);
 				
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add((selfLinkBuilder).withSelfRel())
@@ -396,7 +387,7 @@ public class NoticeService {
 		
 		Reply result = noticeReplyRepository.save(reply);
 		
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply").slash(replyId);
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId, "reply").slash(replyId);
 		
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add((selfLinkBuilder).withSelfRel())
@@ -439,7 +430,7 @@ public class NoticeService {
 			noticeReplyRepository.save(child);
 		}
 		
-		WebMvcLinkBuilder selfLinkBuilder = getClassLink(noticeId).slash("reply");
+		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId, "reply");
 		
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add(selfLinkBuilder.slash(replyId).withSelfRel())

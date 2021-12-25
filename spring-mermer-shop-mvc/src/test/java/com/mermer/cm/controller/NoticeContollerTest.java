@@ -721,6 +721,37 @@ public class NoticeContollerTest extends BaseTest {
 	}
 	
 	@Test
+	@DisplayName("Notice 댓글 권한없는 사람 update")
+	public void updateNoticeReply_UnAuth_401() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		Account unauth = generateAccount_arg("unauth", "pass");
+		//공지사항 글작성
+		Notice notice = generateNotice(unauth);
+		
+		Reply reply = generateReply(1, notice, unauth);
+		
+		String context = "modified-complete";
+		ReplyDto replyDto = ReplyDto.builder()
+							.content(context)
+							.build();
+				
+		mockMvc.perform(put("/api/notice/{id}/reply/{replyId}", notice.getId(), reply.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objMapper.writeValueAsString(replyDto))
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+		.andDo(print())
+		.andExpect(status().is(401))
+		;
+	}
+	
+	
+	@Test
 	@DisplayName("Notice 댓글 단건 삭제")
 	public void deleteNoticeReply() throws Exception {
 		//Given
@@ -851,6 +882,24 @@ public class NoticeContollerTest extends BaseTest {
 		return account;
 		
 	}
+	
+	//임의의 이름,비번으로 계정 만들기 
+	private Account generateAccount_arg(String username, String password) {
+
+		Account account = Account.builder()
+				.loginId(username)
+				.username(username)
+				.hpNum("01012345678")
+				.email("admin@naver.com")
+				.pass(password)
+				.role(Set.of(AccountRole.ADMIN, AccountRole.USER))
+				.build();
+	
+		account = accountService.saveAccount(account);
+		return account;
+		
+	}
+	
 	
 	/**
 	 * @method generateNotice

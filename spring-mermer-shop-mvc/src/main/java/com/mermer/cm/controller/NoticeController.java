@@ -2,12 +2,14 @@
 package com.mermer.cm.controller;
 
 import static com.mermer.cm.exception.ErrorsResource.badRequest;
+import static com.mermer.cm.exception.ErrorsResource.unAuthorizedRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -28,6 +30,7 @@ import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.service.NoticeService;
 import com.mermer.cm.util.CurrentUser;
+import com.mermer.cm.util.DevUtil;
 import com.mermer.cm.validator.NoticeValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -219,14 +222,20 @@ public class NoticeController {
 		//validation
 		if(errors.hasErrors())return badRequest(errors);
 		
-		noticeValidator.replyValidation(replyDto, account, errors);
-		if(errors.hasErrors())return badRequest(errors);
+		noticeValidator.replyValidation(replyId, account, errors);
+		if(errors.hasErrors()) {
+			Link link = DevUtil.getClassLink(this.getClass(), id, "reply").withRel("get-notice-reply");
+			return unAuthorizedRequest(link);	
+		}
+		
 		ResponseEntity result = noticeService.updateNoticeReply(id, replyId, replyDto);
 		
 		return result;
 	}
 	
 	
+
+
 	/* 특정 공지사항에 대한 댓글 단건 수정 */
 	@DeleteMapping("/{id}/reply/{replyId}")
 	public ResponseEntity deleteNoticeReply(HttpServletRequest req,
@@ -240,4 +249,7 @@ public class NoticeController {
 		
 		return result;
 	}
+	
+	
+
 }

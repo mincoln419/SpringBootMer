@@ -1,12 +1,18 @@
 
 package com.mermer.cm.validator;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.mermer.cm.entity.Account;
+import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.entity.dto.ReplyDto;
+import com.mermer.cm.repository.NoticeReplyRepository;
 
 /**
  * @packageName : com.mermer.cm.validator
@@ -21,6 +27,9 @@ import com.mermer.cm.entity.dto.ReplyDto;
  */
 @Component
 public class NoticeValidator {
+	
+	@Autowired
+	private NoticeReplyRepository noticeReplyRepository;
 
 	/**
 	 * @methond noticeValidate
@@ -40,8 +49,15 @@ public class NoticeValidator {
 	 * void
 	 * @description 
 	 */
-	public void replyValidation(ReplyDto replyDto, Account account, Errors errors) {
-		// TODO Auto-generated method stub
+	public void replyValidation(Long replyId, Account account, Errors errors) {
+
+		Optional<Reply> result = noticeReplyRepository.findById(replyId);
+		
+		if(result.isEmpty()) {
+			errors.reject("NotFound","수정할 수 있는 ");
+		}else if(result.get().getInster().getId().compareTo(account.getId()) !=0) {
+			errors.reject("UnAuthorized","수정 권한이 없습니다");
+		}
 		
 	}
 
