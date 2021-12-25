@@ -1,14 +1,4 @@
-/**
- * @packageName : com.mermer.cm.exception
- * @fileName : ErrorsIpml.java 
- * @author : Mermer 
- * @date : 2021.12.20 
- * @description :
- * =========================================================== 
- * DATE AUTHOR NOTE 
- * ----------------------------------------------------------- 
- * 2021.12.20 Mermer 최초 생성
- */
+
 package com.mermer.cm.exception;
 
 import java.util.ArrayList;
@@ -24,8 +14,16 @@ import org.springframework.validation.ObjectError;
 
 import lombok.Getter;
 
-/* 
- * @description: 
+/**
+ * @packageName : com.mermer.cm.exception
+ * @fileName : ErrorsIpml.java 
+ * @author : Mermer 
+ * @date : 2021.12.20 
+ * @description : parameter에 error가 없을 때 return 용 errors handling
+ * =========================================================== 
+ * DATE AUTHOR NOTE 
+ * ----------------------------------------------------------- 
+ * 2021.12.20 Mermer 최초 생성
  */
 @Getter
 public class ErrorsIpml extends AbstractErrors {
@@ -36,11 +34,9 @@ public class ErrorsIpml extends AbstractErrors {
 	/**
 	 * 
 	 */
-	public ErrorsIpml() {
+	public ErrorsIpml(String path) {
 		fieldErrors = new ArrayList<>();
-		doSetNestedPath("account");
-		FieldError error =  new FieldError("accountRole", "account", "error");
-		fieldErrors.add(error);
+		doSetNestedPath(path);
 	}
 	
 	@Override
@@ -54,15 +50,13 @@ public class ErrorsIpml extends AbstractErrors {
 	}
 
 	@Override
-	public void reject(String errorCode, Object[] errorArgs, String defaultMessage) {
-		// TODO Auto-generated method stub
-		
+	public void reject(String errorCode, String defaultMessage) {
+			fieldErrors.add(new FieldError(errorCode, errorCode, defaultMessage));
 	}
 
 	@Override
-	public void rejectValue(String field, String errorCode, Object[] errorArgs, String defaultMessage) {
-
-		
+	public void rejectValue(String field, String errorCode,  String defaultMessage) {
+		fieldErrors.add(new FieldError(field, errorCode, defaultMessage));
 	}
 
 	@Override
@@ -85,6 +79,22 @@ public class ErrorsIpml extends AbstractErrors {
 	@Override
 	public Object getFieldValue(String field) {
 		return fieldErrors.get(0).getField();
+	}
+
+	@Override
+	public void reject(String errorCode, Object[] errorArgs, String defaultMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void rejectValue(String field, String errorCode, Object[] errorArgs, String defaultMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public boolean hasErrors() {
+		return fieldErrors.size() > 0;
 	}
 	
 	

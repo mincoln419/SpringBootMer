@@ -210,12 +210,6 @@ public class NoticeService {
 		}
 		Notice notice = optionalNotice.get();
 		
-		//본인 작성한 글이 아닌경우
-		if(notice.getInster().getId() != account.getId()) {
-			//권한 없음 리턴
-			return ResponseEntity.status(401).build();
-		}
-		
 		notice.setUseYn(UseYn.N);
 		noticeRepository.save(notice);
 		
@@ -376,11 +370,6 @@ public class NoticeService {
 	 */
 	public ResponseEntity updateNoticeReply(Long noticeId, Long replyId, ReplyDto replyDto) {
 
-		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
-		if(optionalNotice.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
-
 		Reply reply = noticeReplyRepository.getByIdAndNotice(noticeId, replyId).get();
 		
 		modelMapper.map(replyDto, reply);
@@ -408,16 +397,7 @@ public class NoticeService {
 	@Transactional
 	public ResponseEntity deleteNoticeReply(Long noticeId, Long replyId, Account account) {
 
-		Optional<Notice> optionalNotice = noticeRepository.findById(noticeId);
-		if(optionalNotice.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
 		Reply reply = noticeReplyRepository.getByIdAndNotice(noticeId, replyId).get();
-		//본인 작성한 글이 아닌경우
-		if(reply.getInster().getId() != account.getId()) {
-			//권한 없음 리턴
-			return ResponseEntity.status(401).build();
-		}
 		//사용여부 N으로 변경
 		reply.setUseYn(UseYn.N);
 		

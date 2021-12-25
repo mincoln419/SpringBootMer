@@ -28,6 +28,7 @@ import com.mermer.cm.entity.Notice;
 import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.entity.dto.ReplyDto;
+import com.mermer.cm.exception.ErrorsIpml;
 import com.mermer.cm.service.NoticeService;
 import com.mermer.cm.util.CurrentUser;
 import com.mermer.cm.util.DevUtil;
@@ -67,10 +68,6 @@ public class NoticeController {
 	) 
 	{
 		if(errors.hasErrors()) return badRequest(errors);
-		
-		noticeValidator.noticeValidate(noticeDto, account, errors);
-		if(errors.hasErrors()) return badRequest(errors);
-		
 
 		Notice notice = modelMapper.map(noticeDto, Notice.class);
 		log.debug("POST /notice/new HTTP/1.1");
@@ -116,8 +113,12 @@ public class NoticeController {
 		log.debug("GET /notice/1 HTTP/1.1");
 		if(errors.hasErrors())return badRequest(errors);
 		
-		noticeValidator.noticeValidate(noticeDto, account, errors);
-		if(errors.hasErrors())return badRequest(errors);
+		noticeValidator.noticeValidate(id, account, errors);
+		if(errors.hasErrors()) {
+			Link link = DevUtil.getClassLink(this.getClass(), id, "reply").withRel("get-notice-reply");
+			return unAuthorizedRequest(link);	
+		}
+		
 
 		//현재 작성하는 ip주소 세팅
 		noticeDto.setWriterIp(req.getLocalAddr());
@@ -131,7 +132,13 @@ public class NoticeController {
 									   @CurrentUser Account account
 									  ) 
 	{
-
+		Errors errors = new ErrorsIpml("notice");
+		noticeValidator.noticeValidate(id, account, errors);
+		if(errors.hasErrors()) {
+			Link link = DevUtil.getClassLink(this.getClass(), id, "reply").withRel("get-notice-reply");
+			return unAuthorizedRequest(link);	
+		}
+		
 		return noticeService.deleteNotice(account, id);
 	}
 	
@@ -236,7 +243,7 @@ public class NoticeController {
 	
 
 
-	/* 특정 공지사항에 대한 댓글 단건 수정 */
+	/* 특정 공지사항에 대한 댓글 단건 삭제 */
 	@DeleteMapping("/{id}/reply/{replyId}")
 	public ResponseEntity deleteNoticeReply(HttpServletRequest req,
 											@PathVariable Long id,
@@ -244,7 +251,13 @@ public class NoticeController {
 											@CurrentUser Account account
 	) 
 	{
-
+		Errors errors = new ErrorsIpml("notice/reply");
+		noticeValidator.replyValidation(replyId, account, errors);
+		if(errors.hasErrors()) {
+			Link link = DevUtil.getClassLink(this.getClass(), id, "reply").withRel("get-notice-reply");
+			return unAuthorizedRequest(link);	
+		}
+		
 		ResponseEntity result = noticeService.deleteNoticeReply(id, replyId, account);
 		
 		return result;

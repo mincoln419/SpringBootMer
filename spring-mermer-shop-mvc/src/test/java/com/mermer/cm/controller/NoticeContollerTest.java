@@ -468,6 +468,34 @@ public class NoticeContollerTest extends BaseTest {
 		;
 	}
 	
+	@Test
+	@DisplayName("Notice 권한없는 사람 delete")
+	public void deleteNotice_UnAuth_401() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		Account unauth = generateAccount_arg("unauth", "pass");
+		//공지사항 글작성
+		Notice notice = generateNotice(unauth);
+		
+		String newtitle = "Notice Test modified";
+		String changed = "changed";
+		NoticeDto noticeDto = NoticeDto.builder()
+				.title(newtitle)
+				.content(changed)
+				.build();
+				
+		mockMvc.perform(delete("/api/notice/{id}", notice.getId())
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+		.andDo(print())
+		.andExpect(status().is(401))
+		;
+	}
+	
 	
 	@Test
 	@DisplayName("Notice 댓글 작성")
@@ -814,6 +842,36 @@ public class NoticeContollerTest extends BaseTest {
 		;
 	}
 	
+	
+	@Test
+	@DisplayName("Notice 댓글 권한없는 사람 delete")
+	public void deleteNoticeReply_UnAuth_401() throws Exception {
+		//Given
+		Account account = generateAccount();
+		//밖에서 account 꺼낼때는 parameter에 false
+		String token = getBearerToken(getAccessToken(false));
+		
+		Account unauth = generateAccount_arg("unauth", "pass");
+		//공지사항 글작성
+		Notice notice = generateNotice(unauth);
+		
+		Reply reply = generateReply(1, notice, unauth);
+		
+		String context = "modified-complete";
+		ReplyDto replyDto = ReplyDto.builder()
+							.content(context)
+							.build();
+				
+		mockMvc.perform(delete("/api/notice/{id}/reply/{replyId}", notice.getId(), reply.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objMapper.writeValueAsString(replyDto))
+						.accept(MediaTypes.HAL_JSON)
+						.header(HttpHeaders.AUTHORIZATION, token)
+				)
+		.andDo(print())
+		.andExpect(status().is(401))
+		;
+	}
 	
 	
 	/**

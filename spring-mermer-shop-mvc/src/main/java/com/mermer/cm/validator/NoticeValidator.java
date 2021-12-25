@@ -9,10 +9,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.mermer.cm.entity.Account;
+import com.mermer.cm.entity.Notice;
 import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.entity.dto.ReplyDto;
 import com.mermer.cm.repository.NoticeReplyRepository;
+import com.mermer.cm.repository.NoticeRepository;
 
 /**
  * @packageName : com.mermer.cm.validator
@@ -30,6 +32,8 @@ public class NoticeValidator {
 	
 	@Autowired
 	private NoticeReplyRepository noticeReplyRepository;
+	@Autowired
+	private NoticeRepository noticeRepository;
 
 	/**
 	 * @methond noticeValidate
@@ -37,8 +41,14 @@ public class NoticeValidator {
 	 * @param errors
 	 * void
 	 */
-	public void noticeValidate(NoticeDto noticeDto, Account account, Errors errors) {
-		// TODO Auto-generated method stub
+	public void noticeValidate(Long noticeId, Account account, Errors errors) {
+		Optional<Notice> result = noticeRepository.findById(noticeId);
+		
+		if(result.isEmpty()) {
+			errors.reject("NotFound","수정할 수 있는 공지사항 데이터가 없습니다 ");
+		}else if(result.get().getInster().getId().compareTo(account.getId()) !=0) {
+			errors.reject("UnAuthorized","수정 권한이 없습니다");
+		}
 		
 	}
 
@@ -54,7 +64,7 @@ public class NoticeValidator {
 		Optional<Reply> result = noticeReplyRepository.findById(replyId);
 		
 		if(result.isEmpty()) {
-			errors.reject("NotFound","수정할 수 있는 ");
+			errors.reject("NotFound","수정할 수 있는 공지사항 댓글이 없습니다 ");
 		}else if(result.get().getInster().getId().compareTo(account.getId()) !=0) {
 			errors.reject("UnAuthorized","수정 권한이 없습니다");
 		}
