@@ -13,6 +13,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.service.AccountService;
@@ -44,6 +45,12 @@ public class AppConfig {
 			.setMatchingStrategy(MatchingStrategies.STRICT);
 		return mapper;
 	}
+	
+	@Bean
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
+	}
+	
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {

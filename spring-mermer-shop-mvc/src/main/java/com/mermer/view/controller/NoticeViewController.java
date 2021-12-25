@@ -1,12 +1,20 @@
 
 package com.mermer.view.controller;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.mermer.cm.entity.Notice;
 
 /**
  * @packageName : com.mermer.view.controller
@@ -24,9 +32,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class NoticeViewController {
 	
 	@GetMapping
-	public String noticeList() {
+	public ModelAndView noticeList() throws MalformedURLException {
 	
-		return "/notice/list";
+		//URL uri = new URL("/api/notice");
+		
+		
+		return new ModelAndView("/notice/list");
 	}
 	
 	@GetMapping("/{id}")

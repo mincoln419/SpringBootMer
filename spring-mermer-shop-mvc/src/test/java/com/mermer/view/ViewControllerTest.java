@@ -3,6 +3,7 @@ package com.mermer.view;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,13 +12,16 @@ import java.net.http.HttpRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -44,6 +48,7 @@ public class ViewControllerTest extends BaseTest {
 	MockMvc mockMvc;
 
 	@Test
+	@DisplayName("view 연동 테스트 ")
 	public void viewCalling() throws Exception {
 		mockMvc.perform(get("/"))
 			.andDo(print())
@@ -61,4 +66,16 @@ public class ViewControllerTest extends BaseTest {
 		;
 	}
 	
+	@Test
+	@DisplayName("로그인 api 연동을 화면에서부터 진행한 경우")
+	public void loginViewRequest() throws Exception {
+		mockMvc.perform(post("/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				)
+			.andDo(print())
+			.andExpect(status().isOk())
+			;
+		
+	}
 }
