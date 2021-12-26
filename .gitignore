@@ -113,4 +113,15 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+
+node_modules
+bower_components
+
 # End of https://www.toptal.com/developers/gitignore/api/java,eclipse,maven

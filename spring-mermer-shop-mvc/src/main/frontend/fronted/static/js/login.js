@@ -2,7 +2,7 @@ const inputs = document.querySelectorAll(".input");
 
 
 function addcl(){
-	let parent = this.parentNode.parentNode;
+	let parent = this.parentNode.parentNode; 
 	parent.classList.add("focus");
 }
 
@@ -19,3 +19,6 @@ inputs.forEach(input => {
 	input.addEventListener("blur", remcl);
 });
 
+const submit = document.getElementById("loginButton");
+
+alert(submit);
