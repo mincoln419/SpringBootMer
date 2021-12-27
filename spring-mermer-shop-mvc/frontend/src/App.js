@@ -12,7 +12,7 @@ function App() {
 
     useEffect(() => {
         axios.get('/api/notice')
-            .then((response) => setMessage("0" + response))
+            .then((response) => setMessage(response.data._links.self.href))
     })
 
     return (
