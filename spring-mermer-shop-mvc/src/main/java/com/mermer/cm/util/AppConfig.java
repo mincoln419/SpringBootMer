@@ -14,8 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.mermer.cm.entity.Account;
+import com.mermer.cm.entity.Notice;
 import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.service.AccountService;
+import com.mermer.cm.service.NoticeService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,6 +61,9 @@ public class AppConfig {
 			
 			@Autowired
 			AppProperties appProperties;
+			
+			@Autowired
+			NoticeService noticeService;
 
 			@Override
 			public void run(ApplicationArguments args) throws Exception {	
@@ -73,6 +78,13 @@ public class AppConfig {
 				log.debug("guest::" + appProperties.getGuestName());
 				
 				accountService.saveAccount(admin);
+				
+				Notice notice = Notice.builder()
+						.title("test1- title")
+						.content("test content")
+						.inster(admin)
+						.build();
+				noticeService.createNotice(notice);
 				
 				
 				Account user = Account.builder()

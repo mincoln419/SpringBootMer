@@ -8,7 +8,7 @@ import Sidebar from './layouts/Sidebar.js';
 import Headers from './layouts/Headers.js';
 import Notice from './components/Notice';
 import Login from './components/Login';
-import Index from './components/Index';
+import SignUp from './components/SignUp';
 import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 
 const {SubMenu} = Menu;
@@ -19,10 +19,8 @@ function App() {
 
     useEffect(() => {
         axios.get('/api/notice')
-            .then((response) => setMessage(response.data._links.self.href))
+            .then((response) => setMessage(response.data._embedded.tupleBackedMapList[0].title))
     })
-
-    
 
     return (
         <BrowserRouter>
@@ -30,11 +28,19 @@ function App() {
             <Sidebar />
             <Layout className="site-layout" style={{ marginLeft: 200 }}>
                 <Headers />
-                <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+                <Content
+                    className="site-layout-background"
+                    style={{
+                            padding: 24,
+                            margin: '24px 64px',
+                            minHeight: 280,
+                            
+                            verticalAlign:"left"
+                        }}>
                      <Routes>
-                        <Route path = "/" element={<Index message = {message}  />}/>
                         <Route path = "/notice" element={<Notice />}/>
                         <Route path = "/login" element={<Login />}/>
+                        <Route path = "/sign-up" element={<SignUp/>}/>
                      </Routes>
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
