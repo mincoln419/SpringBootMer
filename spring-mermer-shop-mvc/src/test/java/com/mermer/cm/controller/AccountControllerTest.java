@@ -217,7 +217,7 @@ public class AccountControllerTest extends BaseTest{
 		String name = "mermer";
 		String pass = "pass";
 		AccountDto accountDto = AccountDto.builder()
-				.loginId(name)
+				.login(name)
 				.pass(pass)
 				.username(name)
 				.hpNum("01012345656")
@@ -250,7 +250,7 @@ public class AccountControllerTest extends BaseTest{
 				),
 				requestFields(
 					fieldWithPath("username").description("User name of new account"),
-					fieldWithPath("loginId").description("login ID of new account"),
+					fieldWithPath("login").description("login ID of new account"),
 					fieldWithPath("pass").description("password for login"),
 					fieldWithPath("email").description("User email of new account"),
 					fieldWithPath("hpNum").description("User cellphone number of new account"),
@@ -266,7 +266,7 @@ public class AccountControllerTest extends BaseTest{
 						fieldWithPath("id").description("Unique key of new account in system"),
 												
 						//request +
-						fieldWithPath("loginId").description("login ID of new account"),
+						fieldWithPath("login").description("login ID of new account"),
 						fieldWithPath("username").description("User name of new account"),
 						fieldWithPath("instDtm").description("date time of created Account"),
 						fieldWithPath("mdfDtm").description("date time of modified Account information"),
@@ -394,7 +394,7 @@ public class AccountControllerTest extends BaseTest{
 		String username = appProperties.getUserName(); 
 		String password = appProperties.getUserPass();
 		Account account = Account.builder()
-				.loginId(username)
+				.login(username)
 				.username(username)
 				.hpNum("01012345678")
 				.email("admin@naver.com")
@@ -437,7 +437,7 @@ public class AccountControllerTest extends BaseTest{
 		String username = appProperties.getAdminName(); 
 		String password = appProperties.getAdminPass();
 		Account account = Account.builder()
-				.loginId(username)
+				.login(username)
 				.username(username)
 				.hpNum("01012345678")
 				.email("admin@naver.com")
