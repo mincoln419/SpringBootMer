@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Layout, Menu } from 'antd';
 import {UserOutlined, FileDoneOutlined, TeamOutlined} from '@ant-design/icons';
+import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 
 const {SubMenu} = Menu;
 const {Header, Content, Sider, Footer} = Layout;
@@ -25,7 +26,7 @@ const Sidebar = (props) => {
                             key="sub1"
                             title={<span><UserOutlined /><span>User</span></span>}
                         >
-                            <Menu.Item key="3">Tom</Menu.Item>
+                            <Link to="/notice"><Menu.Item key="3">Notice</Menu.Item></Link>
                             <Menu.Item key="4">Bill</Menu.Item>
                             <Menu.Item key="5">Alex</Menu.Item>
                         </SubMenu>

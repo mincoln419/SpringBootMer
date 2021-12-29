@@ -1,10 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
+const React = require('react');
+const {useEffect, useState} = require('react');
+const axios = require('axios');
 import {Layout, Menu } from 'antd';
 import {UserOutlined, FileDoneOutlined, TeamOutlined} from '@ant-design/icons';
 import './App.css';
-import Sidebar from './components/Sidebar.js';
-import Headers from './components/Headers.js';
+import Sidebar from './layouts/Sidebar.js';
+import Headers from './layouts/Headers.js';
+import Notice from './components/Notice';
+import Login from './components/Login';
+import Index from './components/Index';
+import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 
 const {SubMenu} = Menu;
 const {Header, Content, Sider, Footer} = Layout;
@@ -17,21 +22,25 @@ function App() {
             .then((response) => setMessage(response.data._links.self.href))
     })
 
+    
+
     return (
+        <BrowserRouter>
         <Layout style={{ minHeight: '100vh' }}>
             <Sidebar />
             <Layout className="site-layout" style={{ marginLeft: 200 }}>
                 <Headers />
                 <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-                    <div className="site-layout-background" style={{ padding: 24, textAlign: 'center' }}>
-                        <br />
-                        {message}
-                        <br />
-                    </div>
+                     <Routes>
+                        <Route path = "/" element={<Index message = {message}  />}/>
+                        <Route path = "/notice" element={<Notice />}/>
+                        <Route path = "/login" element={<Login />}/>
+                     </Routes>
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
             </Layout>
         </Layout>
+        </BrowserRouter>
     );
 }
 

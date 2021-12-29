@@ -44,9 +44,9 @@ const config = {
                     minifyCSS: true,
                 },
             template: './static/index.html',
-            title: 'Spring Boot + React.js',
-            description: `Spring Boot + React.js Example`,
-            url: 'https://ohjongsung.io',
+            title: '형량 계산기',
+            description: `형량 계산기 웹페이지`,
+            url: 'http://mermer-api.kr',
         })
     ]
 };
