@@ -1,7 +1,7 @@
 const React = require('react');
 const {useEffect, useState} = require('react');
 const axios = require('axios');
-import {Layout, Menu } from 'antd';
+import {Layout, Menu, Row, Col} from 'antd';
 import {UserOutlined, FileDoneOutlined, TeamOutlined} from '@ant-design/icons';
 import './App.css';
 import Sidebar from './layouts/Sidebar.js';
@@ -15,17 +15,11 @@ const {SubMenu} = Menu;
 const {Header, Content, Sider, Footer} = Layout;
 
 function App() {
-    const [message, setMessage] = useState('오늘');
-
-    useEffect(() => {
-        axios.get('/api/notice')
-            .then((response) => setMessage(response.data._embedded.tupleBackedMapList[0].title))
-    })
 
     return (
         <BrowserRouter>
         <Layout style={{ minHeight: '100vh' }}>
-            <Sidebar />
+        <Sidebar />
             <Layout className="site-layout" style={{ marginLeft: 200 }}>
                 <Headers />
                 <Content

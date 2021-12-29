@@ -1,16 +1,44 @@
 import React from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
+import Index from './Index';
+import axios from 'axios';
+const oauth = require('axios-oauth-client');
+const {useEffect, useState} = require('react');
 
 const Login = () => {
-    const onFinish = (values) => {
-      console.log('Success:', values);
-    };
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const onFinish = (data) => {
+        data.grant_type = 'password';
+      console.log('Success:', data);
+
+      axios.request({
+        url: "/oauth/token",
+        method: "post",
+        baseURL: "/",
+        auth: {
+          username: data.username,
+          password: data.password
+        },
+        data: {
+          "grant_type": "client_credentials",
+          "scope": "read write"    
+        }
+      }).then(function(res) {
+        console.log(res);  
+      });
+
+    }
   
     const onFinishFailed = (errorInfo) => {
       console.log('Failed:', errorInfo);
     };
   
     return (
+    <>
+        {isLoggedIn ? <Index/> :
+    
       <Form
         name="basic"
         labelCol={{
@@ -24,6 +52,7 @@ const Login = () => {
         }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
+        onSu
         autoComplete="off"
       >
         <Form.Item
@@ -74,6 +103,8 @@ const Login = () => {
           </Button>
         </Form.Item>
       </Form>
+        }
+      </>
     );
   };
   
