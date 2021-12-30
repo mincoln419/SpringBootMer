@@ -1,26 +1,19 @@
 import React from 'react';
-import { Form, Input, Button, Checkbox } from 'antd';
+React.useLayoutEffect = React.useEffect;
+import { Form, Input, Button, Checkbox, Typography, Divider } from 'antd';
 import Index from '.';
 import axios from 'axios';
+const { Title} = Typography;
 const {useEffect, useState} = require('react');
 
 const Login = () => {
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const onFinish = (data) => {
+    const onFinish = (data) => {//이미 e.preventDefault 적용이 되어있음.
         data.grant_type = 'password';
       console.log('Success:', data);
 
-/**
- *       HTTP Method = POST
-      Request URI = /oauth/token
-       Parameters = {username=[adminmermer020304191011], password=[adminmermer11012934567], grant_type=[password]}
-          Headers = [Authorization:"Basic bWVyQXBwMDIwMzA0MTkxMDExMjptZXJtZXIxMTAxMjkzNDU2NzE="]
-             Body = null
-    Session Attrs = {}
- * 
- * */
       const token = 'Basic ' + window.btoa("" + ':' + ""); //basic auth 생성 공통 프로토콜
       console.log(token);
       axios.request({
@@ -38,7 +31,9 @@ const Login = () => {
             grant_type: 'password'
         }
       }).then(function(res) {
-        console.log(res);  
+        console.log(res);
+        useState.accessToken
+        
       });
 
     }
@@ -48,9 +43,8 @@ const Login = () => {
     };
   
     return (
-    <>
+      <>
         {isLoggedIn ? <Index/> :
-    
       <Form
         name="basic"
         labelCol={{
@@ -67,6 +61,11 @@ const Login = () => {
         onSu
         autoComplete="off"
       >
+        <Typography>
+        <Title>로그인</Title>
+        <Divider style={{ borderWidth: 2, borderColor: 'black' }} />
+        </Typography>
+        
         <Form.Item
           label="Username"
           name="username"
