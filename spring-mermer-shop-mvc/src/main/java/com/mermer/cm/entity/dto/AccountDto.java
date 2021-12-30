@@ -37,7 +37,7 @@ import lombok.NoArgsConstructor;
 public class AccountDto {
 
 		@NotBlank
-		private String loginId;//loginId 규칙: 영어 + 숫자 13자 미만
+		private String login;//loginId 규칙: 영어 + 숫자 13자 미만
 		
 		@NotBlank
 		private String pass;//loginId 규칙: 영어 + 특수문자 + 숫자 13자 미만

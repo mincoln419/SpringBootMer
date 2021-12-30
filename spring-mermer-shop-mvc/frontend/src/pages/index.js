@@ -1,3 +1,5 @@
+import React from 'react';
+React.useLayoutEffect = React.useEffect;
 import { Typography, Divider } from 'antd';
 
 const { Title, Paragraph, Text, Link } = Typography;

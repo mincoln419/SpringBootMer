@@ -38,7 +38,7 @@ public class AccountEntityTest extends BaseTest{
 	static public Account getOneAccount(String name) {
 		
 		Account account = Account.builder()
-				.loginId(name)
+				.login(name)
 				.pass(name)
 				.username(name)
 				.role(Set.of(AccountRole.GOLD))
@@ -78,7 +78,7 @@ public class AccountEntityTest extends BaseTest{
 	 */
 	public static Account getOneAccount(String loginId, String pass) {
 		Account account = Account.builder()
-				.loginId(loginId)
+				.login(loginId)
 				.pass(pass)
 				.username(pass)
 				.role(Set.of(AccountRole.GOLD))

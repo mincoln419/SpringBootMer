@@ -77,7 +77,7 @@ public class AccountController {
 		log.debug("GET /account HTTP/1.1");
 		log.debug("CurrentUser::" 
 				+ account.getUsername() + ","
-				+ account.getLoginId() + ","
+				+ account.getLogin() + ","
 				+ account.getRole().contains(AccountRole.ADMIN)
 				);
 		if(!account.getRole().contains(AccountRole.ADMIN)) {

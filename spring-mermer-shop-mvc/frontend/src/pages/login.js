@@ -28,10 +28,9 @@ const Login = () => {
         method: "post",
         baseURL: "/",
         headers: {'Content-Type' : 'form-data'},
-        auth: {
+        auth: {//Basic Auth를 만들어주는 해더부분임
           username: 'merApp0203041910112',
-          password: 'mermer110129345671',
-          grant_type: 'password'
+          password: 'mermer110129345671'
         },
         params : {
             username: data.username,

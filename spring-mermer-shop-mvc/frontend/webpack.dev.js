@@ -15,6 +15,7 @@ const config =  {
         // dev 환경에서 cors 대응
         proxy: {
             '/api': 'http://localhost:8080',
+            '/oauth/token' : 'http://localhost:8080',
         }
     },
 }
