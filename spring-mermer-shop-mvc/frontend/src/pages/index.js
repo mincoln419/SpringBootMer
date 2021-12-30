@@ -8,6 +8,7 @@ const Index = () =>{
     return (
     <Typography>
       <Title>Introduction</Title>
+      <Divider style={{ borderWidth: 2, borderColor: 'black' }} />
       <Paragraph>
         In the process of internal desktop applications development, many different design specs and
         implementations would be involved, which might cause designers and developers difficulties and

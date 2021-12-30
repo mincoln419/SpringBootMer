@@ -5,17 +5,22 @@ import 'antd/dist/antd.css';
 import Headers from "../layouts/Headers";
 import Sidebars from "../layouts/Sidebars";
 import {Layout, Menu, Row, Col} from 'antd';
+import { useState } from 'react/cjs/react.development';
 const {SubMenu} = Menu;
 const {Header, Content, Sider, Footer} = Layout;
 
 
 const App = ({ Component }) => {
+
+    const [accessToken] = useState("");
+
     return (
         <>
+            <title>형량계산기</title>
             <Layout style={{ minHeight: '100vh' }}>
             <Sidebars/>
                 <Layout className="site-layout" style={{ marginLeft: 200 }}>
-                <Headers/>
+                <header><Headers/></header>
                 <Content
                     className="site-layout-background"
                     style={{
