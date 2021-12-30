@@ -15,7 +15,7 @@ const App = ({ Component }) => {
             <Layout style={{ minHeight: '100vh' }}>
             <Sidebars/>
                 <Layout className="site-layout" style={{ marginLeft: 200 }}>
-                <Headers/>
+                <header><Headers/></header>
                 <Content
                     className="site-layout-background"
                     style={{

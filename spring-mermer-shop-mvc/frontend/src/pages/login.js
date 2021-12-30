@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
-import Index from './Index';
+import Index from '.';
 import axios from 'axios';
 const {useEffect, useState} = require('react');
 
@@ -70,6 +70,7 @@ const Login = () => {
         <Form.Item
           label="Username"
           name="username"
+          autoComplete="on"
           rules={[
             {
               required: true,
@@ -83,6 +84,7 @@ const Login = () => {
         <Form.Item
           label="Password"
           name="password"
+          autoComplete="on"
           rules={[
             {
               required: true,
