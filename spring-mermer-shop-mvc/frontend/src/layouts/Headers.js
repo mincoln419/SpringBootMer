@@ -12,7 +12,7 @@ const Headers = (props) => {
      return (
          <>
         <Header className="site-layout-background" style={{ padding: 0 , alignmentBaseline:'right'}} >
-        <Menu mode="horizontal" defaultSelectedKeys={['2']}>
+        <Menu mode="horizontal" defaultSelectedKeys={['1']}>
         <Menu.Item key="1"><Link href="/"><a>Home</a></Link></Menu.Item>
         <Menu.Item key="2"><Link href="/login"><a>Login</a></Link></Menu.Item>
         <Menu.Item key="3"><Link href="/sign-up"><a>Sign Up</a></Link></Menu.Item>
