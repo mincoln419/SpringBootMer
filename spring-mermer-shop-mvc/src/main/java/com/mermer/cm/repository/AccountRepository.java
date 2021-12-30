@@ -10,7 +10,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
 	/**
 	 * @method findByLoginId
-	 * @param loginId
+	 * @param login
 	 * @return
 	 * Account
 	 * @description 

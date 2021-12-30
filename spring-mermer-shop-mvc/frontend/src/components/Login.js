@@ -2,7 +2,6 @@ import React from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
 import Index from './Index';
 import axios from 'axios';
-const oauth = require('axios-oauth-client');
 const {useEffect, useState} = require('react');
 
 const Login = () => {
@@ -13,17 +12,31 @@ const Login = () => {
         data.grant_type = 'password';
       console.log('Success:', data);
 
+/**
+ *       HTTP Method = POST
+      Request URI = /oauth/token
+       Parameters = {username=[adminmermer020304191011], password=[adminmermer11012934567], grant_type=[password]}
+          Headers = [Authorization:"Basic bWVyQXBwMDIwMzA0MTkxMDExMjptZXJtZXIxMTAxMjkzNDU2NzE="]
+             Body = null
+    Session Attrs = {}
+ * 
+ * */
+      const token = 'Basic ' + window.btoa("" + ':' + ""); //basic auth 생성 공통 프로토콜
+      console.log(token);
       axios.request({
         url: "/oauth/token",
         method: "post",
         baseURL: "/",
+        headers: {'Content-Type' : 'form-data'},
         auth: {
-          username: data.username,
-          password: data.password
+          username: 'merApp0203041910112',
+          password: 'mermer110129345671',
+          grant_type: 'password'
         },
-        data: {
-          "grant_type": "client_credentials",
-          "scope": "read write"    
+        params : {
+            username: data.username,
+            password: data.password,
+            grant_type: 'password'
         }
       }).then(function(res) {
         console.log(res);  
