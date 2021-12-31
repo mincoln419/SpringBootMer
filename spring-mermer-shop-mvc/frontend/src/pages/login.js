@@ -4,11 +4,11 @@ import { Form, Input, Button, Checkbox, Typography, Divider } from 'antd';
 import Index from '.';
 import axios from 'axios';
 const { Title} = Typography;
-const {useEffect, useState} = require('react');
+import { useDispatch } from 'react-redux';
+import { loginAction } from '../reducer'; 
 
 const Login = () => {
-
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const dispatch = useDispatch();
 
     const onFinish = (data) => {//이미 e.preventDefault 적용이 되어있음.
         data.grant_type = 'password';
@@ -16,24 +16,26 @@ const Login = () => {
 
       const token = 'Basic ' + window.btoa("" + ':' + ""); //basic auth 생성 공통 프로토콜
       console.log(token);
+
+      const name = data.loginId;
+
       axios.request({
-        url: "/oauth/token",
-        method: "post",
-        baseURL: "/",
-        headers: {'Content-Type' : 'form-data'},
-        auth: {//Basic Auth를 만들어주는 해더부분임
-          username: 'merApp0203041910112',
-          password: 'mermer110129345671'
+        'url': "/oauth/token",
+        'method': "post",
+        'baseURL': "/",
+        'headers': {'Content-Type' : 'form-data'},
+        'auth': {//Basic Auth를 만들어주는 해더부분임
+          'username': 'merApp0203041910112',
+          'password': 'mermer110129345671'
         },
-        params : {
-            username: data.username,
-            password: data.password,
-            grant_type: 'password'
+        'params' : {
+            'username': data.loginId,
+            'password': data.password,
+            'grant_type': 'password'
         }
       }).then(function(res) {
         console.log(res);
-        useState.accessToken
-        
+        dispatch(loginAction({name}));
       });
 
     }
@@ -44,7 +46,7 @@ const Login = () => {
   
     return (
       <>
-        {isLoggedIn ? <Index/> :
+        {false ? <Index/> :
       <Form
         name="basic"
         labelCol={{
@@ -58,7 +60,6 @@ const Login = () => {
         }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
-        onSu
         autoComplete="off"
       >
         <Typography>
@@ -67,13 +68,13 @@ const Login = () => {
         </Typography>
         
         <Form.Item
-          label="Username"
-          name="username"
+          label="Login Id"
+          name="loginId"
           autoComplete="on"
           rules={[
             {
               required: true,
-              message: 'Please input your username!',
+              message: 'Please input your Login Id!',
             },
           ]}
         >

@@ -1,8 +1,26 @@
-import React from 'react';
-
-import { List, Typography, Divider } from 'antd';
+import React, { Component} from 'react';
+React.useLayoutEffect = React.useEffect;
+import { Table, Tag, Space, Divider } from 'antd';
 import axios from 'axios';
-import { Component, useState } from 'react/cjs/react.development';
+
+const columns = [
+  {
+    title: 'id',
+    dataIndex: 'id',
+    key: 'id',
+    render: text => <a>{text}</a>,
+  },
+  {
+    title: 'title',
+    dataIndex: 'title',
+    key: 'title',
+  },
+  {
+    title: '등록시간',
+    dataIndex: 'instDtm',
+    key: 'instDtm',
+  }
+];
 
 export default class Notice extends Component{
     
@@ -20,19 +38,13 @@ export default class Notice extends Component{
         });
     }
 
+    
+
     render(){
         return (
   <>
-    <Divider orientation="left">Default Size</Divider>
-    <List
-      bordered
-      dataSource={this.state.data}
-      renderItem={item => (
-        <List.Item key={item.id}>
-          <Typography.Text mark>[ITEM]</Typography.Text> {item.title} {item.insterId}
-        </List.Item>
-      )}
-    />
+    <Divider orientation="left">공지사항</Divider>
+    <Table columns={columns} dataSource={this.state.data} key={this.state.data.id}/>
   </>
 );
 }

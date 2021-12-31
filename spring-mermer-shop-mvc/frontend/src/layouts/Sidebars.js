@@ -1,48 +1,51 @@
-import React, {useEffect, useState} from 'react';
-React.useEffectLayout = React.useEffect;
-import {Layout, Menu } from 'antd';
-import {UserOutlined, FileDoneOutlined, TeamOutlined} from '@ant-design/icons';
-import Link from 'next/link';
-const {SubMenu} = Menu;
-const {Header, Content, Sider, Footer} = Layout;
+import React  from 'react';
 
-const Sidebars = (props) => {
-    
-     return (
-            <Sider style={{
-                    overflow: 'auto',
-                    height: '100vh',
-                    position: 'fixed',
-                    left: 0,
-                }}>
-                    <div className="logo" />
-                    <Menu
-                        theme="dark"
-                        mode="inline"
-                        defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
-                    >
-                        <SubMenu
-                            key="sub1"
-                            title={<span><UserOutlined /><span>User</span></span>}
-                        >
-                            <Menu.Item key="3"><Link href="/notice"><a>Notice</a></Link></Menu.Item>
-                            <Menu.Item key="4">Bill</Menu.Item>
-                            <Menu.Item key="5">Alex</Menu.Item>
-                        </SubMenu>
-                        <SubMenu
-                            key="sub2"
-                            title={<span><TeamOutlined /><span>Team</span></span>}
-                        >
-                            <Menu.Item key="6">Team 1</Menu.Item>
-                            <Menu.Item key="8">Team 2</Menu.Item>
-                        </SubMenu>
-                        <Menu.Item key="9">
-                            <FileDoneOutlined/>
-                            <span>File</span>
-                        </Menu.Item>
-                    </Menu>
-                </Sider>
-                 )
-}
-export default Sidebars;
+import { Menu } from 'antd';
+import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import Link from "next/link";
+const { SubMenu } = Menu;
+
+	class Sidebars extends React.Component {
+		handleClick = e => {
+		  console.log('click ', e);
+		};
+	  
+		render() {
+		  return (
+			<Menu
+			  onClick={this.handleClick}
+			  style={{ width: 256,height:'90vh',overflow: 'auto',minWidth:256}}
+			  defaultSelectedKeys={['1']}
+			  defaultOpenKeys={['sub1']}
+			  mode="inline"
+			>
+			  <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
+				<Menu.ItemGroup key="g1" title="Item 1">
+				  <Menu.Item key="1"><Link href="/notice"><a>공지사항</a></Link></Menu.Item>
+				  <Menu.Item key="2">Option 2</Menu.Item>
+				</Menu.ItemGroup>
+				<Menu.ItemGroup key="g2" title="Item 2">
+				  <Menu.Item key="3">Option 3</Menu.Item>
+				  <Menu.Item key="4">Option 4</Menu.Item>
+				</Menu.ItemGroup>
+			  </SubMenu>
+			  <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Navigation Two">
+				<Menu.Item key="5">Option 5</Menu.Item>
+				<Menu.Item key="6">Option 6</Menu.Item>
+				<SubMenu key="sub3" title="Submenu">
+				  <Menu.Item key="7">Option 7</Menu.Item>
+				  <Menu.Item key="8">Option 8</Menu.Item>
+				</SubMenu>
+			  </SubMenu>
+			  <SubMenu key="sub4" icon={<SettingOutlined />} title="Navigation Three">
+				<Menu.Item key="9">Option 9</Menu.Item>
+				<Menu.Item key="10">Option 10</Menu.Item>
+				<Menu.Item key="11">Option 11</Menu.Item>
+				<Menu.Item key="12">Option 12</Menu.Item>
+			  </SubMenu>
+			</Menu>
+		  );
+		}
+	  }
+
+  export default Sidebars;

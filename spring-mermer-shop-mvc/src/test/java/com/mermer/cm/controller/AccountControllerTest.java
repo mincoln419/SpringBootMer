@@ -181,7 +181,7 @@ public class AccountControllerTest extends BaseTest{
 				),
 				requestFields(
 						//request
-						fieldWithPath("loginId").description("loginId for updated-account"),						
+						fieldWithPath("login").description("loginId for updated-account"),						
 						fieldWithPath("pass").description("password for login"),
 						fieldWithPath("username").description("User name of new account"),						
 						fieldWithPath("email").description("User email of new account"),
