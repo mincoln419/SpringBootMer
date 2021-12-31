@@ -6,9 +6,7 @@ import axios from 'axios';
 const { Title} = Typography;
 const {useEffect, useState} = require('react');
 
-const Login = () => {
-
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+const Login = ({setIsLoggedIn}) => {
 
     const onFinish = (data) => {//이미 e.preventDefault 적용이 되어있음.
         data.grant_type = 'password';
@@ -33,7 +31,7 @@ const Login = () => {
       }).then(function(res) {
         console.log(res);
         useState.accessToken
-        
+        setIsLoggedIn(true);
       });
 
     }
@@ -44,7 +42,7 @@ const Login = () => {
   
     return (
       <>
-        {isLoggedIn ? <Index/> :
+        {false ? <Index/> :
       <Form
         name="basic"
         labelCol={{
