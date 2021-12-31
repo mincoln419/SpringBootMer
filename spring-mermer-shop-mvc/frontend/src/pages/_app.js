@@ -1,23 +1,28 @@
-import React, { useState } from 'react';
-React.useEffectLayout = React.useEffect;
+import React from 'react';
+React.useLayoutEffect = React.useEffect;
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import Link from 'next/link';
 import 'antd/dist/antd.css';
 import Sidebars from "../layouts/Sidebars";
 import { Layout, Row, Col, Avatar, Input, Menu, Dropdown, Icon, Badge, Button } from 'antd';
 import { DownOutlined , UserOutlined} from '@ant-design/icons';
 const {Header, Content, Sider, Footer} = Layout;
-
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutAction } from '../reducer';
+import wrapper from '../store/configureStore';
 
 
 
 const App = ({ Component }) => {
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector((state) => {
+        console.log(state);
+        return state.user.isLoggedIn;
+    });
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [token, setToken] = useState([""]);
-
-    const logout = () =>{
-        setIsLoggedIn(false);
+    function logout() {
+        dispatch(logoutAction());
     }
 
     const menu = (
@@ -32,12 +37,6 @@ const App = ({ Component }) => {
         </Menu>
         </>
     );
-
-    
-
-    const getValue = (value) => {
-        //const [value] = useState([value]);
-    }
 
     return (
         <>
@@ -71,15 +70,19 @@ const App = ({ Component }) => {
                             <Sidebars />
                         </Sider>
                         <Content style={{ marginLeft: '5%', height: '86vh', paddingRight: '2%', overflow: 'auto', textAlign: 'center' }}>
-                            <Component isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+                            <Component />
                         </Content>
                     </Layout>
                     <Footer style={{ backgroundColor: '#001529', position: 'fixed', bottom: 0, width: '100vw', minWidth: '1000px', textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>
                     <a href="http://www.mermer.kr" target={'_blank'}>©2021 Created by Mermer</a>
                     </Footer>
-                </Layout>
+            </Layout>
         </>
     );
 }
 
-export default App;
+App.propTypes = {
+    Component: PropTypes.elementType.isRequired,
+  };
+
+export default wrapper.withRedux(App);

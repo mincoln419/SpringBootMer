@@ -1,45 +1,51 @@
 import React  from 'react';
 
-import Link from 'next/link';
-import { Menu, Icon } from 'antd';
+import { Menu } from 'antd';
+import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import Link from "next/link";
+const { SubMenu } = Menu;
 
+	class Sidebars extends React.Component {
+		handleClick = e => {
+		  console.log('click ', e);
+		};
+	  
+		render() {
+		  return (
+			<Menu
+			  onClick={this.handleClick}
+			  style={{ width: 256,height:'90vh',overflow: 'auto',minWidth:256}}
+			  defaultSelectedKeys={['1']}
+			  defaultOpenKeys={['sub1']}
+			  mode="inline"
+			>
+			  <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
+				<Menu.ItemGroup key="g1" title="Item 1">
+				  <Menu.Item key="1"><Link href="/notice"><a>공지사항</a></Link></Menu.Item>
+				  <Menu.Item key="2">Option 2</Menu.Item>
+				</Menu.ItemGroup>
+				<Menu.ItemGroup key="g2" title="Item 2">
+				  <Menu.Item key="3">Option 3</Menu.Item>
+				  <Menu.Item key="4">Option 4</Menu.Item>
+				</Menu.ItemGroup>
+			  </SubMenu>
+			  <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Navigation Two">
+				<Menu.Item key="5">Option 5</Menu.Item>
+				<Menu.Item key="6">Option 6</Menu.Item>
+				<SubMenu key="sub3" title="Submenu">
+				  <Menu.Item key="7">Option 7</Menu.Item>
+				  <Menu.Item key="8">Option 8</Menu.Item>
+				</SubMenu>
+			  </SubMenu>
+			  <SubMenu key="sub4" icon={<SettingOutlined />} title="Navigation Three">
+				<Menu.Item key="9">Option 9</Menu.Item>
+				<Menu.Item key="10">Option 10</Menu.Item>
+				<Menu.Item key="11">Option 11</Menu.Item>
+				<Menu.Item key="12">Option 12</Menu.Item>
+			  </SubMenu>
+			</Menu>
+		  );
+		}
+	  }
 
-export default class Sidebars extends React.Component {
-	constructor () {
-		super()
-		
-	}
-    handleClick = (e) => {
-		console.log(e)
-		//this.props.getValue(e.key,e.item.props.children); 
-	}
-    render () {
-				return (
-					<Menu
-						onClick={this.handleClick}
-						//onChange = {this.getValue}
-						style={{ width: 256,height:'90vh',overflow: 'auto', minWidth:256}}
-						defaultSelectedKeys={['1']}
-						defaultOpenKeys = {['sub10']}
-						mode="inline"
-					>
-
-						<Menu key="sub1" title={<span><Icon type="smile-o" /><span>메뉴</span></span>}>
-								<Menu.Item key="1">
-									<Link href="/notice"><a>notice</a></Link>
-								</Menu.Item>
-								<Menu.Item key="2">
-									<Link href="/login"><a>Login</a></Link>
-								</Menu.Item>
-								<Menu key="sub10" title="law">
-									<Menu.Item key="3">
-										<Link href="/law"><a>Law</a></Link>
-									</Menu.Item>
-
-								</Menu>
-						</Menu>
-
-					</Menu>
-				);
-			}
-  }
+  export default Sidebars;

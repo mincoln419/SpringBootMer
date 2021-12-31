@@ -1,8 +1,7 @@
-import React from 'react';
-
+import React, { Component} from 'react';
+React.useLayoutEffect = React.useEffect;
 import { Table, Tag, Space, Divider } from 'antd';
 import axios from 'axios';
-import { Component, useState } from 'react/cjs/react.development';
 
 const columns = [
   {
@@ -45,7 +44,7 @@ export default class Notice extends Component{
         return (
   <>
     <Divider orientation="left">공지사항</Divider>
-    <Table columns={columns} dataSource={this.state.data} />
+    <Table columns={columns} dataSource={this.state.data} key={this.state.data.id}/>
   </>
 );
 }

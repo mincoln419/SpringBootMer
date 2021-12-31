@@ -1,4 +1,5 @@
 import React from 'react';
+React.useLayoutEffect = React.useEffect;
 import { Form, Input, InputNumber, Button, Divider, Typography, Space , Checkbox } from 'antd';
 import axios from 'axios';
 const { Title, Paragraph, Text, Link } = Typography;
