@@ -16,6 +16,7 @@ const App = ({ Component }) => {
 
     return (
         <>
+            <title>형량계산기</title>
             <Layout style={{ minHeight: '100vh' }}>
             <Sidebars/>
                 <Layout className="site-layout" style={{ marginLeft: 200 }}>
