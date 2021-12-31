@@ -22,8 +22,8 @@ public interface NoticeList {
 	Long getId();
 	String getTitle();
 	Integer getReadCnt();
-	LocalDateTime instDtm();
-	LocalDateTime mdfDtm();
+	LocalDateTime getInstDtm();
+	LocalDateTime getMdfDtm();
 	Long getInsterId();
 	UseYn getUseYn();
 }
