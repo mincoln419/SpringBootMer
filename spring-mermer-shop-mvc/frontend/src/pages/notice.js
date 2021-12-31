@@ -44,7 +44,7 @@ export default class Notice extends Component{
     render(){
         return (
   <>
-    <Divider orientation="left">Default Size</Divider>
+    <Divider orientation="left">공지사항</Divider>
     <Table columns={columns} dataSource={this.state.data} />
   </>
 );
