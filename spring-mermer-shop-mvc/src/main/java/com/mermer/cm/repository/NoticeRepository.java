@@ -32,12 +32,13 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>{
 	 * Page<Notice>
 	 * @description 공지사항 목록조회시 content 제외한 항목만 조회
 	 */
+	
 	@Query(nativeQuery = true, value = "select n.id"
 				      + ", n.title"
-				      + ", n.read_Cnt"
-				      + ", n.inst_Dtm"
-				      + ", n.mdf_Dtm"
-				      + ", n.inster_id "
+				      + ", n.read_Cnt as readCnt "
+				      + ", n.inst_Dtm as instDtm "
+				      + ", n.mdf_Dtm as mdfDtm "
+				      + ", n.inster_id as insterId "
 				   + "from notice n "
 				  + "where n.use_Yn = 'Y'", 
 				  countQuery = "select * from notice where use_yn = 'Y'"
