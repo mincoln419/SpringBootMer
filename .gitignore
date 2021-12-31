@@ -113,4 +113,17 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
-# End of https://www.toptal.com/developers/gitignore/api/java,eclipse,maven
+### frontend ###
+frontend/public/
+frontend/node_modules/
+frontend/node/
+frontend/.env
+frontend/.cache/
+frontend/yarn-error.log
+frontend/analysis
+
+### NextJS ###
+# Next build dir
+.next/
+
+# End of https://www.toptal.com/developers/gitignore/api/java,eclipse,maven,nextjs

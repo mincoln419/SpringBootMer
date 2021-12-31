@@ -958,7 +958,7 @@ public class NoticeContollerTest extends BaseTest {
 		String username = appProperties.getAdminName(); 
 		String password = appProperties.getAdminPass();
 		Account account = Account.builder()
-				.loginId(username)
+				.login(username)
 				.username(username)
 				.hpNum("01012345678")
 				.email("admin@naver.com")
@@ -975,7 +975,7 @@ public class NoticeContollerTest extends BaseTest {
 	private Account generateAccount_arg(String username, String password) {
 
 		Account account = Account.builder()
-				.loginId(username)
+				.login(username)
 				.username(username)
 				.hpNum("01012345678")
 				.email("admin@naver.com")

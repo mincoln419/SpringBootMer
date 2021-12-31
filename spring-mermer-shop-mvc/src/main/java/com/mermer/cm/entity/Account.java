@@ -45,7 +45,7 @@ public class Account {
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_ID_GENERATOR")
 	private Long id;
 	
-	private String loginId;//loginId 규칙: 영어 + 숫자 13자 미만
+	private String login;//loginId 규칙: 영어 + 숫자 13자 미만
 	
 	private String pass;//loginId 규칙: 영어 + 특수문자 + 숫자 13자 미만
 		

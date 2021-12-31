@@ -13,7 +13,10 @@ package com.mermer.cm.controller;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
+import java.util.Optional;
+
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,10 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class IndexController {
 	
 	@GetMapping("/api")
-	public RepresentationModel index() {
+	public RepresentationModel apiIndex() {
 		var index = new RepresentationModel();
 		// api 접근시 잘못된 주소인 경우는 공지사항 조회 link return
 		index.add(linkTo(NoticeController.class).withRel("index"));
 		return index;
+	}
+	
+	@GetMapping("/")
+	public ResponseEntity<String> index() {
+		return ResponseEntity.of(Optional.of("index.html")); //프록시 서버를 사용하기 때문에 Endpoint에서 String 리턴은 이제 불가능
 	}
 }
