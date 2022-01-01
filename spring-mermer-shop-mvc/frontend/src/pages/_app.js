@@ -45,7 +45,7 @@ const App = ({ Component }) => {
                     <Header style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' }}>
                         <Row>
                             <Col span={10}>
-                                형량계산기
+                                <Link href="/"><a>형량계산기</a></Link>
                             </Col>
                             <Col span={8}><Input placeholder="검색" /></Col>
                             <Col span={6}>

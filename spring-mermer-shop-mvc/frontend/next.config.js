@@ -24,7 +24,6 @@ module.exports = {
   compress: true,
 
   async rewrites() {
-    if (process.env.NODE_ENV !== 'production') {
       return [
 
         {
@@ -37,6 +36,5 @@ module.exports = {
         },
 
       ]
-    }
   }
 };
