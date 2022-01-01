@@ -5,7 +5,7 @@ const { config } = require('dotenv');
 config({
   path: path.resolve(
     process.cwd(),
-    process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
+    process.env.NODE_ENV === 'production' ? '.env' : '.env.local',
   )
 });
 const prod = process.env.NODE_ENV === 'production';
@@ -36,5 +36,20 @@ module.exports = {
         },
 
       ]
-  }
+  },
+
+  async redirects() {
+    return [
+      {
+        source: '/login',
+        destination: '/',
+        permanent: false,
+      },
+      {
+        source: '/sign-up',
+        destination: '/',
+        permanent: false,
+      },
+    ]
+  },
 };

@@ -5,11 +5,12 @@ import Index from '.';
 import axios from 'axios';
 const { Title} = Typography;
 import { useDispatch } from 'react-redux';
-import { loginAction } from '../reducer'; 
+import { loginAction } from '../reducer/user';
+import { useRouter } from 'next/router'
 
 const Login = () => {
     const dispatch = useDispatch();
-
+    const router = useRouter();
     const onFinish = (data) => {//이미 e.preventDefault 적용이 되어있음.
         data.grant_type = 'password';
       console.log('Success:', data);
@@ -34,8 +35,9 @@ const Login = () => {
             'grant_type': 'password'
         }
       }).then(function(res) {
-        console.log(res);
         dispatch(loginAction({name}));
+        
+        router.push("/");
       });
 
     }

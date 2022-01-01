@@ -2,7 +2,10 @@ import React from 'react';
 React.useLayoutEffect = React.useEffect;
 import { Form, Input, InputNumber, Button, Divider, Typography, Space , Checkbox } from 'antd';
 import axios from 'axios';
-const { Title, Paragraph, Text, Link } = Typography;
+import { useDispatch } from 'react-redux';
+import {loginAction} from '../reducer/user';
+import { useRouter } from 'next/router'
+const { Title, Paragraph, Text } = Typography;
 const layout = {
     labelCol: {
       span: 5,
@@ -37,8 +40,10 @@ const validateMessages = {
 
 
 const SignUp = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
       const onFinish = (values) => {
-        console.log(values);
+        const name = values.user.login;
         axios.request({
           url: "/api/account",
           method: "post",
@@ -48,7 +53,9 @@ const SignUp = () => {
                 },
           data: values.user
         }).then(function(res) {
-          console.log(res);
+          dispatch(loginAction({name}));
+          
+          router.push("/");
         });
       };
     
