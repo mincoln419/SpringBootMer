@@ -2,13 +2,14 @@ import React, { Component} from 'react';
 React.useLayoutEffect = React.useEffect;
 import { Table, Tag, Space, Divider } from 'antd';
 import axios from 'axios';
+import Link from 'next/link';
 
 const columns = [
   {
     title: 'id',
     dataIndex: 'id',
     key: 'id',
-    render: text => <a>{text}</a>,
+    render: text => <Link href={"/notices/detail?" + text}><a>{text}</a></Link>,
   },
   {
     title: 'title',

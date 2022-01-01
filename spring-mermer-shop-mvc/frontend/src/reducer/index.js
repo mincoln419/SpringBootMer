@@ -2,7 +2,7 @@
 import { HYDRATE } from "next-redux-wrapper";
 
 import user from "./user";
-import post from "./post";
+import notice from "./notice";
 import comment from "./comment";
 import { combineReducers } from "redux";
 
@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
         }
     },
     user,
-    post,
+    notice,
     comment
 })
 

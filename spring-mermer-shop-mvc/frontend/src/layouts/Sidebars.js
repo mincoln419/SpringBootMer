@@ -21,7 +21,7 @@ const { SubMenu } = Menu;
 			>
 			  <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
 				<Menu.ItemGroup key="g1" title="Item 1">
-				  <Menu.Item key="1"><Link href="/notice"><a>공지사항</a></Link></Menu.Item>
+				  <Menu.Item key="1"><Link href="/notices"><a>공지사항</a></Link></Menu.Item>
 				  <Menu.Item key="2">Option 2</Menu.Item>
 				</Menu.ItemGroup>
 				<Menu.ItemGroup key="g2" title="Item 2">

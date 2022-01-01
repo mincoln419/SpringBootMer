@@ -4,13 +4,17 @@ import { Form, Input, Button, Checkbox, Typography, Divider } from 'antd';
 import Index from '.';
 import axios from 'axios';
 const { Title} = Typography;
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from '../reducer/user';
 import { useRouter } from 'next/router'
 
 const Login = () => {
     const dispatch = useDispatch();
     const router = useRouter();
+    const {isLoggedIn} = useSelector((state) => state.user);
+    const notice = useSelector((state) => state.notice);
+    console.log("isLoggedIn", isLoggedIn);
+    console.log("notice", notice);
     const onFinish = (data) => {//이미 e.preventDefault 적용이 되어있음.
         data.grant_type = 'password';
       console.log('Success:', data);
