@@ -1,15 +1,21 @@
 const intitialState = {
-    isLoggedIn : false,
-    username: null,
+    isLoggedIn : true,
+    loginId: null,
     signUpData :{},
     loginData : {},
-    token : ""
+    token : null
 };
 /* Action Creator */
 export const loginAction = (data) => {
     return {
         type: 'LOG_IN',
         data,
+    }
+};
+
+export const getToken = () => {
+    return {
+        type: 'GET_TOKEN',
     }
 };
 
@@ -25,14 +31,20 @@ const reducer = (state = intitialState, action) => {
             return {
                 ...state.user,
                 isLoggedIn: true,
-                username: action.username
+                loginId: action.username
             };
 
         case 'LOG_OUT':
             return {
                 ...state,
                 isLoggedIn: false,
-                username: null
+                loginId: null,
+                token: null
+            };
+        case 'GET_TOKEN':
+            return {
+                ...state,
+                token: action.token
             };
         default:
             return state;

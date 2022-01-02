@@ -5,7 +5,7 @@ import Index from '.';
 import axios from 'axios';
 const { Title} = Typography;
 import { useDispatch, useSelector } from 'react-redux';
-import { loginAction } from '../reducer/user';
+import { loginAction, getToken } from '../reducer/user';
 import { useRouter } from 'next/router'
 
 const Login = () => {
@@ -35,13 +35,25 @@ const Login = () => {
         },
         'params' : {
             'username': data.loginId,
-            'password': data.password,
+            'password': data.password, //비밀번호 input암호화 필요 -> 백엔드 서버에서 다시한번 암호화 해서 DB에 저장
             'grant_type': 'password'
         }
       }).then(function(res) {
-        dispatch(loginAction({name}));
-        
-        router.push("/");
+        const token = res.data.access_token;
+        dispatch(getToken({token}));
+        /* 로그인 아이디로 account_id를 가져와 reducer에 담음*/
+        axios.request({
+          url: "/api/account/login/"+ data.loginId,
+          method: "get",
+          baseURL: "/",
+          headers: {'Content-Type' : 'application/json;charset=UTF-8',
+                    'Accept':'application/hal+json',
+                    'Authorization' : 'Bearer ' + token
+                }
+        }).then((resCall) => {
+          dispatch(loginAction({name}));
+          router.push("/");
+        });
       });
 
     }

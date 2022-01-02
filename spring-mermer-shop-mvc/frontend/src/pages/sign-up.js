@@ -43,7 +43,7 @@ const SignUp = () => {
   const router = useRouter();
   const dispatch = useDispatch();
       const onFinish = (values) => {
-        const name = values.user.login;
+        const loginId = values.user.login;
         axios.request({
           url: "/api/account",
           method: "post",
@@ -53,7 +53,7 @@ const SignUp = () => {
                 },
           data: values.user
         }).then(function(res) {
-          dispatch(loginAction({name}));
+          dispatch(loginAction({loginId}));
           
           router.push("/");
         });
