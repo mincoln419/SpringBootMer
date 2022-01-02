@@ -103,6 +103,30 @@ public class AccountService implements UserDetailsService{
 	}
 
 	/**
+	 * @methond getAccount
+	 * @param id
+	 * @return
+	 * ResponseEntity
+	 * @description 
+	 */
+	public ResponseEntity getAccountByLogin(String loginId) {
+		Optional<Account> optionalAccount = this.accountRepository.findByLogin(loginId);
+		if(optionalAccount.isEmpty()){
+			return ResponseEntity.notFound().build();
+		}
+		WebMvcLinkBuilder selfLinkBuilder = getClassLink(loginId);
+		Account account = optionalAccount.get();
+		EntityModel<Account> accountResource = AccountResource.of(account)
+											  .add((selfLinkBuilder).withSelfRel())
+											  .add(Link.of("/docs/index.html#resources-account-login").withRel("profile"));
+		return ResponseEntity.ok(accountResource);
+	}
+	
+
+
+
+
+	/**
 	 * @method updateAccount
 	 * @param accountDto
 	 * @param accountId 
@@ -143,9 +167,10 @@ public class AccountService implements UserDetailsService{
 	 * URI
 	 * @description 
 	 */
-	private WebMvcLinkBuilder getClassLink(Long accountId) {
+	private WebMvcLinkBuilder getClassLink(Object accountId) {
 		return linkTo(AccountController.class).slash(accountId);
 	}
+
 
 	/**
 	 * @method createAccount
