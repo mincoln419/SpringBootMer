@@ -1,6 +1,6 @@
 const intitialState = {
     isLoggedIn : true,
-    loginId: null,
+    accountId: null,
     signUpData :{},
     loginData : {},
     token : null
@@ -9,13 +9,14 @@ const intitialState = {
 export const loginAction = (data) => {
     return {
         type: 'LOG_IN',
-        data,
+        accountId: data.accountId
     }
 };
 
-export const getToken = () => {
+export const getToken = (data) => {
     return {
         type: 'GET_TOKEN',
+        token: data.token
     }
 };
 
@@ -26,19 +27,20 @@ export const logoutAction = () => {
 };
 
 const reducer = (state = intitialState, action) => {
+
     switch (action.type) {
         case 'LOG_IN':
             return {
-                ...state.user,
+                ...state,
                 isLoggedIn: true,
-                loginId: action.username
+                accountId: action.accountId
             };
 
         case 'LOG_OUT':
             return {
                 ...state,
                 isLoggedIn: false,
-                loginId: null,
+                accountId: null,
                 token: null
             };
         case 'GET_TOKEN':

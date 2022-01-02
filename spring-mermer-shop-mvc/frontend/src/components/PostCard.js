@@ -10,7 +10,8 @@ import { Content } from 'antd/lib/layout/layout';
 
 
 const PostCard = ({notice}) => {
-    const {userId} = useSelector((state) => state.user);
+    const {accountId} = useSelector((state) => state.user);
+    console.log("accountId", {accountId});
     return (
         <div>
             <Card
@@ -22,12 +23,11 @@ const PostCard = ({notice}) => {
                         <MessageOutlined key="messageLine"/>,
                         <Popover key="more" content={(
                             <Button.Group>
-                                {userId === notice.insterId && <Button>수정</Button>}
+                                {accountId === notice.insterId && <Button>수정</Button>}
                                 <Button type="danger">삭제</Button>
                                 <Button>신고</Button>
                             </Button.Group>
                         )}>
-
                             <EllipsisOutlined/>
                         </Popover>
                     ]

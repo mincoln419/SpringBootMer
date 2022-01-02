@@ -16,12 +16,8 @@ const Login = () => {
     console.log("isLoggedIn", isLoggedIn);
     console.log("notice", notice);
     const onFinish = (data) => {//이미 e.preventDefault 적용이 되어있음.
-        data.grant_type = 'password';
-      console.log('Success:', data);
-
+      data.grant_type = 'password';
       const token = 'Basic ' + window.btoa("" + ':' + ""); //basic auth 생성 공통 프로토콜
-      console.log(token);
-
       const name = data.loginId;
 
       axios.request({
@@ -51,8 +47,9 @@ const Login = () => {
                     'Authorization' : 'Bearer ' + token
                 }
         }).then((resCall) => {
-          dispatch(loginAction({name}));
-          router.push("/");
+          const accountId = resCall.data.id;
+          dispatch(loginAction({accountId}));
+         // router.push("/");
         });
       });
 
