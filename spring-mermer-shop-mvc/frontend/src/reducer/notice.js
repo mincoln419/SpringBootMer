@@ -4,7 +4,8 @@ const intitialState = {
         title:"test1 - 타이틀",
         insterId: 1,
         contents: "test Content",
-        reply:[{
+        Replies:[{
+            id: 1,
             insterId:2,
             contents:"댓글입니다"
         }],
