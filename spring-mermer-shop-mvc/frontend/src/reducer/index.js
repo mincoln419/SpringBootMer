@@ -1,61 +1,28 @@
 /* 초기 데이터 구조를 잡아놔야 한다 */
-const intitialState = {
-    user: {
-        isLoggedIn : false,
-        username: null,
-        signUpData :{},
-        loginData : {},
-        token : ""
-    },
-    post:{
-        mainPosts: []
-    }
-};
+import { HYDRATE } from "next-redux-wrapper";
 
-/* Action Creator */
-export const loginAction = (data) => {
-    return {
-        type: 'LOG_IN',
-        data,
-    }
-};
-
-export const logoutAction = () => {
-    return {
-        type: 'LOG_OUT',
-    }
-};
-
+import user from "./user";
+import notice from "./notice";
+import comment from "./comment";
+import { combineReducers } from "redux";
 
 /* 비동기 action creator */
 // (이전상태, 액션) => 다음상태
-const rootReducer = (state = intitialState, action)=>{
-
+const rootReducer = combineReducers({
+    index : (state = {}, action) => {
     switch (action.type) {
-        case 'LOG_IN':
-            return {
-                ...state,
-                user: {
-                    ...state.user,
-                    isLoggedIn: true,
-                    username: action.username
-                }
-            }
-        case 'LOG_OUT':
-            return {
-                ...state,
-                user: {
-                    ...state.user,
-                    isLoggedIn: false,
-                    username: null
-                }
-            }
+        case HYDRATE : //서버사이드 랜더링 때문에 추가
+            console.log('HYDRATE', action);
+            return { ...state, ...action.payload};
+
             default: {
-                return {
-                   ...state,
-                  };
+                return state;
             }
-    }
-};
+        }
+    },
+    user,
+    notice,
+    comment
+})
 
 export default rootReducer;

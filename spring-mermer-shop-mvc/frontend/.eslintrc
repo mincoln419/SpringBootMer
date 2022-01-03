@@ -1,5 +1,6 @@
 {
     "parserOption":{
+        "project":["./package.json"],
         "ecmaVersion": 2020,
         "sourceType": "module",
         "ecmaFeatures":{

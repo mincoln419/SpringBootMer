@@ -34,6 +34,13 @@ operation::create-account[snippets='request-fields,curl-request,http-request,req
 
 operation::get-account[snippets='request-fields,curl-request,http-response,links']
 
+[[resources-account-login]]
+=== 로그인ID로 Account 조회
+
+`Get` 요청을 사용해서 기존 Account 하나를 로그인 ID로 조회할 수 있다.
+
+operation::get-account[snippets='request-fields,curl-request,http-response,links']
+
 [[resources-account-update]]
 === Account 수정
 

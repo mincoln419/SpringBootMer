@@ -16,5 +16,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	 * @description 
 	 */
 	Optional<Account> findByLogin(String login);
+	
 
 }

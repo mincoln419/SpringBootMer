@@ -149,6 +149,48 @@ public class AccountControllerTest extends BaseTest{
 	}
 	
 	@Test
+	@DisplayName("로그인 ID로 account 정보 조회")
+	public void selectAccountOneByLoginId() throws Exception {
+		//Given
+		Account account = generateAccount();
+		String token = getBearerToken(getAccessToken(false));
+		
+		//When & Then
+		mockMvc.perform(get("/api/account/login/{id}", account.getLogin())
+				.accept(MediaTypes.HAL_JSON)
+				.header(HttpHeaders.AUTHORIZATION, token) //포스트 픽스로 "Bearer " 없으면 인증 통과 못함
+				)
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andDo(document("get-account-login", links(
+				linkWithRel("self").description("link to self"),
+			    linkWithRel("profile").description("link to profile")
+			),
+			requestHeaders(
+				headerWithName(HttpHeaders.ACCEPT).description("accept header")
+			),
+			responseHeaders(
+					//headerWithName(HttpHeaders.LOCATION).description("location header"),
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+			),
+			relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
+					//response only
+					fieldWithPath("id").description("Id of new account"),
+											
+					//request +
+					fieldWithPath("username").description("User name of new account"),
+					fieldWithPath("instDtm").description("date time of created Account"),
+					fieldWithPath("mdfDtm").description("date time of modified Account information"),
+					fieldWithPath("email").description("User email of new account"),
+					fieldWithPath("hpNum").description("User cellphone number of new account"),
+					fieldWithPath("role").description("User role level"),
+					fieldWithPath("part").description("working part which User participate in")
+				)
+			
+		));
+	}
+	
+	@Test
 	@DisplayName("계정 정보 수정")
 	public void updateAccount() throws Exception {
 		//Given

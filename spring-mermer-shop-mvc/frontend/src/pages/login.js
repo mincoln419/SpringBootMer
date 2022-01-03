@@ -4,40 +4,20 @@ import { Form, Input, Button, Checkbox, Typography, Divider } from 'antd';
 import Index from '.';
 import axios from 'axios';
 const { Title} = Typography;
-import { useDispatch } from 'react-redux';
-import { loginAction } from '../reducer'; 
+import { useDispatch, useSelector } from 'react-redux';
+import {  loginRequestAction } from '../reducer/user';
+import { useRouter } from 'next/router'
 
 const Login = () => {
     const dispatch = useDispatch();
-
+    const router = useRouter();
+    const {isLoggedIn} = useSelector((state) => state.user);
+    
+    if(isLoggedIn){
+      router.push("/");
+    }
     const onFinish = (data) => {//이미 e.preventDefault 적용이 되어있음.
-        data.grant_type = 'password';
-      console.log('Success:', data);
-
-      const token = 'Basic ' + window.btoa("" + ':' + ""); //basic auth 생성 공통 프로토콜
-      console.log(token);
-
-      const name = data.loginId;
-
-      axios.request({
-        'url': "/oauth/token",
-        'method': "post",
-        'baseURL': "/",
-        'headers': {'Content-Type' : 'form-data'},
-        'auth': {//Basic Auth를 만들어주는 해더부분임
-          'username': 'merApp0203041910112',
-          'password': 'mermer110129345671'
-        },
-        'params' : {
-            'username': data.loginId,
-            'password': data.password,
-            'grant_type': 'password'
-        }
-      }).then(function(res) {
-        console.log(res);
-        dispatch(loginAction({name}));
-      });
-
+      dispatch(loginRequestAction(data));
     }
   
     const onFinishFailed = (errorInfo) => {

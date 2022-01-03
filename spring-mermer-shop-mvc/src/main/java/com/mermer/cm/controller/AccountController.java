@@ -106,6 +106,20 @@ public class AccountController {
 		return result;
 	}
 	
+	/**@param Long
+	 * @method getAccount
+	 * @return ResponseEntity
+	 * @description 계정정보 단건 조회
+	 */
+	@GetMapping("/login/{id}")
+	public ResponseEntity getAccountByLogin(@PathVariable String id) {
+		log.debug("GET /account HTTP/1.1");
+		
+		ResponseEntity result = accountService.getAccountByLogin(id);
+		
+		return result;
+	}
+	
 	/**@param AccountDto
 	 * @param Errors
 	 * @method newAccount

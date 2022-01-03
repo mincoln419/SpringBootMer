@@ -9,7 +9,7 @@ import { Layout, Row, Col, Avatar, Input, Menu, Dropdown, Icon, Badge, Button } 
 import { DownOutlined , UserOutlined} from '@ant-design/icons';
 const {Header, Content, Sider, Footer} = Layout;
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutAction } from '../reducer';
+import { logoutAction } from '../reducer/user';
 import wrapper from '../store/configureStore';
 
 
@@ -17,7 +17,6 @@ import wrapper from '../store/configureStore';
 const App = ({ Component }) => {
     const dispatch = useDispatch();
     const isLoggedIn = useSelector((state) => {
-        console.log(state);
         return state.user.isLoggedIn;
     });
 
@@ -74,7 +73,7 @@ const App = ({ Component }) => {
                         </Content>
                     </Layout>
                     <Footer style={{ backgroundColor: '#001529', position: 'fixed', bottom: 0, width: '100vw', minWidth: '1000px', textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>
-                    <a href="http://www.mermer.kr" target={'_blank'}>©2021 Created by Mermer</a>
+                    <a href="http://www.mermer.kr" target={'_blank'}>©2021-2022 Made by Mermer</a>
                     </Footer>
             </Layout>
         </>
