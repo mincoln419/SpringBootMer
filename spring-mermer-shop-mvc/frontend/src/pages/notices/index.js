@@ -1,8 +1,9 @@
-import React, { Component} from 'react';
+import React, { Component, useEffect, useState} from 'react';
 React.useLayoutEffect = React.useEffect;
 import { Table, Tag, Space, Divider } from 'antd';
-import axios from 'axios';
 import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
+import { queryNoticeRequestAction } from '../../reducer/notice';
 
 const columns = [
   {
@@ -23,30 +24,23 @@ const columns = [
   }
 ];
 
-export default class Notice extends Component{
-    
-    constructor(){
-        super();
-        this.state = {data : []};
-    }
-    
-    componentDidMount(){
-        axios.get("/api/notice")
-        .then((response) => {
-            const data = Object.values(response.data._embedded.tupleBackedMapList);
-            this.setState({data});
-            //setData(response.data._embedded.tupleBackedMapList);
-        });
-    }
+const Notice = () =>{
 
-    
+  const dispatch = useDispatch();
+  
+  //화면 전환시 한번만 호출
+  useEffect(() => {
+    dispatch(queryNoticeRequestAction());
+  }, []);
+  
+  const {noticeList} = useSelector((state) => state.notice);
 
-    render(){
         return (
   <>
     <Divider orientation="left">공지사항</Divider>
-    <Table columns={columns} dataSource={this.state.data} key={this.state.data.id}/>
+    <Table columns={columns} dataSource={noticeList} key={noticeList}/>
   </>
 );
 }
-}
+
+export default Notice;

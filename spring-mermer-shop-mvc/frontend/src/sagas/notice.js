@@ -1,58 +1,58 @@
-import {all, fork, take, takeEvery, takeLatest, call, put} from 'redux-saga/effects';
+import {all, fork, throttle, take, takeEvery, takeLatest, call, put} from 'redux-saga/effects';
+import {QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS, QUERY_NOTICE_FAILURE } from '../actions/notice';
+import axios from 'axios';
 
-
-function noticeAPI(data){
-
-
-    return  await axios.request({
-        'url': "/notice",
-        'method': "post",        
-      }).then(function(res) {
-        const token = res.data.access_token;
-        dispatch(getToken({token}));
-        /* 로그인 아이디로 account_id를 가져와 reducer에 담음*/
-        axios.request({
-          url: "/api/account/login/"+ data.loginId,
-          method: "get",
-          baseURL: "/",
-          headers: {'Content-Type' : 'application/json;charset=UTF-8',
-                    'Accept':'application/hal+json',
-                    'Authorization' : 'Bearer ' + token
-                }
-        }).then((resCall) => {
-          const accountId = resCall.data.id;
-          dispatch(loginAction({accountId}));
-         // router.push("/");
-        });
-      });
+function noticeQueryAPI(){
+    return  axios.get("/api/notice");
 };
 
-function* queryNotice(action){
+function* queryNoticeRequest(){
     try{
-        const result = yield call(noticeAPI, action.data);//call - 동기, fork - 비동기
+        const result = yield call(noticeQueryAPI);//call - 동기, fork - 비동기
+        console.log(result);
         yield put({
-            type: 'LOG_IN_SUCCESS',
-            data: result.data
+            type: QUERY_NOTICE_SUCCESS,
+            data: result.data._embedded.tupleBackedMapList
         });
     }catch(err){
+        console.log(err);
         yield put({
-            type: 'LOG_IN_FAILURE',
-            data: result.data
+            type: QUERY_NOTICE_FAILURE,
         });
     }
     
 };
 
+function addNoticeAPI(data){
+    return  axios.post("/api/notice", data);
+}
+
+function* addNoticeRequest(action){
+    try{
+        const result = yield call(addNoticeAPI, action.data);//call - 동기, fork - 비동기
+
+        yield put({
+            type: ADD_NOTICE_SUCCESS,
+            data: result.data
+        });
+    }catch(err){
+        yield put({
+            type: ADD_NOTICE_FAILURE,
+        });
+    }
+}
+
+
 function* watchQueryNotice() {
-    yield throttle('QUERY_NOTICE', login, 2000);
+    yield throttle(2000, 'QUERY_NOTICE_REQUEST', queryNoticeRequest);
 };
 
 
 function* watchAddNotice() {
-    yield throttle('ADD_NOTICE', 1000);
+    yield throttle(1000, 'ADD_NOTICE_REQUEST', addNoticeRequest);
 };
 
-export default function* userSaga() {
+export default function* noticeSaga() {
     yield all([
         fork(watchQueryNotice),
         fork(watchAddNotice)

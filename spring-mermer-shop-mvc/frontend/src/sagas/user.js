@@ -1,9 +1,13 @@
+import axios from 'axios';
 import {all, fork, take, takeEvery, takeLatest, call, put} from 'redux-saga/effects';
+import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS } from '../actions';
+import Router from 'next/router'
 
 
-
+/* API CALL */
 function loginAPI(data){
-    return  await axios.request({
+    console.log("data", data);
+    return  axios.request({
         'url': "/oauth/token",
         'method': "post",
         'baseURL': "/",
@@ -17,65 +21,71 @@ function loginAPI(data){
             'password': data.password, //비밀번호 input암호화 필요 -> 백엔드 서버에서 다시한번 암호화 해서 DB에 저장
             'grant_type': 'password'
         }
-      }).then(function(res) {
-        const token = res.data.access_token;
-        dispatch(getToken({token}));
-        /* 로그인 아이디로 account_id를 가져와 reducer에 담음*/
-        axios.request({
-          url: "/api/account/login/"+ data.loginId,
-          method: "get",
-          baseURL: "/",
-          headers: {'Content-Type' : 'application/json;charset=UTF-8',
-                    'Accept':'application/hal+json',
-                    'Authorization' : 'Bearer ' + token
-                }
-        }).then((resCall) => {
-          const accountId = resCall.data.id;
-          dispatch(loginAction({accountId}));
-         // router.push("/");
-        });
       });
 };
 
-function* login(action){
+function getAccountAPI(data, token){
+    
+    console.log(token);
+    return axios.request({
+        url: "/api/account/login/"+ data.loginId,
+        method: "get",
+        baseURL: "/",
+        headers: {'Content-Type' : 'application/json;charset=UTF-8',
+                  'Accept':'application/hal+json',
+                  'Authorization' : 'Bearer ' + token
+              }
+      });
+}
+
+
+/* login Action */
+function* login(data){
     try{
-        const result = yield call(loginAPI, action.data);//call - 동기, fork - 비동기
+        const result = yield call(loginAPI, data);//call - 동기, fork - 비동기
         yield put({
-            type: 'LOG_IN_SUCCESS',
-            data: result.data
+            type: GET_TOKEN,
+            token: result.data.access_token
         });
-    }catch(err){
+
+        const account = yield call(getAccountAPI, data, result.data.access_token); 
+
         yield put({
-            type: 'LOG_IN_FAILURE',
-            data: result.data
+            type: LOG_IN_SUCCESS,
+            data: account.data
+        });
+
+        yield Router.push("/");
+    }catch(err){
+        console.log(err);
+        yield put({
+            type: LOG_IN_FAILURE
         });
     }
     
 };
 
 function* watchLogIn() {
-    yield takeLatest('LOG_IN_REQUEST', login);
+    yield takeLatest(LOG_IN_REQUEST, login);
 };
 
-function* logOut(action){
+/* log out Action */
+function* logOut(){
     try{
-        const result = yield call(loginAPI, action.data);//call - 동기, fork - 비동기
         yield put({
-            type: 'LOG_OUT_SUCCESS',
-            data: result.data
+            type: LOG_OUT_SUCCESS,
         });
     }catch(err){
         yield put({
-            type: 'LOG_OUT_FAILURE',
-            data: result.data
+            type: LOG_OUT_FAILURE,
         });
     }
     
 };
 
-
 function* watchLogOut() {
-    yield takeLatest('LOG_OUT_REQUEST', logOut);
+
+    yield takeLatest(LOG_OUT_REQUEST, logOut);
 };
 
 export default function* userSaga() {

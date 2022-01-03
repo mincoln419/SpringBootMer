@@ -1,3 +1,5 @@
+import { QUERY_NOTICE_FAILURE, QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS } from "../actions/notice";
+
 const intitialState = {
     mainPosts: [{
         id: 1,
@@ -20,8 +22,16 @@ const intitialState = {
         }
         ],
     }],
+    noticeList:[{
+            id: 1,
+            title:"test1 - 타이틀",
+            insterId: 1,
+            instDtm: new Date(2021, 12, 26, 12, 11, 25),
+        }
+    ],
     images: [],
-    noticeAdded: false
+    noticeAdded: false,
+    loading: false
 };
 
 const ADD_POST = 'ADD_POST';
@@ -39,6 +49,13 @@ const dummyPost = {
     Replies:[]
 }
 
+export const queryNoticeRequestAction = () => {
+    return {
+        type: QUERY_NOTICE_REQUEST,
+        loading: true
+    }
+}
+
 const reducer = (state = intitialState, action) => {
     switch (action.type) {
         case ADD_POST:
@@ -46,6 +63,22 @@ const reducer = (state = intitialState, action) => {
                 ...state,
                 mainPosts: [dummyPost, ...state.mainPosts],
                 noticeAdded: true
+            };
+        case QUERY_NOTICE_REQUEST:
+            return {
+                ...state,
+                loading: true
+            };
+        case QUERY_NOTICE_SUCCESS:
+            return {
+                ...state,
+                noticeList: action.data,
+                loading: false
+            };
+        case QUERY_NOTICE_FAILURE:
+            return {
+                ...state,
+                loading: false
             };
         default:
             return state;
