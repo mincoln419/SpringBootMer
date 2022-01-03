@@ -73,7 +73,7 @@ const App = ({ Component }) => {
                         </Content>
                     </Layout>
                     <Footer style={{ backgroundColor: '#001529', position: 'fixed', bottom: 0, width: '100vw', minWidth: '1000px', textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>
-                    <a href="http://www.mermer.kr" target={'_blank'}>©2021 Created by Mermer</a>
+                    <a href="http://www.mermer.kr" target={'_blank'}>©2021-2022 Made by Mermer</a>
                     </Footer>
             </Layout>
         </>

@@ -16,8 +16,9 @@ const NoticeDetail = () => {
   <>
     {isLoggedIn && (
         <>
-            <NoticeForm/>
-            {mainPosts.map((notice, index) => <PostCard key= {index} notice = {notice}/>)} 
+            <NoticeForm />
+            {mainPosts.map((notice, index) => <PostCard key= {index} notice = {notice}/>)}
+            <div style={{position: 'relative', margin:100}}></div>
         </>
     )
     

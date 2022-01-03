@@ -8,6 +8,7 @@ import { EllipsisOutlined, HeartOutlined, MessageOutlined, RetweetOutlined, Hear
 
 import { Content } from 'antd/lib/layout/layout';
 import CommentForm from './CommentForm';
+import PostCardContent from './postCardContent';
 
 
 const PostCard = ({notice}) => {
@@ -25,6 +26,7 @@ const PostCard = ({notice}) => {
         setCommentFormOpen((prev) => !prev);
     }, []);
 
+    console.log("notice", notice);
     return (
         <div>
             <Card
@@ -52,9 +54,9 @@ const PostCard = ({notice}) => {
                 <Button></Button>
 
                 <Card.Meta
-                    avatar={<Avatar>{notice.accountId}</Avatar>}
+                    avatar={<Avatar>{notice.insterId}</Avatar>}
                     title = {notice.insterId}               
-                    description = {notice.contents}
+                    description = {<PostCardContent postData = {notice.contents} />}
                 />
             </Card>
             {commentFormOpen  && (<div>
@@ -68,7 +70,7 @@ const PostCard = ({notice}) => {
                             <Comment
                                 author={item.insterId}
                                 avatar={<Avatar>{item.insterId}</Avatar>}
-                                content={item.contents}
+                                content={<PostCardContent postData = {item.contents} />}
                             />
                         </li>
                     )}
