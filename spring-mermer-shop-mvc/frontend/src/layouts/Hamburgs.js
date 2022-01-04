@@ -10,19 +10,23 @@ import { setToggleBarAction, setToggleMenuAction } from '../reducer/menu';
 const { SubMenu } = Menu;
     
 const NavTop = styled.div`
-  display: inline-block;
-  position: relative;
+  position: absolute;
   justify-content: flex-end;
   button {
     background: #282828;
     border: none;
   }
+  left:0 ;
+    top: 0;
 `;
 
 const MenuWrapper = styled.div`
-    display: inline-block;
+    position: absolute;
     z-index : 10;
     background-color: grey;
+    left: 0;
+    top: 60px;
+    width: 120px;
 `;
 
     
@@ -78,22 +82,6 @@ const Hamburgs = () =>{
               theme='light'
 			  mode="inline"
 			>  
-              <Menu>
-              {isLoggedIn ? (<>
-                   <Avatar style={{ backgroundColor: '#87d068', marginRight: 20 }} icon={<UserOutlined/>} />
-                   <Dropdown overlay={menu}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                       {login} <DownOutlined />
-                   </a>
-                 </Dropdown>
-                 </>) : (<>
-                   <ul style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' , float: "right", paddingRight : "10px"}}> 
-                       <Link  href="/login"><a style={{paddingRight : "10px"}}>Login</a></Link>
-                       <Link href="/sign-up"><a>Sign-Up</a></Link>
-                   </ul>
-                 </>)}
-
-              </Menu>
 			  <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
 				<Menu.ItemGroup key="g1" title="Item 1">
 				  <Menu.Item key="1"><Link href="/notices"><a>공지사항</a></Link></Menu.Item>

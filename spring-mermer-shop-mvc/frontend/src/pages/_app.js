@@ -94,8 +94,26 @@ const App = ({ Component }) => {
             <Layout>
                     <Header style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold'}}>
                     <Row>
-                            <Col span={8}>
+                            <Col span={4}>
+                                </Col>
+                            <Col span={6}>
                                 <Link href="/"><a>형량계산기</a></Link>
+                            </Col>
+                            <Col span={12}>
+                            {isLoggedIn ? (<>
+                   <Avatar style={{ backgroundColor: '#87d068', marginRight: 20 }} icon={<UserOutlined/>} />
+                   <Dropdown overlay={menu}>
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                       {login} <DownOutlined />
+                   </a>
+                 </Dropdown>
+                 </>) : (<>
+                   <ul style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' , float: "right", paddingRight : "10px"}}> 
+                        <Link  href="/login"><a style={{paddingRight : "10px"}}>Login</a></Link>
+                        <Link href="/sign-up"><a>SignUp</a></Link>
+                   </ul>
+                 </>)}
+
                             </Col>
                         </Row>
                     </Header>
