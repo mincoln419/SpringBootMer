@@ -1,3 +1,6 @@
+import produce from "immer";
+import shortid from "shortid";
+import faker from "faker";
 import { QUERY_NOTICE_FAILURE, QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS } from "../actions/notice";
 
 const intitialState = {
@@ -34,6 +37,26 @@ const intitialState = {
     loading: false
 };
 
+intitialState.mainPosts = intitialState.mainPosts.concat(
+    Array(20).fill().map(() => ({
+        id: shortid.generate(),
+        insterId: shortid.generate(),
+        title: faker.lorem.paragraph(),
+        contents: faker.lorem.paragraph(),
+        images: [{
+            src : faker.image.image()
+        }],
+        Replies: [{
+            id: shortid.generate(),
+            insterId: shortid.generate(),
+            contents: faker.lorem.sentence(),
+        }],
+
+    }))
+)
+;
+
+
 const ADD_POST = 'ADD_POST';
 
 export const addPost = {
@@ -57,33 +80,27 @@ export const queryNoticeRequestAction = () => {
 }
 
 const reducer = (state = intitialState, action) => {
+
+    return produce(state, (draft) => {
     switch (action.type) {
         case ADD_POST:
-            return {
-                ...state,
-                mainPosts: [dummyPost, ...state.mainPosts],
-                noticeAdded: true
-            };
+            draft.mainPosts = dummyPost;
+            draft.noticeAdded = true;
+            break;
         case QUERY_NOTICE_REQUEST:
-            return {
-                ...state,
-                loading: true
-            };
+            draft.loading = true;
+            break;
         case QUERY_NOTICE_SUCCESS:
-            return {
-                ...state,
-                noticeList: action.data,
-                loading: false
-            };
+            draft.noticeList = action.data;
+            draft.loading = false;
+            break;
         case QUERY_NOTICE_FAILURE:
-            return {
-                ...state,
-                loading: false
-            };
+            draft.loading = false;
+            break;
         default:
-            return state;
+            break;
     }
-    
+    });
 }
 
 export default reducer;

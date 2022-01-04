@@ -1,23 +1,32 @@
-import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS } from "../actions";
+import produce from "immer";
+import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../actions";
 
 const intitialState = {
     isLoggedIn : false,
     accountId: null,
     signUpData :{},
     loginData : {},
-    token : null,
     isLogginIn : false,
     isLogginOut : false,
-    loginId: null,
-    password: null,
+    Account:{
+        login: null,
+        pass: null,
+        username: null,
+        email: null,
+        hpNum: null,
+        role: [],
+        part: [],
+        token : null,
+    }
 };
 /* Action Creator */
 export const loginRequestAction = (data) => {
-    console.log("LOG_IN_REQUEST", LOG_IN_REQUEST);
     return {
         type: LOG_IN_REQUEST,
-        loginId: data.loginId,
-        password: data.password
+        Account: {
+            login: data.loginId,
+            pass: data.password,
+        }
     }
 };
 
@@ -27,55 +36,56 @@ export const logoutAction = () => {
     }
 };
 
+export const signUpRequestAction = (data) =>{
+    console.log(data);
+    return {
+        type: SIGN_UP_REQUEST,
+        Account: data.user
+    }
+}
+
+
 const reducer = (state = intitialState, action) => {
-    console.log("reducer work?" + action.type);
+    
+    return produce(state, (draft) => {
     switch (action.type) {
         case LOG_IN_REQUEST:
-            console.log("login Reducer?");
-            return {
-                ...state,
-                isLogginIn: true
-            };
+            draft.isLoggedIn = true;
+            break;
         case LOG_IN_SUCCESS:
-            return {
-                ...state,
-                isLoggedIn: true,
-                accountId: action.accountId,
-                isLogginIn: false
-            };
+            draft.isLoggedIn = true;
+            draft.accountId = action.accountId;
+            draft.Account.login = action.Account.login;
+            draft.isLogginIn = false;
+            break;
         case LOG_IN_FAILURE:
-            return {
-                ...state,
-                isLogginIn: false
-            };
+            draft.isLoggedIn = false;
+            break;
         case LOG_OUT_REQUEST:
-            alert("reducer -logout");
-            return {
-                ...state,
-                isLogginOut: true
-            };
+            draft.isLogginOut = true;
+            break;
         case LOG_OUT_SUCCESS:
-            return {
-                ...state,
-                isLoggedIn: false,
-                accountId: null,
-                token: null,
-                isLogginOut: false
-            };
+            draft.isLoggedIn = false;
+            draft.accountId = null;
+            draft.token = null;
+            draft.isLogginOut = false;
+            break;
         case LOG_OUT_FAILURE:
-            return {
-                ...state,
-                isLogginOut: false
-            };
+            draft.isLogginOut = false;
+            break;
         case GET_TOKEN:
-            return {
-                ...state,
-                token: action.token
-            };
+            draft.Account.token = action.Account.token;
+            break;
+        case SIGN_UP_REQUEST:
+            draft.isLogginIn = true;
+        case SIGN_UP_SUCCESS:
+            break;
+        case SIGN_UP_FAILURE:
+            draft.isLogginIn = false;
         default:
-            return state;
+            break;
     }
-    
+    });
 }
 
 export default reducer;

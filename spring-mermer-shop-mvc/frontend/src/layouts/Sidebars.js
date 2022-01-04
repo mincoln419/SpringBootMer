@@ -14,7 +14,7 @@ const { SubMenu } = Menu;
 		  return (
 			<Menu
 			  onClick={this.handleClick}
-			  style={{ width: 256,height:'90vh',overflow: 'auto',minWidth:256}}
+			  style={{ width: '30%',height:'90vh',overflow: 'auto',minWidth:220}}
 			  defaultSelectedKeys={['1']}
 			  defaultOpenKeys={['sub1']}
 			  mode="inline"

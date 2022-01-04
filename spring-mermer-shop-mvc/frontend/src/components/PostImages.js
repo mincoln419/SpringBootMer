@@ -20,7 +20,7 @@ const PostImages = ({images}) => {
         return (
             <>
                 <img role="presentation" style={{blockSize: "50%"}} src={images[0].src} alt={images[0].src} onClick={onZoom}/>
-                {showImagesZoom && <ImagesZoom image= {images} onClose= {onClose}/>}
+                {showImagesZoom && <ImagesZoom images= {images} onClose= {onClose}/>}
             </>
         );
     }
