@@ -79,12 +79,16 @@ public class AppConfig {
 				
 				accountService.saveAccount(admin);
 				
+				
+				for(int i= 0 ; i < 10 ; i ++) {
 				Notice notice = Notice.builder()
-						.title("test1- title")
-						.content("test content")
+						.title("test " + i + " - title")
+						.content("test content #해시테크"+ i)
 						.inster(admin)
 						.build();
+				
 				noticeService.createNotice(notice);
+				}
 				
 				
 				Account user = Account.builder()

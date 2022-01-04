@@ -4,6 +4,7 @@ import { HYDRATE } from "next-redux-wrapper";
 import user from "./user";
 import notice from "./notice";
 import comment from "./comment";
+import menu from "./menu";
 import { combineReducers } from "redux";
 
 /* 비동기 action creator */
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
     },
     user,
     notice,
-    comment
+    comment,
+    menu
 })
 
 export default rootReducer;

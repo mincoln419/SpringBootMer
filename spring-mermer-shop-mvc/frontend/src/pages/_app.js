@@ -11,8 +11,16 @@ const {Header, Content, Sider, Footer} = Layout;
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutAction } from '../reducer/user';
 import wrapper from '../store/configureStore';
+import { BrowserView, MobileView } from 'react-device-detect';
+import Hamburgs from '../layouts/Hamburgs';
+import { createGlobalStyle } from 'styled-components';
 
+const Global = createGlobalStyle`
+    .ant-layout-header {
+        padding-right: 0;
+    }
 
+`;
 
 const App = ({ Component }) => {
     const dispatch = useDispatch();
@@ -37,17 +45,21 @@ const App = ({ Component }) => {
         </>
     );
 
+
     return (
         <>
             <title>형량계산기</title>
+            
+            <BrowserView>
             <Layout>
                     <Header style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' }}>
                         <Row>
-                            <Col span={10}>
+                            <Col span={3}>
                                 <Link href="/"><a>형량계산기</a></Link>
                             </Col>
+                            <Col span={5}></Col>
                             <Col span={8}><Input placeholder="검색" /></Col>
-                            <Col span={6}>
+                            <Col span={8}>
                                 {isLoggedIn ? (<>
                                 <Avatar style={{ backgroundColor: '#87d068', marginRight: 20 }} icon={<UserOutlined/>} />
                                 <Dropdown overlay={menu}>
@@ -68,7 +80,7 @@ const App = ({ Component }) => {
                         <Sider style={{ color: '#666' }}>
                             <Sidebars />
                         </Sider>
-                        <Content style={{ marginLeft: '5%', height: '86vh', paddingRight: '2%', overflow: 'auto', textAlign: 'center' }}>
+                        <Content style={{marginLeft: '5%', height: '86vh', paddingRight: '2%', overflow: 'auto', textAlign: 'center' }}>
                             <Component />
                         </Content>
                     </Layout>
@@ -76,6 +88,28 @@ const App = ({ Component }) => {
                     <a href="http://www.mermer.kr" target={'_blank'}>©2021-2022 Made by Mermer</a>
                     </Footer>
             </Layout>
+            </BrowserView>
+            <MobileView>
+            <Hamburgs />
+            <Layout>
+                    <Header style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold'}}>
+                    <Row>
+                            <Col span={8}>
+                                <Link href="/"><a>형량계산기</a></Link>
+                            </Col>
+                        </Row>
+                    </Header>
+                    
+                    <Layout>
+                        <Content style={{marginLeft: '5%', height: '86vh', paddingRight: '2%', overflow: 'auto', textAlign: 'center' }}>
+                            <Component />
+                        </Content>
+                    </Layout>
+                    <Footer style={{ backgroundColor: '#001529', position: 'fixed', bottom: 0, width: '100vw', minWidth: '100px', textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>
+                    <a href="http://www.mermer.kr" target={'_blank'}>©2021-2022 Made by Mermer</a>
+                    </Footer>
+            </Layout>
+           </MobileView>
         </>
     );
 }
