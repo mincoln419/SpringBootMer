@@ -1,12 +1,14 @@
 
 package com.mermer.cm.validator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.cm.repository.AccountRepository;
 
 /**
  * @packageName : com.mermer.cm.validator
@@ -22,12 +24,25 @@ import com.mermer.cm.entity.type.AccountRole;
 @Component
 public class AccountValidator {
 
+	
+	@Autowired
+	AccountRepository accountRepository;
 
 	/**
 	 * @param accountDto
 	 * @param errors
 	 */
 	public void validate(AccountDto accountDto, Errors errors) {
+		
+		
+		/*
+		 * @description 로그인ID 고유성 검사
+		 *  		 
+		 * */
+		if (!accountRepository.findByLogin(accountDto.getLogin()).isEmpty()) {
+			errors.rejectValue("login", "로그인 중복");
+		}
+		
 		/*
 		 * @description:전화번호 유효성 검사 		 
 		 * */
