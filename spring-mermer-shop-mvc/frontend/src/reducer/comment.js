@@ -1,14 +1,16 @@
+import produce from "immer";
+
 const intitialState = {
     maincomment: []
 };
 
 const reducer = (state = intitialState, action) => {
-    switch (action.type) {
-
-        default:
-            return state;
-    }
-    
+    return produce(state, (draft) => {
+        switch (action.type) {
+            default:
+                break;
+        }
+    });
 }
 
 export default reducer;

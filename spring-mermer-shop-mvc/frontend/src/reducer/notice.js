@@ -1,3 +1,4 @@
+import produce from "immer";
 import { QUERY_NOTICE_FAILURE, QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS } from "../actions/notice";
 
 const intitialState = {
@@ -57,33 +58,27 @@ export const queryNoticeRequestAction = () => {
 }
 
 const reducer = (state = intitialState, action) => {
+
+    return produce(state, (draft) => {
     switch (action.type) {
         case ADD_POST:
-            return {
-                ...state,
-                mainPosts: [dummyPost, ...state.mainPosts],
-                noticeAdded: true
-            };
+            draft.mainPosts = dummyPost;
+            draft.noticeAdded = true;
+            break;
         case QUERY_NOTICE_REQUEST:
-            return {
-                ...state,
-                loading: true
-            };
+            draft.loading = true;
+            break;
         case QUERY_NOTICE_SUCCESS:
-            return {
-                ...state,
-                noticeList: action.data,
-                loading: false
-            };
+            draft.noticeList = action.data;
+            draft.loading = false;
+            break;
         case QUERY_NOTICE_FAILURE:
-            return {
-                ...state,
-                loading: false
-            };
+            draft.loading = false;
+            break;
         default:
-            return state;
+            break;
     }
-    
+    });
 }
 
 export default reducer;

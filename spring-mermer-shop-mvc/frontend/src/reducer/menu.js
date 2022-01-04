@@ -1,3 +1,5 @@
+import produce from "immer";
+
 const intitialState = {
     toggleMenu : false,
     toggleBar : false
@@ -18,21 +20,18 @@ export const setToggleBarAction = (flag) => {
 }
 
 const reducer = (state = intitialState, action) => {
+    return produce(state, (draft) => {
     switch (action.type) {
         case 'SET_TOGGLE_MENU':
-            return {
-                ...state,
-                toggleMenu: action.flag
-            };
+            draft.toggleMenu = action.flag;
+            break;
         case 'SET_TOGGLE_BAR':
-            return {
-                ...state,
-                toggleBar: action.flag
-            };
+            draft.toggleBar = action.flag;
+            break;
         default:
-            return state;
+            break;
     }
-    
+});
 }
 
 export default reducer;
