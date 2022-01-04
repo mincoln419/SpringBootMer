@@ -51,7 +51,8 @@ function* login(action){
 
         yield put({
             type: LOG_IN_SUCCESS,
-            accountId: account.data.id
+            accountId: account.data.id,
+            Account:{login : action.Account.login}
         });
 
         yield Router.push("/");
@@ -113,14 +114,14 @@ function* signUp(action){
 
         yield put({
             type: SIGN_UP_SUCCESS,
-            Account: action.Account,
         });
-
+        console.log(action.Account);
         const account = yield call(getAccountAPI, action.Account, result.data.access_token); 
 
         yield put({
             type: LOG_IN_SUCCESS,
-            accountId: account.data.accountId
+            accountId: account.data.accountId,
+            Account: {login : action.Account.login}
         });
 
         yield Router.push("/");

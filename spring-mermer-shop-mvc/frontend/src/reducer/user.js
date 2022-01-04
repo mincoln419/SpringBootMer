@@ -56,6 +56,7 @@ const reducer = (state = intitialState, action) => {
                 ...state,
                 isLoggedIn: true,
                 accountId: action.accountId,
+                Account:{...state.Account, login: action.Account.login},
                 isLogginIn: false
             };
         case LOG_IN_FAILURE:
@@ -95,7 +96,6 @@ const reducer = (state = intitialState, action) => {
         case SIGN_UP_SUCCESS:
             return {
                 ...state,
-                Account: action.Account,
             };
         case SIGN_UP_FAILURE:
             return {

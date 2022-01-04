@@ -16,10 +16,10 @@ import wrapper from '../store/configureStore';
 
 const App = ({ Component }) => {
     const dispatch = useDispatch();
-    const isLoggedIn = useSelector((state) => {
-        return state.user.isLoggedIn;
-    });
-
+    const {isLoggedIn} = useSelector((state) => state.user);
+    const {login} = useSelector((state) => state.user.Account);
+    console.log("isLoggedIn", isLoggedIn);
+    console.log("login", login);
     function logout() {
         dispatch(logoutAction());
     }
@@ -52,7 +52,7 @@ const App = ({ Component }) => {
                                 <Avatar style={{ backgroundColor: '#87d068', marginRight: 20 }} icon={<UserOutlined/>} />
                                 <Dropdown overlay={menu}>
                                  <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                    Mermer <DownOutlined />
+                                    {login} <DownOutlined />
                                 </a>
                               </Dropdown>
                               </>) : (<>
