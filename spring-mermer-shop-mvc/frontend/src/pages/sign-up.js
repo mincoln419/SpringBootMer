@@ -3,7 +3,7 @@ React.useLayoutEffect = React.useEffect;
 import { Form, Input, InputNumber, Button, Divider, Typography, Space , Checkbox } from 'antd';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import {loginAction} from '../reducer/user';
+import {signUpRequestAction} from '../reducer/user';
 import { useRouter } from 'next/router'
 const { Title, Paragraph, Text } = Typography;
 const layout = {
@@ -42,22 +42,11 @@ const validateMessages = {
 const SignUp = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-      const onFinish = (values) => {
-        const loginId = values.user.login;
-        axios.request({
-          url: "/api/account",
-          method: "post",
-          baseURL: "/",
-          headers: {'Content-Type' : 'application/json;charset=UTF-8',
-                    'Accept':'application/hal+json'
-                },
-          data: values.user
-        }).then(function(res) {
-          dispatch(loginAction({loginId}));
-          
-          router.push("/");
-        });
-      };
+  
+  const onFinish = (values) => {
+    dispatch(signUpRequestAction(values));
+        
+  };
     
       return (
         <>
@@ -73,7 +62,7 @@ const SignUp = () => {
               },
             ]}
           >
-             <Input />
+             <Input name={['user', 'login']}/>
             </Form.Item>
            <Form.Item
         name={['user', "pass"]}
@@ -86,7 +75,7 @@ const SignUp = () => {
         ]}
         hasFeedback
       >
-        <Input.Password />
+        <Input.Password name={['user', "pass"]}/>
       </Form.Item>
 
       <Form.Item
@@ -101,7 +90,7 @@ const SignUp = () => {
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
-              if (!value || getFieldValue('pass') === value) {
+              if (!value || getFieldValue(['user', "pass"]) === value) {
                 return Promise.resolve();
               }
 
@@ -110,7 +99,7 @@ const SignUp = () => {
           }),
         ]}
       >
-        <Input.Password />
+        <Input.Password name={['confirm']} />
       </Form.Item>
       <Form.Item
             name={['user', 'username']}

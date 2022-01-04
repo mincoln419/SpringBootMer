@@ -1,23 +1,31 @@
-import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS } from "../actions";
+import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../actions";
 
 const intitialState = {
     isLoggedIn : false,
     accountId: null,
     signUpData :{},
     loginData : {},
-    token : null,
     isLogginIn : false,
     isLogginOut : false,
-    loginId: null,
-    password: null,
+    Account:{
+        login: null,
+        pass: null,
+        username: null,
+        email: null,
+        hpNum: null,
+        role: [],
+        part: [],
+        token : null,
+    }
 };
 /* Action Creator */
 export const loginRequestAction = (data) => {
-    console.log("LOG_IN_REQUEST", LOG_IN_REQUEST);
     return {
         type: LOG_IN_REQUEST,
-        loginId: data.loginId,
-        password: data.password
+        Account: {
+            login: data.loginId,
+            pass: data.password,
+        }
     }
 };
 
@@ -27,11 +35,18 @@ export const logoutAction = () => {
     }
 };
 
+export const signUpRequestAction = (data) =>{
+    console.log(data);
+    return {
+        type: SIGN_UP_REQUEST,
+        Account: data.user
+    }
+}
+
+
 const reducer = (state = intitialState, action) => {
-    console.log("reducer work?" + action.type);
     switch (action.type) {
         case LOG_IN_REQUEST:
-            console.log("login Reducer?");
             return {
                 ...state,
                 isLogginIn: true
@@ -49,7 +64,6 @@ const reducer = (state = intitialState, action) => {
                 isLogginIn: false
             };
         case LOG_OUT_REQUEST:
-            alert("reducer -logout");
             return {
                 ...state,
                 isLogginOut: true
@@ -68,10 +82,27 @@ const reducer = (state = intitialState, action) => {
                 isLogginOut: false
             };
         case GET_TOKEN:
+            console.log(action);
             return {
                 ...state,
-                token: action.token
+                Account: {...state.Account, token:action.Account.token}
             };
+        case SIGN_UP_REQUEST:
+            return {
+                ...state,
+                isLogginIn: true
+            };
+        case SIGN_UP_SUCCESS:
+            return {
+                ...state,
+                Account: action.Account,
+            };
+        case SIGN_UP_FAILURE:
+            return {
+                ...state,
+                isLogginIn: false
+            };
+
         default:
             return state;
     }

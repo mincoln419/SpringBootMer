@@ -27,10 +27,10 @@ const App = ({ Component }) => {
     const menu = (
         <>
         <Menu>
-            <Menu.Item>
+            <Menu.Item key={"setting"}>
                 <Link href="/login"><a>환경설정</a></Link>
             </Menu.Item>
-            <Menu.Item>
+            <Menu.Item key={"logout"}>
                 <Button onClick={logout}>로그아웃</Button>
             </Menu.Item>
         </Menu>
@@ -56,10 +56,10 @@ const App = ({ Component }) => {
                                 </a>
                               </Dropdown>
                               </>) : (<>
-                                <ui style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' , float: "right", paddingRight : "10px"}}> 
+                                <ul style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' , float: "right", paddingRight : "10px"}}> 
                                     <Link  href="/login"><a style={{paddingRight : "20px"}}>Login</a></Link><span > </span>
                                     <Link href="/sign-up"><a>Sign-Up</a></Link>
-                                </ui>
+                                </ul>
                               </>)}
                             </Col>
                         </Row>
