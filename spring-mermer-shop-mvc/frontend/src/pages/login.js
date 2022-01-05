@@ -11,13 +11,12 @@ import { useRouter } from 'next/router'
 const Login = () => {
     const dispatch = useDispatch();
     const router = useRouter();
-    const {isLoggedIn} = useSelector((state) => state.user);
-    
+    const {isLoggedIn, setCookie} = useSelector((state) => state.user);
     if(isLoggedIn){
       router.push("/");
     }
     const onFinish = (data) => {//이미 e.preventDefault 적용이 되어있음.
-      dispatch(loginRequestAction(data));
+      dispatch(loginRequestAction(data, setCookie));
     }
   
     const onFinishFailed = (errorInfo) => {

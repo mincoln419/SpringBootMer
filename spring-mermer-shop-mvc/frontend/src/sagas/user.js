@@ -54,7 +54,9 @@ function* login(action){
             accountId: account.data.id,
             Account:{login : action.Account.login}
         });
-
+        action.setCookie('token', result.data.access_token, {path: '/'});
+        action.setCookie('accountId', account.data.id, {path: '/'});
+        action.setCookie('loginId', action.Account.login, {path: '/'});
         yield Router.push("/");
     }catch(err){
         console.log(err);

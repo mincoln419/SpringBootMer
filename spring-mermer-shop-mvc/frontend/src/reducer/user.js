@@ -1,5 +1,5 @@
 import produce from "immer";
-import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_STATE_UPDATE, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../actions";
+import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_STATE_UPDATE, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SET_COOKIE_SESSION, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../actions";
 
 const intitialState = {
     isLoggedIn : false,
@@ -17,16 +17,18 @@ const intitialState = {
         role: [],
         part: [],
         token : null,
-    }
+    },
+    setCookie : null,
 };
 /* Action Creator */
-export const loginRequestAction = (data) => {
+export const loginRequestAction = (data, setCookie) => {
     return {
         type: LOG_IN_REQUEST,
         Account: {
             login: data.loginId,
             pass: data.password,
-        }
+        },
+        setCookie: setCookie,
     }
 };
 
@@ -44,6 +46,14 @@ export const signUpRequestAction = (data) =>{
     }
 }
 
+/* 쿠키 관련 리퀘스트 엑션 */
+export const setCookieRequest = (setCookie) => {
+    return {
+        type: SET_COOKIE_SESSION,
+        setCookie : setCookie,
+    }
+}
+
 export const logInStateUpdateRequest = (cookies) =>{
     console.log(cookies.login);
     return {
@@ -58,6 +68,9 @@ const reducer = (state = intitialState, action) => {
     
     return produce(state, (draft) => {
     switch (action.type) {
+        case SET_COOKIE_SESSION:
+            draft.setCookie = action.setCookie;
+            break;
         case LOG_IN_STATE_UPDATE:
             draft.isLoggedIn = true;
             draft.accountId = action.accountId;
