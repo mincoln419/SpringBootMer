@@ -36,14 +36,6 @@ public class AccountValidator {
 		
 		
 		/*
-		 * @description 로그인ID 고유성 검사
-		 *  		 
-		 * */
-		if (!accountRepository.findByLogin(accountDto.getLogin()).isEmpty()) {
-			errors.rejectValue("login", "로그인 중복");
-		}
-		
-		/*
 		 * @description:전화번호 유효성 검사 		 
 		 * */
 		if (!accountDto.getHpNum().startsWith("01")||accountDto.getHpNum().length() < 10) {
@@ -53,6 +45,21 @@ public class AccountValidator {
 
 	}
 
+	
+	public void accountValidate(AccountDto accountDto, Errors errors) {		
+		
+		/*
+		 * @description 로그인ID 고유성 검사
+		 *  		 
+		 * */
+		if (!accountRepository.findByLogin(accountDto.getLogin()).isEmpty()) {
+			errors.rejectValue("login", "로그인 중복");
+		}
+
+	}
+	
+	
+	
 	/**
 	 * @method validateAccount
 	 * @param account

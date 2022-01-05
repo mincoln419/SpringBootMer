@@ -1,12 +1,13 @@
 {
     "parser":"babel-eslint",
-    "parserOption":{
+    "parserOptions":{
         "project":["./package.json"],
         "ecmaVersion": 2020,
         "sourceType": "module",
         "ecmaFeatures":{
             "jsx":true
-        }  
+        },
+        "requireConfigFile": false
     },
     "env":{
         "browser":true,
@@ -16,9 +17,10 @@
     "extends":[
         "airbnb"
     ],
-    "plugsin":[
+    "plugins":[
         "import",
-        "react-hooks"
+        "react-hooks",
+        "next"
     ],
     "rules":{
         "jsx-a11y/label-has-associated-control": "off",

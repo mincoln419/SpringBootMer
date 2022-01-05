@@ -1,0 +1,6 @@
+DESTINATION_URL = 'http://localhost:8080/api/:path*'
+SOURCE_PATH = '/api/:path*'
+TOKEN_URL = 'http://localhost:8080/oauth/token'
+TOKEN_PATH = '/oauth/token'
+CLIENT_ID = 'merApp0203041910112'
+CLIENT_SECRET = 'mermer110129345671'

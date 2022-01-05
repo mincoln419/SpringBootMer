@@ -134,6 +134,7 @@ public class AccountController {
 		
 		/* validation start */
 		if(errors.hasErrors()) return badRequest(errors);
+		accountValidator.accountValidate(accountDto, errors);
 		accountValidator.validate(accountDto, errors);
 		if(errors.hasErrors()) return badRequest(errors);
 		/* validation end */

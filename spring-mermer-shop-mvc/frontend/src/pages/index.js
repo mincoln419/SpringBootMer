@@ -1,6 +1,9 @@
 import React from 'react';
 React.useLayoutEffect = React.useEffect;
 import { Typography, Divider } from 'antd';
+import wrapper from '../store/configureStore';
+import { LOAD_USER_REQUEST } from '../actions';
+import {END} from "redux-saga";
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -17,5 +20,15 @@ const Index = () =>{
     </Typography>
       );
     };
+
+// export const getServerSideProps = wrapper.getServerSideProps((context)=>{
+
+//   context.store.dispatch({
+//     type: LOAD_USER_REQUEST
+//   });
+
+//   context.store.dispatch(END);
+//   await context.store.sagaTask.toPromise();
+// });
 
 export default Index;
