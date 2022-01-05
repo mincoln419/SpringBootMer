@@ -1,6 +1,5 @@
 import React from 'react';
 React.useLayoutEffect = React.useEffect;
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import 'antd/dist/antd.css';
@@ -9,11 +8,14 @@ import { Layout, Row, Col, Avatar, Input, Menu, Dropdown, Icon, Badge, Button } 
 import { DownOutlined , UserOutlined} from '@ant-design/icons';
 const {Header, Content, Sider, Footer} = Layout;
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutAction } from '../reducer/user';
+import { logInStateUpdateRequest, logoutAction } from '../reducer/user';
 import wrapper from '../store/configureStore';
 import { BrowserView, MobileView } from 'react-device-detect';
 import Hamburgs from '../layouts/Hamburgs';
 import { createGlobalStyle } from 'styled-components';
+import { useCookies } from 'react-cookie';
+
+
 
 const Global = createGlobalStyle`
     .ant-layout-header {
@@ -24,11 +26,28 @@ const Global = createGlobalStyle`
 
 const App = ({ Component }) => {
     const dispatch = useDispatch();
-    const {isLoggedIn} = useSelector((state) => state.user);
-    const {login} = useSelector((state) => state.user.Account);
+    const loginInfo = ['token' ,"loginId", "accountId"];
+    const [cookies, setCookie, rmCookie] = useCookies(loginInfo);
+    const {isLoggedIn, accountId } = useSelector((state) => state.user);
+    const {login, token} = useSelector((state) => state.user.Account);
+
+
+    if(cookies.loginId && !isLoggedIn){//쿠키에는 로그인이 되어있는데, redux에는 없는 경우 쿠키정보로 로그인 상태로 맹글어준다
+       // dispatch(logInStateUpdateRequest(cookies));
+    }
+
+    if(isLoggedIn && !cookies.loginId){//로그인 상태에서 최초 한번 쿠키에 세팅        
+        console.log(token);
+        console.log(accountId);
+        setCookie('token', token, {path: '/'});
+        setCookie('accountId', accountId, {path: '/'});
+        setCookie('loginId', login, {path: '/'});
+    }
+    
     console.log("isLoggedIn", isLoggedIn);
     console.log("login", login);
-    function logout() {
+    function logout() {//로그아웃 버튼 클릭시 쿠키 삭제
+        loginInfo.map((v) => rmCookie(v));
         dispatch(logoutAction());
     }
 
@@ -49,7 +68,6 @@ const App = ({ Component }) => {
     return (
         <>
             <title>형량계산기</title>
-            
             <BrowserView>
             <Layout>
                     <Header style={{ color: '#fff', textAlign: 'center', fontWeight: 'bold' }}>

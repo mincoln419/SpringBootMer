@@ -1,5 +1,5 @@
 import produce from "immer";
-import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../actions";
+import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_STATE_UPDATE, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../actions";
 
 const intitialState = {
     isLoggedIn : false,
@@ -44,11 +44,26 @@ export const signUpRequestAction = (data) =>{
     }
 }
 
+export const logInStateUpdateRequest = (cookies) =>{
+    console.log(cookies.login);
+    return {
+        type: LOG_IN_STATE_UPDATE,
+        token: cookies.token,
+        accountId: cookies.accountId,
+        login: cookies.loginId
+    }
+}
 
 const reducer = (state = intitialState, action) => {
     
     return produce(state, (draft) => {
     switch (action.type) {
+        case LOG_IN_STATE_UPDATE:
+            draft.isLoggedIn = true;
+            draft.accountId = action.accountId;
+            draft.Account.login = action.login;
+            draft.token = action.token;
+            break;
         case LOG_IN_REQUEST:
             draft.isLoggedIn = true;
             break;
