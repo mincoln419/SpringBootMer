@@ -33,9 +33,9 @@ const App = ({ Component }) => {
     const {login, token} = useSelector((state) => state.user.Account);
 
     useEffect(() => {
-        dispatch(setCookieRequest(setCookie));
+        if(!setCookie)dispatch(setCookieRequest(setCookie));
+        
         if(cookies.loginId && !isLoggedIn){//쿠키에는 로그인이 되어있는데, redux에는 없는 경우 쿠키정보로 로그인 상태로 맹글어준다
-            isLoggedIn = true;
             dispatch(logInStateUpdateRequest(cookies));
         }
     }, []);
