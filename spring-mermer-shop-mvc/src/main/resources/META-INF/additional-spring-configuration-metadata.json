@@ -38,5 +38,10 @@
     "name": "mer-app.user-pass",
     "type": "java.lang.String",
     "description": "A description for 'mer-app.user-pass'"
+  },
+  {
+    "name": "mer-app.path",
+    "type": "java.lang.String",
+    "description": "A description for 'mer-app.path'"
   }
 ]}

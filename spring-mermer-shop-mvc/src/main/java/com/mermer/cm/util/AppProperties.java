@@ -47,5 +47,7 @@ public class AppProperties {
 	@NotBlank
 	private String clientSecret;
 	
+	@NotBlank
+	private String path;
 	
 }
