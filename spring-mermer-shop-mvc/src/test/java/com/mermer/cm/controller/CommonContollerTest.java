@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
@@ -60,21 +62,22 @@ public class CommonContollerTest extends BaseTest {
 		//Account account = generateAccount();
 		//밖에서 account 꺼낼때는 parameter에 false
 		String token = getBearerToken(getAccessToken(false));
-		String filePath = "src/test/resource/developer.jpg";
+		String filePath = "C:\\Users\\N\\Pictures\\developer.jpg";
 		
-		MockMultipartFile file = new MockMultipartFile("image", "developer.jpg", "image/jpg", new FileInputStream(filePath));
+		MockMultipartFile file = new MockMultipartFile("images", "developer.jpg", "image/jpg", new FileInputStream(filePath));
 		
 		String name = "mermer";
 		
 		//When & Then
 		mockMvc.perform(multipart("/api/common/img")
-				.file(file).part(new MockPart("name", name.getBytes(StandardCharsets.UTF_8)))
+				.file(file)
+				.part(new MockPart("name", name.getBytes(StandardCharsets.UTF_8)))
 				.accept(MediaTypes.HAL_JSON)
 				.header(HttpHeaders.AUTHORIZATION, token)
 		)
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("name").value(name))
+		.andExpect(jsonPath("_embedded.upLoadFileList[0].name").value(name))
 		;
 ;
 		

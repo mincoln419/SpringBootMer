@@ -52,7 +52,6 @@ public class UpLoadFile {
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FILE_ID_GENERATOR")
 	Long fileId;
 	
-	@NotBlank
 	String name;
 	
 	@NotBlank

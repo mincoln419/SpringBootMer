@@ -3,16 +3,21 @@ package com.mermer.cm.controller;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,12 +52,14 @@ public class CommonController {
 	final CommonService commonService; 
 	final AppProperties appProperties;
 	
-	@PostMapping(value = "/img", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity uploadImage(@RequestPart(name = "name", required = false) String name,
-	                                     @RequestPart(name = "image") MultipartFile image,
-	                                     @CurrentUser Account account
-	                                     ) throws IOException {
+	@PostMapping(value = "/img")
+	public ResponseEntity uploadImage(@RequestParam(name = "name", required = false) String name,
+									  @RequestParam(name = "images") MultipartFile[] imageArr,
+	                                  @CurrentUser Account account
+	                                  ) throws IOException {
 		
+		List<UpLoadFile> list = new ArrayList<>();
+		Arrays.stream(imageArr).forEach(image -> {
 		log.debug("file", image.getName() + ":" + image.getSize());
 		
 		//TODO 파일업로드 S3 서버로 이전 예정
@@ -60,22 +67,34 @@ public class CommonController {
 		File folder = new File(path);
 		if(!folder.exists())folder.mkdir();
 		String fileName = path + (LocalDateTime.now().getLong(ChronoField.MILLI_OF_DAY)) + "developer.jpg";
-		FileOutputStream fos = new FileOutputStream(fileName);
-		BufferedOutputStream bos = new BufferedOutputStream(fos);
-		bos.write(image.getBytes());
-		fos.close();
-		bos.close();
+		FileOutputStream fos;
+		BufferedOutputStream bos;
+		try {
+			fos = new FileOutputStream(fileName);
+			bos = new BufferedOutputStream(fos);
+			bos.write(image.getBytes());
+			fos.close();
+			bos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace(); 
+		}
 		
 		UpLoadFile upLoadFile = UpLoadFile.builder()
-							.path(path)
-							.fileName(fileName)
-							.name(name)
-							.inster(account)
-							.mdfer(account)
-							.build()
-							;
+				.path(path)
+				.fileName(fileName)
+				.name(name)
+				.inster(account)
+				.mdfer(account)
+				.build()
+				;
+		list.add(upLoadFile);
+		});
 		
-		ResponseEntity result = commonService.createFile(upLoadFile);
+		
+
+		ResponseEntity result = commonService.createFile(list);
 		return result;
 	}
 

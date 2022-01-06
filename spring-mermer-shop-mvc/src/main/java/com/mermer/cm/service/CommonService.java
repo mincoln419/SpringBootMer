@@ -3,10 +3,13 @@ package com.mermer.cm.service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.net.URI;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -16,13 +19,12 @@ import org.springframework.stereotype.Service;
 import com.mermer.cm.controller.CommonController;
 import com.mermer.cm.entity.UpLoadFile;
 import com.mermer.cm.repository.UpLoadFileRepository;
-import com.mermer.cm.resource.NoticeResource;
-import com.mermer.cm.util.DevUtil;
+import com.mermer.cm.resource.UpLoadFileListResource;
+import com.mermer.cm.resource.UpLoadFileResource;
+import com.mermer.view.controller.BaseViewController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 /**
  * @packageName : com.mermer.cm.service
@@ -44,23 +46,27 @@ public class CommonService {
 
 	/**
 	 * @method createFile
-	 * @param upLoadFile
+	 * @param 
 	 * @return ResponseEntity
 	 * @description
 	 */
 	@Transactional
-	public ResponseEntity createFile(UpLoadFile upLoadFile) {
+	public ResponseEntity createFile(List<UpLoadFile> list) {
 
-		UpLoadFile result = upLoadFileRepository.save(upLoadFile);
-
-		// TODO 게시글의 댓글 정보 link return
-		WebMvcLinkBuilder selfLinkBuilder = linkTo(CommonController.class).slash("img").slash(result.getFileId());
+		List<UpLoadFile> resultList = new ArrayList<>();
+		for(UpLoadFile upLoadFile : list)resultList.add(upLoadFileRepository.save(upLoadFile));
+		
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(CommonController.class).slash("img");
 		URI createdUri = selfLinkBuilder.toUri();
 
-		EntityModel<Optional> imageResource = NoticeResource.of(Optional.of(result));// 생성자 대신 static of 사용
-		imageResource.add((selfLinkBuilder).withSelfRel())
-				.add(linkTo(CommonController.class).withRel("image-select"))
-				.add(Link.of("/docs/index.html#resources-image-create").withRel("profile"));
+		List<EntityModel<UpLoadFile>> detail= resultList.stream().map(result -> {
+			return UpLoadFileResource.of(result, selfLinkBuilder.withSelfRel())
+					.add((linkTo(BaseViewController.class)).slash(result.getFileName()).withRel("select-image"));
+		}).collect(Collectors.toList());
+		
+		CollectionModel<EntityModel<UpLoadFile>> imageResource = UpLoadFileListResource.of(detail)
+										.add((selfLinkBuilder).withSelfRel())
+										.add(Link.of("/docs/index.html#resources-image-create").withRel("profile"));
 
 		return ResponseEntity.created(createdUri).body(imageResource);
 	}
