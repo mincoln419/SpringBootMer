@@ -126,4 +126,5 @@ frontend/analysis
 # Next build dir
 .next/
 
+.env*
 # End of https://www.toptal.com/developers/gitignore/api/java,eclipse,maven,nextjs

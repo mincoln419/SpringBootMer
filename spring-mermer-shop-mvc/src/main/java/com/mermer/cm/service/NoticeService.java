@@ -51,7 +51,7 @@ import lombok.extern.slf4j.Slf4j;
  * 2021.12.17 Mermer 최초 생성
  */
 @Service
-@RequiredArgsConstructor //=> 자동으로 AccountRepository를 injection 처리
+@RequiredArgsConstructor //=> 자동으로 필드 injection 처리
 @Slf4j
 @SuppressWarnings("rawtypes")
 public class NoticeService {
