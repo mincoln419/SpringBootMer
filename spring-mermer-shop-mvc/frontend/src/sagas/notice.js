@@ -1,5 +1,5 @@
 import {all, fork, throttle, take, takeEvery, takeLatest, call, put} from 'redux-saga/effects';
-import {QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS, QUERY_NOTICE_FAILURE } from '../actions/notice';
+import {QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS, QUERY_NOTICE_FAILURE, UPLOAD_IMAGE_SUCCESS, UPLOAD_IMAGE_REQUEST, UPLOAD_IMAGE_FAILURE } from '../actions/notice';
 import axios from 'axios';
 
 function noticeQueryAPI(){
@@ -43,6 +43,43 @@ function* addNoticeRequest(action){
 }
 
 
+
+function uploadImgAPI(data, token){
+    for (let value of data.values()) {
+        console.log("value", value);
+      }
+        return axios.request({
+        url: "/api/common/img/",
+        method: "post",
+        baseURL: "/",
+        headers: { 'Accept':'application/hal+json',
+                  'Content-Type': 'multipart/form-data;utf-8',
+                  'Authorization' : 'Bearer ' + token
+              },
+        data: data
+      });
+}
+
+
+function* upLoadImages(action){
+
+    try{
+        const result = yield call(uploadImgAPI, action.tmpImgs, action.token);//call - 동기, fork - 비동기
+
+        yield put({
+            type: UPLOAD_IMAGE_SUCCESS,
+            data: result.data
+        });
+    }catch(err){
+        console.log(err);
+        yield put({
+            type: UPLOAD_IMAGE_FAILURE,
+        });
+    }
+}
+
+
+/* watch Action*/
 function* watchQueryNotice() {
     yield throttle(2000, 'QUERY_NOTICE_REQUEST', queryNoticeRequest);
 };
@@ -52,9 +89,17 @@ function* watchAddNotice() {
     yield throttle(1000, 'ADD_NOTICE_REQUEST', addNoticeRequest);
 };
 
+
+function* watchUploadImg() {
+    yield throttle(2000, UPLOAD_IMAGE_REQUEST, upLoadImages);
+};
+
+
+
 export default function* noticeSaga() {
     yield all([
         fork(watchQueryNotice),
-        fork(watchAddNotice)
+        fork(watchAddNotice),
+        fork(watchUploadImg)
     ]);
 };

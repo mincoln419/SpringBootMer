@@ -1,7 +1,7 @@
 import produce from "immer";
 import shortid from "shortid";
 import faker from "faker";
-import { QUERY_NOTICE_FAILURE, QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS } from "../actions/notice";
+import { QUERY_NOTICE_FAILURE, QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS, UPLOAD_IMAGE_FAILURE, UPLOAD_IMAGE_REQUEST, UPLOAD_IMAGE_SUCCESS } from "../actions/notice";
 
 const intitialState = {
     mainPosts: [{
@@ -34,7 +34,9 @@ const intitialState = {
     ],
     images: [],
     noticeAdded: false,
-    loading: false
+    loading: false,
+    imageName : null,
+    tmpImgs: []
 };
 
 intitialState.mainPosts = intitialState.mainPosts.concat(
@@ -96,6 +98,16 @@ const reducer = (state = intitialState, action) => {
             break;
         case QUERY_NOTICE_FAILURE:
             draft.loading = false;
+            break;
+        case UPLOAD_IMAGE_REQUEST:
+            draft.isUploading = true;
+            break;
+        case UPLOAD_IMAGE_SUCCESS:
+            draft.isUploading = false;
+            break;
+        case UPLOAD_IMAGE_FAILURE :
+            draft.isUploading = false;
+            draft.images = [];
             break;
         default:
             break;

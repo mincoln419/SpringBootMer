@@ -12,13 +12,13 @@ import PostCardContent from './postCardContent';
 
 
 const PostCard = ({notice}) => {
-    const {accountId} = useSelector((state) => state.user);
+    const {accountId, token} = useSelector((state) => state.user);
 
     //TODO 실제 데이터 처리로 대체예정
     const [isLinked, setIsLinked] =  useState(false);
     const [commentFormOpen, setCommentFormOpen] =  useState(false);
 
-    console.log("accountId", {accountId});
+    
     const onToggleLike = useCallback(() => {
         setIsLinked((prev) => !prev);
     }, []);
@@ -26,7 +26,7 @@ const PostCard = ({notice}) => {
         setCommentFormOpen((prev) => !prev);
     }, []);
 
-    console.log("notice", notice);
+    
     return (
         <div>
             <Card

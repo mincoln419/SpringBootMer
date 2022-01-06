@@ -75,7 +75,7 @@ const reducer = (state = intitialState, action) => {
             draft.isLoggedIn = true;
             draft.accountId = action.accountId;
             draft.Account.login = action.login;
-            draft.token = action.token;
+            draft.Account.token = action.token;
             break;
         case LOG_IN_REQUEST:
             draft.isLoggedIn = true;
@@ -88,6 +88,8 @@ const reducer = (state = intitialState, action) => {
             break;
         case LOG_IN_FAILURE:
             draft.isLoggedIn = false;
+            draft.accountId = null;
+            draft.Account.login = null;
             break;
         case LOG_OUT_REQUEST:
             draft.isLogginOut = true;
@@ -95,7 +97,7 @@ const reducer = (state = intitialState, action) => {
         case LOG_OUT_SUCCESS:
             draft.isLoggedIn = false;
             draft.accountId = null;
-            draft.token = null;
+            draft.Account.token = null;
             draft.isLogginOut = false;
             break;
         case LOG_OUT_FAILURE:
@@ -106,6 +108,7 @@ const reducer = (state = intitialState, action) => {
             break;
         case SIGN_UP_REQUEST:
             draft.isLogginIn = true;
+            break;
         case SIGN_UP_SUCCESS:
             break;
         case SIGN_UP_FAILURE:
