@@ -110,12 +110,14 @@ const Login = () => {
   //리덕스에 데이터가 채워진상태로 랜더링된다.
   export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{
     
-    const cookies = context.req.cookies
-    
-    if(cookies.loginId){
+    const cookies = context.req.cookies;
+    const state =  context.store.getState();
+
+    if(!state.user.isLoggedIn && cookies.loginId){
       context.store.dispatch(
         {
             type: LOG_IN_STATE_UPDATE,
+            accountId: cookies.accountId,
             token: cookies.token,
             login: cookies.loginId
         }

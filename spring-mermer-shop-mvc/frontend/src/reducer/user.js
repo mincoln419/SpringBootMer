@@ -3,12 +3,12 @@ import { GET_TOKEN, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_STATE_UPDATE, LOG_IN_
 
 const intitialState = {
     isLoggedIn : false,
-    accountId: null,
     signUpData :{},
     loginData : {},
     isLogginIn : false,
     isLogginOut : false,
     Account:{
+        accountId: null,
         login: null,
         pass: null,
         username: null,
@@ -56,6 +56,7 @@ const reducer = (state = intitialState, action) => {
             break;
         case LOG_IN_STATE_UPDATE:
             draft.isLoggedIn = true;
+            draft.Account.accountId = action.accountId;
             draft.Account.login = action.login;
             draft.Account.token = action.token;
             break;
@@ -64,13 +65,13 @@ const reducer = (state = intitialState, action) => {
             break;
         case LOG_IN_SUCCESS:
             draft.isLoggedIn = true;
-            draft.accountId = action.accountId;
+            draft.Account.accountId = action.accountId;
             draft.Account.login = action.Account.login;
             draft.isLogginIn = false;
             break;
         case LOG_IN_FAILURE:
             draft.isLoggedIn = false;
-            draft.accountId = null;
+            draft.Account.accountId = null;
             draft.Account.login = null;
             break;
         case LOG_OUT_REQUEST:
@@ -78,7 +79,7 @@ const reducer = (state = intitialState, action) => {
             break;
         case LOG_OUT_SUCCESS:
             draft.isLoggedIn = false;
-            draft.accountId = null;
+            draft.Account.accountId = null;
             draft.Account.token = null;
             draft.isLogginOut = false;
             break;
