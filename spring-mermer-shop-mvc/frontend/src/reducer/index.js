@@ -9,22 +9,23 @@ import { combineReducers } from "redux";
 
 /* 비동기 action creator */
 // (이전상태, 액션) => 다음상태
-const rootReducer = combineReducers({
-    index : (state = {}, action) => {
-    switch (action.type) {
-        case HYDRATE : //서버사이드 랜더링 때문에 추가
-            console.log('HYDRATE', action);
-            return { ...state, ...action.payload};
+const rootReducer = (state, action) => {
 
-            default: {
-                return state;
-            }
+    switch(action.type) {
+        case HYDRATE : //서버사이드 랜더링 때문에 추가
+            return { ...state, ...action.payload};
+        default: {
+            const combinedReducer = combineReducers({
+                user,
+                notice,
+                comment,
+                menu
+            });
+            return combinedReducer(state, action);
         }
-    },
-    user,
-    notice,
-    comment,
-    menu
-})
+    }
+};
+
 
 export default rootReducer;
+

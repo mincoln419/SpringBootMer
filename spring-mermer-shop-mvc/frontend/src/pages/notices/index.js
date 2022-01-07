@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { queryNoticeRequestAction } from '../../reducer/notice';
 import styled from 'styled-components';
+import wrapper from '../../store/configureStore';
+import { END } from 'redux-saga';
+import { LOG_IN_STATE_UPDATE } from '../../actions';
 
 const columns = [
   {
@@ -55,6 +58,26 @@ const Notice = () =>{
 );
 }
 
+  //리덕스에 데이터가 채워진상태로 랜더링된다.
+  export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{
+    
+    const cookies = context.req.cookies;
+    const state =  context.store.getState();
+
+    if(!state.user.isLoggedIn && cookies.loginId){
+      context.store.dispatch(
+        {
+            type: LOG_IN_STATE_UPDATE,
+            accountId: cookies.accountId,
+            token: cookies.token,
+            login: cookies.loginId
+        }
+    );
+    }
+ 
+    context.store.dispatch(END);
+    await context.store.sagaTask.toPromise();    
+  });
 
 
 export default Notice;

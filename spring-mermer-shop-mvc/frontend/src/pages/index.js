@@ -2,8 +2,9 @@ import React from 'react';
 React.useLayoutEffect = React.useEffect;
 import { Typography, Divider } from 'antd';
 import wrapper from '../store/configureStore';
-import { LOAD_USER_REQUEST } from '../actions';
-import {END} from "redux-saga";
+import { LOG_IN_STATE_UPDATE, SET_COOKIE_SESSION } from '../actions';
+import { END } from 'redux-saga';
+
 
 const { Title, Paragraph, Text, Link } = Typography;
 
@@ -21,14 +22,25 @@ const Index = () =>{
       );
     };
 
-// export const getServerSideProps = wrapper.getServerSideProps((context)=>{
+  //리덕스에 데이터가 채워진상태로 랜더링된다.
+  export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{
+    
+    const cookies = context.req.cookies;
+    const state =  context.store.getState();
 
-//   context.store.dispatch({
-//     type: LOAD_USER_REQUEST
-//   });
-
-//   context.store.dispatch(END);
-//   await context.store.sagaTask.toPromise();
-// });
+    if(!state.user.isLoggedIn && cookies.loginId){
+      context.store.dispatch(
+        {
+            type: LOG_IN_STATE_UPDATE,
+            accountId: cookies.accountId,
+            token: cookies.token,
+            login: cookies.loginId
+        }
+    );
+    }
+ 
+    context.store.dispatch(END);
+    await context.store.sagaTask.toPromise();    
+  });
 
 export default Index;

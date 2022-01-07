@@ -2,16 +2,22 @@ import React from 'react';
 React.useLayoutEffect = React.useEffect;
 import { Form, Input, Button, Checkbox, Typography, Divider } from 'antd';
 import Index from '.';
-import axios from 'axios';
 const { Title} = Typography;
 import { useDispatch, useSelector } from 'react-redux';
 import {  loginRequestAction } from '../reducer/user';
 import { useRouter } from 'next/router'
+import { useCookies } from 'react-cookie';
+import wrapper from '../store/configureStore';
+import { END } from 'redux-saga';
+import { LOG_IN_STATE_UPDATE } from '../actions';
 
 const Login = () => {
     const dispatch = useDispatch();
     const router = useRouter();
-    const {isLoggedIn, setCookie} = useSelector((state) => state.user);
+    const {isLoggedIn} = useSelector((state) => state.user);
+    const loginInfo = ['token' ,"loginId", "accountId"];
+    const [cookies, setCookie, rmCookie] = useCookies(loginInfo);
+
     if(isLoggedIn){
       router.push("/");
     }
@@ -101,5 +107,25 @@ const Login = () => {
     );
   };
   
+  //리덕스에 데이터가 채워진상태로 랜더링된다.
+  export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{
+    
+    const cookies = context.req.cookies;
+    const state =  context.store.getState();
+
+    if(!state.user.isLoggedIn && cookies.loginId){
+      context.store.dispatch(
+        {
+            type: LOG_IN_STATE_UPDATE,
+            accountId: cookies.accountId,
+            token: cookies.token,
+            login: cookies.loginId
+        }
+    );
+    }
+ 
+    context.store.dispatch(END);
+    await context.store.sagaTask.toPromise();    
+  });
 
 export default Login;
