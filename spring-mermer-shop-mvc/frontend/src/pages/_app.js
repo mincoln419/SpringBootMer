@@ -13,7 +13,8 @@ import wrapper from '../store/configureStore';
 import { BrowserView, MobileView } from 'react-device-detect';
 import Hamburgs from '../layouts/Hamburgs';
 import { createGlobalStyle } from 'styled-components';
-import { useCookies } from 'react-cookie';
+import cookies, { useCookies } from 'react-cookie';
+import {END} from 'redux-saga';
 
 
 
@@ -26,26 +27,16 @@ const Global = createGlobalStyle`
 
 const App = ({ Component }) => {
     const dispatch = useDispatch();
-    const loginInfo = ['token' ,"loginId", "accountId"];
-    const [cookies, setCookie, rmCookie] = useCookies(loginInfo);
-
     const {isLoggedIn, accountId } = useSelector((state) => state.user);
     const {login, token} = useSelector((state) => state.user.Account);
-
-    useEffect(() => {
-        if(!setCookie)dispatch(setCookieRequest(setCookie));
-        
-        if(cookies.loginId && !isLoggedIn){//쿠키에는 로그인이 되어있는데, redux에는 없는 경우 쿠키정보로 로그인 상태로 맹글어준다
-            dispatch(logInStateUpdateRequest(cookies));
-        }
-    }, []);
-
-   
+    const loginInfo = ['token' ,"loginId", "accountId"];
+    const [cookies, setCookie, rmCookie] = useCookies(loginInfo);
+    
     function logout() {//로그아웃 버튼 클릭시 쿠키 삭제
         loginInfo.map((v) => rmCookie(v));
         dispatch(logoutAction());
     }
-
+   
     const menu = (
         <>
         <Menu>
@@ -133,7 +124,7 @@ const App = ({ Component }) => {
                     
                     <Layout>
                         <Content style={{marginLeft: '5%', height: '86vh', paddingRight: '2%', overflow: 'auto', textAlign: 'center' }}>
-                            <Component cookie = {setCookie}/>
+                            <Component/>
                         </Content>
                     </Layout>
                     <Footer style={{ backgroundColor: '#001529', position: 'fixed', bottom: 0, width: '100vw', minWidth: '100px', textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>
@@ -148,5 +139,8 @@ const App = ({ Component }) => {
 App.propTypes = {
     Component: PropTypes.elementType.isRequired,
   };
+
+
+
 
 export default wrapper.withRedux(App);

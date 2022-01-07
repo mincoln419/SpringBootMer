@@ -5,6 +5,9 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import {signUpRequestAction} from '../reducer/user';
 import { useRouter } from 'next/router'
+import wrapper from '../store/configureStore';
+import { LOG_IN_STATE_UPDATE } from '../actions';
+import { END } from 'redux-saga';
 const { Title, Paragraph, Text } = Typography;
 const layout = {
     labelCol: {
@@ -154,5 +157,25 @@ const SignUp = () => {
         </>
       );
     };
+
+
+      //리덕스에 데이터가 채워진상태로 랜더링된다.
+  export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{
+    
+    const cookies = context.req.cookies
+    
+    if(cookies.loginId){
+      context.store.dispatch(
+        {
+            type: LOG_IN_STATE_UPDATE,
+            token: cookies.token,
+            login: cookies.loginId
+        }
+    );
+    }
+ 
+    context.store.dispatch(END);
+    await context.store.sagaTask.toPromise();    
+  });
 
 export default SignUp;

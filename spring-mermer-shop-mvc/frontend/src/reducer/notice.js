@@ -29,7 +29,7 @@ const intitialState = {
             id: 1,
             title:"test1 - 타이틀",
             insterId: 1,
-            instDtm: new Date(2021, 12, 26, 12, 11, 25),
+            instDtm: (new Date(2021, 12, 26, 12, 11, 25)).toString(),
         }
     ],
     images: [],

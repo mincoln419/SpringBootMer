@@ -46,34 +46,16 @@ export const signUpRequestAction = (data) =>{
     }
 }
 
-/* 쿠키 관련 리퀘스트 엑션 */
-export const setCookieRequest = (setCookie) => {
-    return {
-        type: SET_COOKIE_SESSION,
-        setCookie : setCookie,
-    }
-}
 
-export const logInStateUpdateRequest = (cookies) =>{
-    console.log(cookies.login);
-    return {
-        type: LOG_IN_STATE_UPDATE,
-        token: cookies.token,
-        accountId: cookies.accountId,
-        login: cookies.loginId
-    }
-}
 
 const reducer = (state = intitialState, action) => {
     
     return produce(state, (draft) => {
     switch (action.type) {
         case SET_COOKIE_SESSION:
-            draft.setCookie = action.setCookie;
             break;
         case LOG_IN_STATE_UPDATE:
             draft.isLoggedIn = true;
-            draft.accountId = action.accountId;
             draft.Account.login = action.login;
             draft.Account.token = action.token;
             break;
