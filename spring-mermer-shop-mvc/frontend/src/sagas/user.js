@@ -107,26 +107,20 @@ function signUpAPI(data){
 function* signUp(action){
     try{
         yield call(signUpAPI, action.Account);//call - 동기, fork - 비동기
-
-        const result = yield call(loginAPI, action.Account);//call - 동기, fork - 비동기
-        yield put({
-            type: GET_TOKEN,
-            Account: { token: result.data.access_token }
-        });
-
+        
         yield put({
             type: SIGN_UP_SUCCESS,
         });
-        console.log(action.Account);
-        const account = yield call(getAccountAPI, action.Account, result.data.access_token); 
 
         yield put({
-            type: LOG_IN_SUCCESS,
-            accountId: account.data.accountId,
-            Account: {login : action.Account.login}
+            type: LOG_IN_REQUEST,
+            Account: {
+                login: action.Account.login,
+                pass: action.Account.pass,
+            },
+            setCookie: action.setCookie,
         });
 
-        yield Router.push("/");
     }catch(err){
         console.log(err);
         yield put({

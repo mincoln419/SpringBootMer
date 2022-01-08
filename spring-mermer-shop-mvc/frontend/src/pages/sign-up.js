@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 import wrapper from '../store/configureStore';
 import { LOG_IN_STATE_UPDATE } from '../actions';
 import { END } from 'redux-saga';
+import { useCookies } from 'react-cookie';
 const { Title, Paragraph, Text } = Typography;
 const layout = {
     labelCol: {
@@ -45,9 +46,10 @@ const validateMessages = {
 const SignUp = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  
+  const loginInfo = ['token' ,"loginId", "accountId"];
+  const [cookies, setCookie, rmCookie] = useCookies(loginInfo);
   const onFinish = (values) => {
-    dispatch(signUpRequestAction(values));
+    dispatch(signUpRequestAction(values, setCookie));
         
   };
     

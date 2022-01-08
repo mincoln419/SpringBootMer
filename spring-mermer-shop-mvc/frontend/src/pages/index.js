@@ -2,7 +2,7 @@ import React from 'react';
 React.useLayoutEffect = React.useEffect;
 import { Typography, Divider } from 'antd';
 import wrapper from '../store/configureStore';
-import { LOG_IN_STATE_UPDATE, SET_COOKIE_SESSION } from '../actions';
+import { LOG_IN_STATE_UPDATE} from '../actions';
 import { END } from 'redux-saga';
 
 
