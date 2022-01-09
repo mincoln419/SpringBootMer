@@ -13,8 +13,6 @@ const rootReducer = (state, action) => {
 
     switch(action.type) {
         case HYDRATE : //서버사이드 랜더링 때문에 추가
-            console.log("state:::", state);
-            console.log("action.payload", action.payload);
             return { ...state,
                  ...action.payload};
         default: {

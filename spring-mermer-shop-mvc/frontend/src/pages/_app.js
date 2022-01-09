@@ -18,7 +18,7 @@ import {END} from 'redux-saga';
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL="http://localhost:8080";
+axios.defaults.baseURL=process.env.NEXT_PUBLIC_AXIOS_BASE_URL;
 axios.defaults.timeout=10000
 
 
