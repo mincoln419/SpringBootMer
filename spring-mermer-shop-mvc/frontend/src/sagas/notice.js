@@ -81,7 +81,7 @@ function* upLoadImages(action){
 
 /* watch Action*/
 function* watchQueryNotice() {
-    yield throttle(2000, 'QUERY_NOTICE_REQUEST', queryNoticeRequest);
+    yield throttle(2000, QUERY_NOTICE_REQUEST, queryNoticeRequest);
 };
 
 

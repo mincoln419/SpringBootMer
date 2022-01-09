@@ -2,7 +2,7 @@ import { applyMiddleware, compose, createStore} from 'redux';
 import { createWrapper } from 'next-redux-wrapper';
 import reducer from '../reducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import createSagaMiddleware from "redux-saga";
+import createSagaMiddleware, { END } from "redux-saga";
 import rootSaga from "../sagas";
 
 
@@ -17,6 +17,35 @@ const configureStore = () => {
     ;
 
     const store = createStore(reducer, enhancer);
+    
+
+    store.runSaga = () => {
+        // Avoid running twice
+        if (store.saga) return;
+        store.saga = sagaMiddleware.run(rootSaga);
+      };
+    
+    store.stopSaga = async () => {
+        // Avoid running twice
+        if (!store.saga) return;
+        store.dispatch(END);
+        await store.saga.toPromise();
+        store.saga = null;
+      };
+    
+    store.execSagaTasks = async (isServer, tasks) => {
+        // run saga
+        store.runSaga();
+        // dispatch saga tasks
+        tasks(store.dispatch);
+        // Stop running and wait for the tasks to be done
+        await store.stopSaga();
+        // Re-run on client side
+        if (!isServer) {
+          store.runSaga();
+        }
+    };
+
     store.sagaTask = sagaMiddleware.run(rootSaga);
     return store;
 }

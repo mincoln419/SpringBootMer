@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 import wrapper from '../store/configureStore';
 import { LOG_IN_STATE_UPDATE } from '../actions';
 import { END } from 'redux-saga';
+import { useCookies } from 'react-cookie';
 const { Title, Paragraph, Text } = Typography;
 const layout = {
     labelCol: {
@@ -45,9 +46,10 @@ const validateMessages = {
 const SignUp = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  
+  const loginInfo = ['token' ,"loginId", "accountId"];
+  const [cookies, setCookie, rmCookie] = useCookies(loginInfo);
   const onFinish = (values) => {
-    dispatch(signUpRequestAction(values));
+    dispatch(signUpRequestAction(values, setCookie));
         
   };
     
@@ -162,7 +164,7 @@ const SignUp = () => {
       //리덕스에 데이터가 채워진상태로 랜더링된다.
   export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{
     
-    const cookies = context.req.cookies;
+    const cookies = context.req? context.req.cookies : '';
     const state =  context.store.getState();
 
     if(!state.user.isLoggedIn && cookies.loginId){

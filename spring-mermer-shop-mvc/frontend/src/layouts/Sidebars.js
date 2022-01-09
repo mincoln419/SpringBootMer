@@ -15,14 +15,13 @@ const { SubMenu } = Menu;
 			<Menu
 			  onClick={this.handleClick}
 			  style={{ width: '30%',height:'90vh',overflow: 'auto',minWidth:220}}
-			  defaultSelectedKeys={['1']}
 			  defaultOpenKeys={['sub1']}
 			  mode="inline"
 			>
 			  <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
 				<Menu.ItemGroup key="g1" title="Item 1">
-				  <Menu.Item key="1"><Link href="/notices"><a>공지사항</a></Link></Menu.Item>
-				  <Menu.Item key="2">Option 2</Menu.Item>
+				  <Menu.Item key="1"><Link href="/about"><a>About</a></Link></Menu.Item>
+				  <Menu.Item key="2"><Link href="/notices"><a>Notice</a></Link></Menu.Item>
 				</Menu.ItemGroup>
 				<Menu.ItemGroup key="g2" title="Item 2">
 				  <Menu.Item key="3">Option 3</Menu.Item>

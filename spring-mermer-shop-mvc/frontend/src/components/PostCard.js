@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Button, Card, Comment, Image, List, Popover } from 'antd';
-import NoticeDetail from '../pages/notices/detail';
+import NoticeDetail from '../pages/notices/[id]';
 import { useSelector } from 'react-redux';
 import Avatar from 'antd/lib/avatar/avatar';
 import PostImages from './PostImages';

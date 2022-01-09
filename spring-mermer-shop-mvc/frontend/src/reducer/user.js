@@ -38,11 +38,12 @@ export const logoutAction = () => {
     }
 };
 
-export const signUpRequestAction = (data) =>{
+export const signUpRequestAction = (data, setCookie) =>{
     console.log(data);
     return {
         type: SIGN_UP_REQUEST,
-        Account: data.user
+        Account: data.user,
+        setCookie: setCookie
     }
 }
 
