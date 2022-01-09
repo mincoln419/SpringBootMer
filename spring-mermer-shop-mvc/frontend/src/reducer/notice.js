@@ -1,7 +1,7 @@
 import produce from "immer";
 import shortid from "shortid";
 import faker from "faker";
-import { QUERY_NOTICE_FAILURE, QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS, UPLOAD_IMAGE_FAILURE, UPLOAD_IMAGE_REQUEST, UPLOAD_IMAGE_SUCCESS } from "../actions/notice";
+import { NOTICE_STATE_UPDATE, QUERY_NOTICE_FAILURE, QUERY_NOTICE_REQUEST, QUERY_NOTICE_SUCCESS, UPLOAD_IMAGE_FAILURE, UPLOAD_IMAGE_REQUEST, UPLOAD_IMAGE_SUCCESS } from "../actions/notice";
 
 const intitialState = {
     mainPosts: [{
@@ -108,6 +108,9 @@ const reducer = (state = intitialState, action) => {
         case UPLOAD_IMAGE_FAILURE :
             draft.isUploading = false;
             draft.images = [];
+            break;
+        case NOTICE_STATE_UPDATE:
+            draft.noticeList = action.noticeList
             break;
         default:
             break;

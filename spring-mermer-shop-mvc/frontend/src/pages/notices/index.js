@@ -7,7 +7,9 @@ import { queryNoticeRequestAction } from '../../reducer/notice';
 import styled from 'styled-components';
 import wrapper from '../../store/configureStore';
 import { END } from 'redux-saga';
-import { LOG_IN_STATE_UPDATE } from '../../actions';
+import { LOG_IN_STATE_UPDATE} from '../../actions';
+import { QUERY_NOTICE_REQUEST } from '../../actions/notice';
+
 
 const columns = [
   {
@@ -40,15 +42,9 @@ export const Overlay = styled.div`
 const Notice = () =>{
 
   const dispatch = useDispatch();
-  
-  //화면 전환시 한번만 호출
-  useEffect(() => {
-    dispatch(queryNoticeRequestAction());
-  }, []);
-  
   const {noticeList} = useSelector((state) => state.notice);
 
-        return (
+  return (
   <>
     
     <Divider orientation="left">공지사항</Divider>
@@ -59,24 +55,32 @@ const Notice = () =>{
 }
 
   //리덕스에 데이터가 채워진상태로 랜더링된다.
-  export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{
+  export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{  
+    //req가 있으면 서버
     
-    const cookies = context.req.cookies;
-    const state =  context.store.getState();
-
-    if(!state.user.isLoggedIn && cookies.loginId){
-      context.store.dispatch(
-        {
-            type: LOG_IN_STATE_UPDATE,
-            accountId: cookies.accountId,
-            token: cookies.token,
-            login: cookies.loginId
-        }
-    );
+    const cookies = context.req? context.req.cookies : '';
+    const store = context.store;
+    const noticeRequest = {
+      type: QUERY_NOTICE_REQUEST,
+      loading: true,
     }
- 
-    context.store.dispatch(END);
-    await context.store.sagaTask.toPromise();    
+
+
+
+    await store.execSagaTasks(true, dispatch => {
+      if(cookies.loginId){
+        const loginState = {
+          type: LOG_IN_STATE_UPDATE,
+          accountId: cookies.accountId,
+          token: cookies.token,
+          login: cookies.loginId
+        };
+        dispatch(loginState);
+      }
+      dispatch(noticeRequest);
+    });
+    
+    
   });
 
 

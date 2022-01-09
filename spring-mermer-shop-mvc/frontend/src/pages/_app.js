@@ -15,7 +15,11 @@ import Hamburgs from '../layouts/Hamburgs';
 import { createGlobalStyle } from 'styled-components';
 import cookies, { useCookies } from 'react-cookie';
 import {END} from 'redux-saga';
+import axios from 'axios';
 
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL="http://localhost:8080";
+axios.defaults.timeout=10000
 
 
 const Global = createGlobalStyle`

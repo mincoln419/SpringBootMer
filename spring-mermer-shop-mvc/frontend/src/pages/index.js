@@ -25,7 +25,7 @@ const Index = () =>{
   //리덕스에 데이터가 채워진상태로 랜더링된다.
   export const getServerSideProps = wrapper.getServerSideProps(async (context)=>{
     
-    const cookies = context.req.cookies;
+    const cookies = context.req? context.req.cookies : '';
     const state =  context.store.getState();
 
     if(!state.user.isLoggedIn && cookies.loginId){
@@ -40,7 +40,7 @@ const Index = () =>{
     }
  
     context.store.dispatch(END);
-    await context.store.sagaTask.toPromise();    
+    await context.store.sagaTask.toPromise(); 
   });
 
 export default Index;
