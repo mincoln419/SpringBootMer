@@ -8,6 +8,8 @@
 :operation-curl-request-title: Example request
 :operation-http-response-title: Example response
 
+link:/docs/index.html[Home] / link:/docs/notice.html[Notice] / link:/docs/account.html[Account]
+
 [[resources-account]]
 == Account
 

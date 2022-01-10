@@ -53,6 +53,7 @@ import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.entity.type.UseYn;
 import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
+import com.mermer.cm.repository.UpLoadFileRepository;
 import com.mermer.cm.service.NoticeService;
 import com.mermer.common.BaseTest;
 
@@ -77,18 +78,17 @@ public class NoticeContollerTest extends BaseTest {
 	
 	@Autowired
 	NoticeService noticeService;
+
+	@Autowired
+	UpLoadFileRepository upLoadFileRepository;
 	
 	@BeforeEach
 	public void init() {
 		//repo 초기화는 의존성 역순으로 제거
 		noticeReplyRepository.deleteAll();
 		noticeRepository.deleteAll();
+		upLoadFileRepository.deleteAll();
 		accountRepository.deleteAll();
-	}
-	
-	@After
-	public void after() {
-		noticeRepository.deleteAll();
 	}
 	
 	@Test

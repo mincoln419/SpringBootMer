@@ -37,6 +37,7 @@ import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.AccountDto;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
+import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
 import com.mermer.common.BaseTest;
 /**
@@ -55,9 +56,14 @@ public class AccountControllerTest extends BaseTest{
 	@Autowired
 	NoticeRepository noticeRepository;
 	
+	@Autowired
+	NoticeReplyRepository noticeReplyRepository;
+	
 	@BeforeEach
 	public void init() {
-		noticeRepository.deleteAll();// 의존성때문에 noticeRepository를 먼저 clear해줘야함
+		//repo 초기화는 의존성 역순으로 제거
+		noticeReplyRepository.deleteAll();
+		noticeRepository.deleteAll();
 		accountRepository.deleteAll();
 	}
 	
