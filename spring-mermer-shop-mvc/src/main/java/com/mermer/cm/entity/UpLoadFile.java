@@ -20,6 +20,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mermer.cm.entity.embeded.CommonEmbeded;
 import com.mermer.cm.entity.serializer.AccountSerializer;
 import com.mermer.cm.entity.type.AccountPart;
 import com.mermer.cm.entity.type.AccountRole;
@@ -31,6 +32,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @packageName : com.mermer.cm.entity
@@ -44,10 +46,10 @@ import lombok.Setter;
  * 2022.01.06 Mermer 최초 생성
  */
 @Entity @NoArgsConstructor @AllArgsConstructor
-@Builder @Getter @Setter @EqualsAndHashCode(of = "fileId")
+@SuperBuilder @Getter @Setter @EqualsAndHashCode(of = "fileId", callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
 @SequenceGenerator(name = "FILE_ID_GENERATOR", sequenceName = "FILE_GENERATOR", initialValue = 1, allocationSize = 1)
-public class UpLoadFile {
+public class UpLoadFile extends CommonEmbeded {
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FILE_ID_GENERATOR")
 	Long fileId;
@@ -60,21 +62,5 @@ public class UpLoadFile {
 	@NotBlank
 	String fileName;
 	
-	@Builder.Default
-	@Enumerated(EnumType.STRING)
-	protected UseYn useYn = UseYn.Y; //사용여부(default 값 Y);
-	
-	@ManyToOne
-	@JsonSerialize(using = AccountSerializer.class)
-	private Account inster;//생성자ID
-	
-	@ManyToOne
-	@JsonSerialize(using = AccountSerializer.class)
-	private Account mdfer;//수정자ID
-	
-	@CreatedDate
-	private LocalDateTime instDtm;
-	
-	@LastModifiedDate
-	private LocalDateTime mdfDtm;
+
 }

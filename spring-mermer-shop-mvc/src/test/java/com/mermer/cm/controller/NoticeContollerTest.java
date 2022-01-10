@@ -200,9 +200,7 @@ public class NoticeContollerTest extends BaseTest {
 	public void queryNotice() throws Exception {
 		
 		Account account = generateAccount();
-		//밖에서 account 꺼낼때는 parameter에 false
-		String token = getBearerToken(getAccessToken(false));//토큰은 필요없음..
-		
+				
 		//해당 계정으로 공지사항 글 작성
 		String title = "Notice Test";
 		String testDoc = "test";//getTestDoc();
@@ -225,9 +223,8 @@ public class NoticeContollerTest extends BaseTest {
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
-		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].insterId").exists())
-		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].title").value(title))
-		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].content").value(testDoc))
+		.andExpect(jsonPath("_embedded.tupleBackedMapList[0].insterId").exists())
+		.andExpect(jsonPath("_embedded.tupleBackedMapList[0].title").value(title))
 		.andDo(document("query-notice", links(
 				linkWithRel("self").description("link to self"),
 			    linkWithRel("profile").description("link to profile"),
