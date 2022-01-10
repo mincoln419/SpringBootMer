@@ -16,6 +16,24 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	 * @description 
 	 */
 	Optional<Account> findByLogin(String login);
+
+	/**
+	 * @method findByEmail
+	 * @param login
+	 * @return
+	 * String
+	 * @description 
+	 */
+	Optional<Account> findByEmail(String login);
+
+	/**
+	 * @method findByHpNum
+	 * @param login
+	 * @return
+	 * String
+	 * @description 
+	 */
+	Optional<Account> findByHpNum(String login);
 	
 
 }
