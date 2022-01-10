@@ -384,6 +384,81 @@ public class AccountControllerTest extends BaseTest{
 		.andDo(print());
 	}
 	
+	@Test
+	@DisplayName("계정 생성 오류 - 이메일이 중복되는 경우")
+	public void createAcccount400_Duplication_Email() throws JsonProcessingException, Exception {
+		//Given
+		String name = "TEST";
+		Account accountOrgin = Account.builder()
+				.username(name)
+				.login(name)
+				.pass(name)
+				.hpNum("010312345654")
+				.role(Set.of(AccountRole.ADMIN))
+				.part(Set.of(AccountPart.BULLETIN))
+				.email("mermer@naver.com")
+				.build();
+		accountRepository.save(accountOrgin);
+		//When & Then
+		AccountDto accountDto = AccountDto.builder()
+				.username(name)
+				.login(name+2)
+				.pass(name)
+				.hpNum("010312345656")
+				.role(Set.of(AccountRole.ADMIN))
+				.part(Set.of(AccountPart.BULLETIN))
+				.email("mermer@naver.com")
+				.build();
+		
+		mockMvc.perform(post("/api/account")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objMapper.writeValueAsString(accountDto)) //body parameter
+				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
+				)
+		.andExpect(status().isBadRequest())
+		.andDo(print())
+		.andExpect(jsonPath("errors[0].field").value("email"))
+		.andExpect(jsonPath("errors[0].code").value("이메일 중복 오류"));
+	}
+	
+	@Test
+	@DisplayName("계정 생성 오류 - 휴대전화가 중복되는 경우")
+	public void createAcccount400_Duplication_HpNum() throws JsonProcessingException, Exception {
+		//Given
+		String name = "TEST";
+		String hpNum = "010312345654";
+		Account accountOrgin = Account.builder()
+				.username(name)
+				.login(name)
+				.pass(name)
+				.hpNum(hpNum)
+				.role(Set.of(AccountRole.ADMIN))
+				.part(Set.of(AccountPart.BULLETIN))
+				.email("mermer@naver.com")
+				.build();
+		accountRepository.save(accountOrgin);
+		//When & Then
+		AccountDto accountDto = AccountDto.builder()
+				.username(name)
+				.login(name+2)
+				.pass(name)
+				.hpNum(hpNum)
+				.role(Set.of(AccountRole.ADMIN))
+				.part(Set.of(AccountPart.BULLETIN))
+				.email("mermer2@naver.com")
+				.build();
+		
+		mockMvc.perform(post("/api/account")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objMapper.writeValueAsString(accountDto)) //body parameter
+				.accept(MediaTypes.HAL_JSON)//heateos 의존성 없으면 오류
+				)
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("errors[0].field").value("hpNum"))
+		.andExpect(jsonPath("errors[0].code").value("휴대전화 중복 오류"))
+		.andDo(print());
+	}
+	
 	/* 관리자 권한만 가능한 기능에 대한 제어 테스트*/
 	@Test
 	@DisplayName("일반 사용자 계정으로 전체조회시 오류")
