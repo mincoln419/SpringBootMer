@@ -4,6 +4,7 @@ package com.mermer.cm.entity;
 import java.sql.Clob;
 import java.time.LocalDateTime;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -21,6 +23,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mermer.cm.entity.embeded.CommonEmbeded;
 import com.mermer.cm.entity.serializer.AccountSerializer;
 import com.mermer.cm.entity.type.UseYn;
 
@@ -44,14 +47,14 @@ import lombok.experimental.SuperBuilder;
  * ----------------------------------------------------------- 
  * 2021.12.17 Mermer 최초 생성
  */
+
 @Entity 
-@Builder
+@SuperBuilder
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
-@EntityListeners(AuditingEntityListener.class) // 이걸집어넣어줘야 instDtm, mdfDtm  자동으로 세팅해줌
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 @SequenceGenerator(name = "NOTICE_ID_GENERATOR", sequenceName = "NOTICE_GENERATOR", initialValue = 1, allocationSize = 1)
-public class Notice {
+public class Notice extends CommonEmbeded {
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "NOTICE_ID_GENERATOR")
 	private Long id;
@@ -65,27 +68,6 @@ public class Notice {
 	private Integer readCnt = 0;
 	
 	private String writerIp;
-	
-	/* Entity 공통부 */
-	@CreatedDate
-	private LocalDateTime instDtm;//생성일시
-	
-	@LastModifiedDate
-	private LocalDateTime mdfDtm;//수정일시
-	
-	//단방향(Account -> Notice)으로 참조하도록 매핑
-	@ManyToOne
-	@JsonSerialize(using = AccountSerializer.class)
-	private Account inster;//생성자ID
-	
-	@ManyToOne
-	@JsonSerialize(using = AccountSerializer.class)
-	private Account mdfer;//수정자ID
-	
-	@Enumerated(EnumType.STRING)
-	@Builder.Default
-	private UseYn useYn = UseYn.Y; //사용여부(default 값 Y);
-	
 	
 	/* *
 	 * 공지사항을 읽은 횟수 갱신

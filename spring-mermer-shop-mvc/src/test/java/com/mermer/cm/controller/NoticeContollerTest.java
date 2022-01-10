@@ -53,6 +53,7 @@ import com.mermer.cm.entity.type.AccountRole;
 import com.mermer.cm.entity.type.UseYn;
 import com.mermer.cm.repository.NoticeReplyRepository;
 import com.mermer.cm.repository.NoticeRepository;
+import com.mermer.cm.repository.UpLoadFileRepository;
 import com.mermer.cm.service.NoticeService;
 import com.mermer.common.BaseTest;
 
@@ -77,18 +78,17 @@ public class NoticeContollerTest extends BaseTest {
 	
 	@Autowired
 	NoticeService noticeService;
+
+	@Autowired
+	UpLoadFileRepository upLoadFileRepository;
 	
 	@BeforeEach
 	public void init() {
 		//repo 초기화는 의존성 역순으로 제거
 		noticeReplyRepository.deleteAll();
 		noticeRepository.deleteAll();
+		upLoadFileRepository.deleteAll();
 		accountRepository.deleteAll();
-	}
-	
-	@After
-	public void after() {
-		noticeRepository.deleteAll();
 	}
 	
 	@Test
@@ -200,9 +200,7 @@ public class NoticeContollerTest extends BaseTest {
 	public void queryNotice() throws Exception {
 		
 		Account account = generateAccount();
-		//밖에서 account 꺼낼때는 parameter에 false
-		String token = getBearerToken(getAccessToken(false));//토큰은 필요없음..
-		
+				
 		//해당 계정으로 공지사항 글 작성
 		String title = "Notice Test";
 		String testDoc = "test";//getTestDoc();
@@ -225,9 +223,8 @@ public class NoticeContollerTest extends BaseTest {
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
-		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].insterId").exists())
-		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].title").value(title))
-		//.andExpect(jsonPath("_embedded.tupleBackedMapList[0].content").value(testDoc))
+		.andExpect(jsonPath("_embedded.tupleBackedMapList[0].insterId").exists())
+		.andExpect(jsonPath("_embedded.tupleBackedMapList[0].title").value(title))
 		.andDo(document("query-notice", links(
 				linkWithRel("self").description("link to self"),
 			    linkWithRel("profile").description("link to profile"),

@@ -18,6 +18,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mermer.cm.entity.embeded.CommonEmbeded;
 import com.mermer.cm.entity.serializer.AccountSerializer;
 import com.mermer.cm.entity.serializer.NoticeSerializer;
 import com.mermer.cm.entity.serializer.ReplySerializer;
@@ -29,6 +30,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @packageName : com.mermer.cm.entity
@@ -42,13 +44,13 @@ import lombok.Setter;
  * 2021.12.23 Mermer 최초 생성
  */
 @Entity
-@Builder
+@SuperBuilder
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
 @EntityListeners(AuditingEntityListener.class) // 이걸집어넣어줘야 instDtm, mdfDtm  자동으로 세팅해줌
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 @SequenceGenerator(name = "REPLY_ID_GENERATOR", sequenceName = "REPLY_GENERATOR", initialValue = 1, allocationSize = 1)
-public class Reply {
+public class Reply extends CommonEmbeded{
 	
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "REPLY_ID_GENERATOR")
 	private Long id;
@@ -63,25 +65,8 @@ public class Reply {
 	@JsonSerialize(using = NoticeSerializer.class)
 	private Notice notice;
 	
-	/* Entity 공통부 */
-	@CreatedDate
-	private LocalDateTime instDtm;//생성일시
-	
-	@LastModifiedDate
-	private LocalDateTime mdfDtm;//수정일시
 	
 	private String writerIp;
 	//단방향(Account -> Notice)으로 참조하도록 매핑
-	@ManyToOne
-	@JsonSerialize(using = AccountSerializer.class)
-	protected Account inster;//생성자ID
-	
-	@ManyToOne
-	@JsonSerialize(using = AccountSerializer.class)
-	private Account mdfer;//수정자ID
-	
-	@Enumerated(EnumType.STRING)
-	@Builder.Default
-	private UseYn useYn = UseYn.Y; //사용여부(default 값 Y);
 
 }

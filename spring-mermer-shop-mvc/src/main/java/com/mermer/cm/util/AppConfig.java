@@ -93,7 +93,9 @@ public class AppConfig {
 				Notice notice = Notice.builder()
 						.title("test " + i + " - title")
 						.content("test content #해시테크"+ i)
+						.writerIp("127.0.0.1")
 						.inster(admin)
+						.mdfer(admin)
 						.build();
 				
 				noticeService.createNotice(notice);
