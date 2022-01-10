@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,14 +55,20 @@ public class CommonContollerTest extends BaseTest {
 	@Autowired
 	NoticeService noticeService;
 
-	
+	@BeforeEach
+	public void init() {
+		//repo 초기화는 의존성 역순으로 제거
+		noticeReplyRepository.deleteAll();
+		noticeRepository.deleteAll();
+		accountRepository.deleteAll();
+	}
 	@Test
 	@DisplayName("Notice 이미지 업로드")
 	public void upLoadImageFile() throws Exception {
 		//Given
 		//Account account = generateAccount();
 		//밖에서 account 꺼낼때는 parameter에 false
-		String token = getBearerToken(getAccessToken(false));
+		String token = getBearerToken(getAccessToken(true));
 		String filePath = "C:\\Users\\N\\Pictures\\developer.jpg";
 		
 		MockMultipartFile file = new MockMultipartFile("images", "developer.jpg", "image/jpg", new FileInputStream(filePath));
