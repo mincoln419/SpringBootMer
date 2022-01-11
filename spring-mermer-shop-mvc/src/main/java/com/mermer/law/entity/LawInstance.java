@@ -6,8 +6,10 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -40,6 +42,15 @@ public class LawInstance extends CommonEmbeded{
 	
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LW_SQ_INSTANCE_ID_GENERATOR")
 	private Long id;
+	
+	@ManyToOne
+	private LawDomain domain;
+	
+	@NotBlank
+	private Long articleNum;
+	
+	
+	
 	
 	
 	

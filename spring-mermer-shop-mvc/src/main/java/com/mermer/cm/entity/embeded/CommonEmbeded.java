@@ -55,7 +55,6 @@ public class CommonEmbeded {
 	@LastModifiedDate
 	protected LocalDateTime mdfDtm;//수정일시
 	
-	//단방향(Account -> Notice)으로 참조하도록 매핑
 	@ManyToOne
 	@JsonSerialize(using = AccountSerializer.class)
 	protected Account inster;//생성자ID
