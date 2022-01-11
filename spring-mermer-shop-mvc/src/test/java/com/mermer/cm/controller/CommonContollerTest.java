@@ -1,11 +1,16 @@
 
 package com.mermer.cm.controller;
 
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.FileInputStream;
@@ -62,6 +67,25 @@ public class CommonContollerTest extends BaseTest {
 		noticeRepository.deleteAll();
 		accountRepository.deleteAll();
 	}
+	
+	@Test
+	@DisplayName("index 페이지 접근 테스트")
+	public void indexControllerTest() throws Exception {
+		
+		//When & Then
+		mockMvc.perform(get("/api/")
+				.accept(MediaTypes.HAL_JSON)
+		)
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andDo(document("index", links(
+				linkWithRel("docs").description("link to API documentation page")
+			)))
+		;
+		
+	}
+	
+	
 	@Test
 	@DisplayName("Notice 이미지 업로드")
 	public void upLoadImageFile() throws Exception {
@@ -86,7 +110,6 @@ public class CommonContollerTest extends BaseTest {
 		.andExpect(status().isCreated())
 		.andExpect(jsonPath("_embedded.upLoadFileList[0].name").value(name))
 		;
-;
 		
 	}
 	

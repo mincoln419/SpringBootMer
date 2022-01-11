@@ -58,7 +58,7 @@ public class AccountService implements UserDetailsService{
 		accountResource.add((selfLinkBuilder).withSelfRel())
 		.add(linkTo(AccountController.class).withRel("query-accounts"))
 		.add(selfLinkBuilder.withRel("update-account"))
-		.add(Link.of("/docs/index.html#resources-account-create").withRel("profile"));
+		.add(Link.of("/docs/account.html#resources-account-create").withRel("profile"));
 		
 		return ResponseEntity.created(createdUri).body(accountResource);
 	}
@@ -77,7 +77,7 @@ public class AccountService implements UserDetailsService{
 		
 		Page<Account> page = this.accountRepository.findAll(pageable);
 		var pagedResource = assembler.toModel(page, e -> AccountResource.of(e).add(Link.of("/docs/index.html#resources-get-account").withRel("profile")));
-		pagedResource.add(Link.of("/docs/index.html#resources-account-list").withRel("profile"));
+		pagedResource.add(Link.of("/docs/account.html#resources-account-list").withRel("profile"));
 		return ResponseEntity.ok(pagedResource);
 	}
 
@@ -97,7 +97,7 @@ public class AccountService implements UserDetailsService{
 		Account account = optionalAccount.get();
 		EntityModel<Account> accountResource = AccountResource.of(account)
 											  .add((selfLinkBuilder).withSelfRel())
-											  .add(Link.of("/docs/index.html#resources-account-get").withRel("profile"))
+											  .add(Link.of("/docs/account.html#resources-account-get").withRel("profile"))
 											  .add(selfLinkBuilder.withRel("update-account"));
 		return ResponseEntity.ok(accountResource);
 	}
@@ -118,7 +118,7 @@ public class AccountService implements UserDetailsService{
 		Account account = optionalAccount.get();
 		EntityModel<Account> accountResource = AccountResource.of(account)
 											  .add((selfLinkBuilder).withSelfRel())
-											  .add(Link.of("/docs/index.html#resources-account-login").withRel("profile"));
+											  .add(Link.of("/docs/account.html#resources-account-login").withRel("profile"));
 		return ResponseEntity.ok(accountResource);
 	}
 	
@@ -151,7 +151,7 @@ public class AccountService implements UserDetailsService{
 		WebMvcLinkBuilder selfLinkBuilder = getClassLink(accountId);
 		EntityModel<Account> accountResource = AccountResource.of(account)
 											  .add((selfLinkBuilder).withSelfRel())
-											  .add(Link.of("/docs/index.html#resources-account-get").withRel("profile"));
+											  .add(Link.of("/docs/account.html#resources-account-get").withRel("profile"));
 		return ResponseEntity.ok(accountResource);
 	}
 
