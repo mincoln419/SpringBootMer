@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.util.CurrentUser;
+import com.mermer.law.entity.dto.LawDto;
 
 /**
  * @packageName : com.mermer.law.entity
