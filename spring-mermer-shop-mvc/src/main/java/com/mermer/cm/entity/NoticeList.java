@@ -25,5 +25,4 @@ public interface NoticeList {
 	LocalDateTime getInstDtm();
 	LocalDateTime getMdfDtm();
 	Long getInsterId();
-	UseYn getUseYn();
 }
