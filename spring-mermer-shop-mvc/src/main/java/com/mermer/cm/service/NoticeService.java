@@ -87,7 +87,7 @@ public class NoticeService {
 		.add(linkTo(NoticeController.class).withRel("query-notice"))
 		.add(selfLinkBuilder.withRel("update-notice"))
 		.add(selfLinkBuilder.slash("reply").withRel("notice-reply-create"))
-		.add(Link.of("/docs/index.html#resources-notice-create").withRel("profile"));
+		.add(Link.of("/docs/notice.html#resources-notice-create").withRel("profile"));
 		
 		return ResponseEntity.created(createdUri).body(noticeResource);
 	}
@@ -110,8 +110,8 @@ public class NoticeService {
 		//전체 조회시 content 는 나오지 않도록 수정 
 		Page<NoticeList> page = noticeRepository.findAllNoContent(pageable);
 		
-		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/index.html#resources-get-notice").withRel("profile")));
-		pagedResource.add(Link.of("/docs/index.html#resources-notice-list").withRel("profile"));
+		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/notice.html#resources-get-notice").withRel("profile")));
+		pagedResource.add(Link.of("/docs/notice.html#resources-notice-list").withRel("profile"));
 		
 		//페이지가 안넘어갈 경우 first, next, last 링크 별도로 세팅
 		if(page.getTotalElements() < page.getSize()) {
@@ -147,7 +147,7 @@ public class NoticeService {
 		
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
 											.add((selfLinkBuilder).withSelfRel())
-											.add(Link.of("/docs/index.html#resources-notice-get").withRel("profile"))
+											.add(Link.of("/docs/notice.html#resources-notice-get").withRel("profile"))
 											.add(selfLinkBuilder.withRel("update-notice"));
 		
 		return ResponseEntity.ok(noticeResource);
@@ -186,7 +186,7 @@ public class NoticeService {
 		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
 				.add((selfLinkBuilder).withSelfRel())
-				.add(Link.of("/docs/index.html#resources-notice-update").withRel("profile"));
+				.add(Link.of("/docs/notice.html#resources-notice-update").withRel("profile"));
 
 		return ResponseEntity.ok(noticeResource);
 	}
@@ -223,7 +223,7 @@ public class NoticeService {
 		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
 				.add((selfLinkBuilder).withSelfRel())
-				.add(Link.of("/docs/index.html#resources-notice-delete").withRel("profile"));
+				.add(Link.of("/docs/notice.html#resources-notice-delete").withRel("profile"));
 
 		return ResponseEntity.ok(noticeResource);
 	}
@@ -258,7 +258,7 @@ public class NoticeService {
 		.add(selfLinkBuilder.withRel("query-notice-reply"))
 		.add(selfLinkBuilder.slash(result.getId()).withRel("update-notice-reply"))
 		.add(selfLinkBuilder.slash(result.getId()).withRel("create-notice-reply-re")) //대댓글 링크 추가
-		.add(Link.of("/docs/index.html#resources-notice-reply-create").withRel("profile"));
+		.add(Link.of("/docs/notice.html#resources-notice-reply-create").withRel("profile"));
 		
 		return ResponseEntity.created(createdUri).body(noticeReplyResource);
 	}
@@ -295,7 +295,7 @@ public class NoticeService {
 		noticeReplyResource.add((selfLinkBuilder).withSelfRel())
 		.add(selfLinkBuilder.withRel("query-notice-reply"))
 		.add(selfLinkBuilder.withRel("update-notice-reply"))
-		.add(Link.of("/docs/index.html#resources-notice-reply-create-re").withRel("profile"));
+		.add(Link.of("/docs/notice.html#resources-notice-reply-create-re").withRel("profile"));
 		
 		return ResponseEntity.created(createdUri).body(noticeReplyResource);
 	}
@@ -319,8 +319,8 @@ public class NoticeService {
 		//전체 조회시 content 는 나오지 않도록 수정 
 		Page<Reply> page = noticeReplyRepository.findAllReplyByNoticeId(noticeId, pageable);
 		
-		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/index.html#resources-get-notice-reply").withRel("profile")));
-		pagedResource.add(Link.of("/docs/index.html#resources-query-notice-reply").withRel("profile"));
+		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/notice.html#resources-get-notice-reply").withRel("profile")));
+		pagedResource.add(Link.of("/docs/notice.html#resources-query-notice-reply").withRel("profile"));
 		
 		//페이지가 안넘어갈 경우 first, next, last 링크 별도로 세팅
 		if(page.getTotalElements() < page.getSize()) {
@@ -352,7 +352,7 @@ public class NoticeService {
 				
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add((selfLinkBuilder).withSelfRel())
-											.add(Link.of("/docs/index.html#resources-get-notice-reply").withRel("profile"))
+											.add(Link.of("/docs/notice.html#resources-get-notice-reply").withRel("profile"))
 											.add(selfLinkBuilder.withRel("update-notice-reply"));
 		
 		return ResponseEntity.ok(replyResource);
@@ -380,7 +380,7 @@ public class NoticeService {
 		
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add((selfLinkBuilder).withSelfRel())
-											.add(Link.of("/docs/index.html#resources-update-notice-reply").withRel("profile"))
+											.add(Link.of("/docs/notice.html#resources-update-notice-reply").withRel("profile"))
 											;
 		return ResponseEntity.ok(replyResource);
 	}
@@ -414,7 +414,7 @@ public class NoticeService {
 		
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add(selfLinkBuilder.slash(replyId).withSelfRel())
-											.add(Link.of("/docs/index.html#resources-delete-notice-reply").withRel("profile"))
+											.add(Link.of("/docs/notice.html#resources-delete-notice-reply").withRel("profile"))
 											;
 		return ResponseEntity.ok(replyResource);
 	}

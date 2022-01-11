@@ -1,6 +1,8 @@
 
 package com.mermer.law.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -10,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -49,7 +52,6 @@ import lombok.experimental.SuperBuilder;
 public class LawDomain extends CommonEmbeded{
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LW_SQ_DOMAIN_ID_GENERATOR")
-	@Column(name = "DOMAIN_ID")
 	private Long id;
 	
 	@NotBlank
@@ -61,5 +63,6 @@ public class LawDomain extends CommonEmbeded{
 	@Lob
 	private String content;
 	
-	
+	@OneToMany(mappedBy = "domain")
+	private List<LawInstance> lawList = new ArrayList<>();
 }

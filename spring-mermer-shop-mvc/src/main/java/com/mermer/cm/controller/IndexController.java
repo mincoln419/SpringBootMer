@@ -15,10 +15,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 import java.util.Optional;
 
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 /* 
  * @description: 
@@ -26,16 +28,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class IndexController {
 	
+	@SuppressWarnings("rawtypes")
 	@GetMapping("/api")
 	public RepresentationModel apiIndex() {
 		var index = new RepresentationModel();
 		// api 접근시 잘못된 주소인 경우는 공지사항 조회 link return
-		index.add(linkTo(NoticeController.class).withRel("index"));
+		index.add(Link.of("/docs/index.html").withRel("docs"));
 		return index;
 	}
 	
 	@GetMapping("/")
-	public ResponseEntity<String> index() {
-		return ResponseEntity.of(Optional.of("index.html")); //프록시 서버를 사용하기 때문에 Endpoint에서 String 리턴은 이제 불가능
+	public RedirectView index() {
+		var index = new RedirectView ("/docs/index.html");
+		return index;
 	}
 }
