@@ -4,10 +4,12 @@ package com.mermer.shop.entity;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,7 +49,6 @@ import lombok.experimental.SuperBuilder;
 public class Order extends CommonEmbeded{
 	
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SH_SQ_ORDERS_ID_GENERATOR")
-	@Column(name = "ORDER_ID")
 	private Long id;
 	
 	@ManyToOne
@@ -58,5 +59,6 @@ public class Order extends CommonEmbeded{
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 	
+	@ManyToOne
 	private Item item;
 }

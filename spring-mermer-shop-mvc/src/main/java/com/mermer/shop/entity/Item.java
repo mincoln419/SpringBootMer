@@ -44,7 +44,8 @@ import lombok.experimental.SuperBuilder;
 public class Item extends CommonEmbeded{
 	
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SH_SQ_ITMES_ID_GENERATOR")
-	@Column(name ="ITEM_ID")
 	private Long id;
+	
+	private String itemName;
 
 }

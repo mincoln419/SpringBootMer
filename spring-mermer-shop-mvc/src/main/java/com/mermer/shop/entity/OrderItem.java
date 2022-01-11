@@ -19,6 +19,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -54,19 +55,19 @@ import lombok.experimental.SuperBuilder;
 public class OrderItem extends CommonEmbeded{
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SH_SQ_ORDER_ITMES_ID_GENERATOR")
-	@Column(name = "ORDER_ITEM_ID")
 	private Long id;
 	
-	@Column(name = "ORDER_ID")
-	private Long orderId;
+	@ManyToOne
+	private Order order;
 	
-	@Column(name = "ITEM_ID")
-	private Long itemId;
+	@ManyToOne
+	private Item item;
 	
 	private Long price;
 	
 	private Integer orderCnt;
 	
+	@ManyToOne
 	private Stock stock;
 	
 }
