@@ -40,7 +40,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class) // 이걸집어넣어줘야 instDtm, mdfDtm  자동으로 세팅해줌
-public class CommonEmbeded {
+public abstract class CommonEmbeded {
 
 	
 	/* Entity 공통부 */
