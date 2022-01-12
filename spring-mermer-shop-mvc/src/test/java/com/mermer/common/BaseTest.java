@@ -29,7 +29,7 @@ import com.mermer.cm.util.AppProperties;
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureRestDocs
+@AutoConfigureRestDocs(uriScheme = "http", uriHost = "www.mermer-api.kr", uriPort = 80)
 @Import(RestDocConfiguration.class)
 @ActiveProfiles("test")
 @Disabled
