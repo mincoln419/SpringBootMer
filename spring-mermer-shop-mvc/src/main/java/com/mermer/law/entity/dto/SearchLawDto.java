@@ -12,6 +12,6 @@ package com.mermer.law.entity.dto;
  * ----------------------------------------------------------- 
  * 2022.01.11 Mermer 최초 생성
  */
-public class LawDto {
+public class SearchLawDto {
 
 }

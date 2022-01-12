@@ -3,8 +3,6 @@ package com.mermer.cm.entity.embeded;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,14 +15,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.mermer.cm.entity.Account;
-import com.mermer.cm.entity.Notice;
 import com.mermer.cm.entity.serializer.AccountSerializer;
 import com.mermer.cm.entity.type.UseYn;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

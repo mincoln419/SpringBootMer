@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.util.CurrentUser;
-import com.mermer.law.entity.dto.LawDto;
+import com.mermer.law.entity.dto.SearchLawDto;
 
 /**
  * @packageName : com.mermer.law.entity
@@ -32,7 +32,7 @@ public class LawAPIController {
 	
 	@PostMapping
 	public ResponseEntity callLawInfo(HttpServletRequest req,
-			   @RequestBody @Validated LawDto lawDto,
+			   @RequestBody @Validated SearchLawDto lawDto,
 			   Errors errors,
 			   @CurrentUser Account account
 			) {
