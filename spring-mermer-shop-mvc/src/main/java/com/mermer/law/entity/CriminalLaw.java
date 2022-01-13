@@ -1,12 +1,15 @@
 
 package com.mermer.law.entity;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +17,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.mermer.cm.entity.embeded.CommonEmbeded;
+import com.mermer.law.entity.embeded.Structure;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -39,10 +43,6 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorValue("CIVIL")
 public class CriminalLaw extends LawInstance{
 
-	
-	@NotBlank
-	private String structure;
-	
 	@NotBlank
 	private String purnishment;
 	

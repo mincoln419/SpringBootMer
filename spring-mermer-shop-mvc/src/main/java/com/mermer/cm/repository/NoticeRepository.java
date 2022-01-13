@@ -7,9 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import com.mermer.cm.entity.Notice;
-import com.mermer.cm.entity.NoticeList;
+import com.mermer.cm.entity.NoticeAbstract;
 
 /**
  * @packageName : com.mermer.cm.repository
@@ -22,7 +23,7 @@ import com.mermer.cm.entity.NoticeList;
  * ----------------------------------------------------------- 
  * 2021.12.17 Mermer 최초 생성
  */
-public interface NoticeRepository extends JpaRepository<Notice, Long>{
+public interface NoticeRepository extends JpaRepository<Notice, Long> , SearchNoticeRepository{
 
 	
 	/**
@@ -33,17 +34,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>{
 	 * @description 공지사항 목록조회시 content 제외한 항목만 조회
 	 */
 	
-	@Query(nativeQuery = true, value = "select n.id"
-				      + ", n.title"
-				      + ", n.read_Cnt as readCnt "
-				      + ", n.inst_Dtm as instDtm "
-				      + ", n.mdf_Dtm as mdfDtm "
-				      + ", n.inster_id as insterId "
-				   + "from notice n "
-				  + "where n.use_Yn = 'Y'", 
-				  countQuery = "select * from notice where use_yn = 'Y'"
-				  )
-	Page<NoticeList> findAllNoContent(Pageable pageable);
 	
 	Optional<Notice> findById(Long noticeId);
 }

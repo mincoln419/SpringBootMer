@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -54,7 +55,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder @Getter @Setter @EqualsAndHashCode(of = "id", callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
 @SequenceGenerator(name = "LW_SQ_DOMAIN_ID_GENERATOR", sequenceName = "LW_SQ_DOMAIN_ID", initialValue = 1, allocationSize = 1)
-public class LawDomain extends CommonEmbeded{
+public abstract class LawDomain extends CommonEmbeded{
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LW_SQ_DOMAIN_ID_GENERATOR")
 	@Column(name = "DOMAIN_ID")
@@ -69,7 +70,7 @@ public class LawDomain extends CommonEmbeded{
 	@Lob
 	private String content;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_id")// 자기 참조 -- 일반법/특별법 구분 위함
 	private LawDomain parent;
 	

@@ -223,8 +223,8 @@ public class NoticeContollerTest extends BaseTest {
 				)
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("_embedded.tupleBackedMapList[0].insterId").exists())
-		.andExpect(jsonPath("_embedded.tupleBackedMapList[0].title").value(title))
+		.andExpect(jsonPath("_embedded.noticeAbstractList[0].insterId").exists())
+		.andExpect(jsonPath("_embedded.noticeAbstractList[0].title").value(title))
 		.andDo(document("query-notice", links(
 				linkWithRel("self").description("link to self"),
 			    linkWithRel("profile").description("link to profile"),
@@ -240,16 +240,16 @@ public class NoticeContollerTest extends BaseTest {
 			),
 			relaxedResponseFields( //응답값에 대한 엄격한 검증을 피하는 테스트 -> _links 정보, doc 정보 누락등의 경우에도 오류나므로
 					//response only
-					fieldWithPath("_embedded.tupleBackedMapList[0].id").description("Id of new notice"),
+					fieldWithPath("_embedded.noticeAbstractList[0].id").description("Id of new notice"),
 											
 					//request +
-					fieldWithPath("_embedded.tupleBackedMapList[0].title").description("title of new notice"),
+					fieldWithPath("_embedded.noticeAbstractList[0].title").description("title of new notice"),
 					//fieldWithPath("_embedded.noticeList[0].content").description("content of new notice"), //목록조회에서는 content 안나오게함
-					fieldWithPath("_embedded.tupleBackedMapList[0].readCnt").description("read count of new notice"),
+					fieldWithPath("_embedded.noticeAbstractList[0].readCnt").description("read count of new notice"),
 					//fieldWithPath("_embedded.noticeList[0].writerIp").description("writer IP Port of new notice"),
 					//fieldWithPath("_embedded.tupleBackedMapList[0].instDtm").description("insert DateTime of new notice"),
 					//fieldWithPath("_embedded.tupleBackedMapList[0].mdfDtm").description("modified DateTime of new notice"),
-					fieldWithPath("_embedded.tupleBackedMapList[0].insterId").description("insert account ID of new notice")
+					fieldWithPath("_embedded.noticeAbstractList[0].insterId").description("insert account ID of new notice")
 					//fieldWithPath("_embedded.tupleBackedMapList[0].mdfer").description("modified account ID of new notice")
 					
 				)
