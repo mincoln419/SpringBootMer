@@ -3,6 +3,7 @@ package com.mermer.law.entity;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.ForeignKey;
@@ -18,6 +19,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.mermer.cm.entity.embeded.CommonEmbeded;
+import com.mermer.law.entity.embeded.Structure;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -43,8 +45,8 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorValue("CIVIL")
 public class CivilLaw extends LawInstance{
 	
-	@NotBlank
-	private String structure;
+	@Embedded
+	private Structure structure;
 	
 	@NotBlank
 	private String right;
