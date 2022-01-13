@@ -23,7 +23,7 @@ import com.mermer.cm.controller.AccountController;
 import com.mermer.cm.controller.NoticeController;
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
-import com.mermer.cm.entity.NoticeList;
+import com.mermer.cm.entity.NoticeAbstract;
 import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.dto.NoticeDto;
 import com.mermer.cm.entity.dto.ReplyDto;
@@ -108,7 +108,7 @@ public class NoticeService {
 		//Page<Notice> page = noticeRepository.findAll(pageable);
 		
 		//전체 조회시 content 는 나오지 않도록 수정 
-		Page<NoticeList> page = noticeRepository.findAllNoContent(pageable);
+		Page<NoticeAbstract> page = noticeRepository.findAllNoContent(pageable);
 		
 		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/notice.html#resources-get-notice").withRel("profile")));
 		pagedResource.add(Link.of("/docs/notice.html#resources-notice-list").withRel("profile"));
