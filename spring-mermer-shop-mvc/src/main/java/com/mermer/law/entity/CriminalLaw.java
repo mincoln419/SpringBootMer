@@ -1,6 +1,7 @@
 
 package com.mermer.law.entity;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -41,10 +43,6 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorValue("CIVIL")
 public class CriminalLaw extends LawInstance{
 
-	
-	@Embedded
-	private Structure structure;
-	
 	@NotBlank
 	private String purnishment;
 	

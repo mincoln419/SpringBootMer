@@ -26,7 +26,8 @@ public enum LawMethod {
 	MULTIPLE("다수의 행위"),
 	COOPERATION("공동정범"),
 	AID("방조범"),
-	FELONY("교사범");
+	FELONY("교사범"),
+	NIGHT("야간");
 		
 	
 	private final String description;

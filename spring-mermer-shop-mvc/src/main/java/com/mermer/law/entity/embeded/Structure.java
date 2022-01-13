@@ -26,37 +26,31 @@ import com.mermer.law.entity.type.LawSubject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter //setter를 없애고 생성자만 만들수 있게 해서 불변객체로 만든다 -> 기존 값의 경우에도 새로 만들어야 함
-@AllArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 @Builder
 public class Structure {
 	
 	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<LawSubject> lawSubject; // 주체
+	private Set<LawSubject> subject; // 주체
 	
 	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<LawSubject> lawObject; // 객체
+	private Set<LawSubject> object; // 객체
 	
 	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<LawMethod> lawMethod; // 수단, 방법
-	
+	private Set<LawMethod> method; // 수단, 방법
 	
 	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<LawResult> lawResult; // 결과
+	private Set<LawResult> result; // 결과
 	
-	@Override
-	public boolean equals(Object obj) {	
-		return super.equals(obj);
-	}
 	
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+	
+
 }

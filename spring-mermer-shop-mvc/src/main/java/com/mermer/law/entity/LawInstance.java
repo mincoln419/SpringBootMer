@@ -11,11 +11,12 @@
  */
 package com.mermer.law.entity;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,6 +31,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.mermer.cm.entity.embeded.CommonEmbeded;
+import com.mermer.law.entity.embeded.Structure;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -48,14 +50,16 @@ import lombok.experimental.SuperBuilder;
 public abstract class LawInstance extends CommonEmbeded{
 	
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LW_SQ_INSTANCE_ID_GENERATOR")
-	@Column(name = "INSTANCE_ID")
 	private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "DOMAIN_ID")
 	private LawDomain domain;
 	
 	@NotBlank
 	private Long articleNum;
 	
+	
+	@Embedded
+	private Structure structure;
 }

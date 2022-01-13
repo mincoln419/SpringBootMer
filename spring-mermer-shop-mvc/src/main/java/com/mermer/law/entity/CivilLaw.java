@@ -1,6 +1,7 @@
 
 package com.mermer.law.entity;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -45,11 +46,9 @@ import lombok.experimental.SuperBuilder;
 @DiscriminatorValue("CIVIL")
 public class CivilLaw extends LawInstance{
 	
-	@Embedded
-	private Structure structure;
-	
+		
 	@NotBlank
-	private String right;
+	private String legalRight;
 	
 	@NotBlank
 	private String target;
