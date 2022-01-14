@@ -1,6 +1,17 @@
 
 package com.mermer.law.entity.dto;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import com.mermer.law.entity.type.LawPart;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * @packageName : com.mermer.law.entity.dto
  * @fileName : LawDto.java 
@@ -12,6 +23,22 @@ package com.mermer.law.entity.dto;
  * ----------------------------------------------------------- 
  * 2022.01.11 Mermer 최초 생성
  */
+@Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class SearchLawDto {
-
+	
+	@Enumerated(EnumType.STRING)
+	private LawPart lawPart;
+	
+	private String articleNum;
+	
+	private String articleTitle;
+	
+	private String searchBody;
+		
+	
+	
+	
+	
+	
 }
