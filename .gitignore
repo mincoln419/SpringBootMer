@@ -113,6 +113,9 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+### Gradle ###
+build/
+
 ### frontend ###
 frontend/public/
 frontend/node_modules/
