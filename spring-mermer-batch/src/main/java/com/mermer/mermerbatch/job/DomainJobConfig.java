@@ -1,15 +1,18 @@
 
 package com.mermer.mermerbatch.job;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParametersValidator;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.CompositeJobParametersValidator;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
@@ -31,6 +34,7 @@ import com.mermer.mermerbatch.core.entity.Domain;
 import com.mermer.mermerbatch.core.entity.DomainDto;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 import com.mermer.mermerbatch.validator.FilePathParameterValidator;
+import com.mermer.mermerbatch.validator.NumberTypeParameterValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,11 +68,21 @@ public class DomainJobConfig {
 		log.debug("path>.." + path);
 		return jobBuilderFactory.get("domainJob")
 				.incrementer(new RunIdIncrementer())
-				.validator(new FilePathParameterValidator())
+				.validator(domainJobParameterValidator())
 				.start(readStep)
 				.build();
 	}
 	
+	
+	private JobParametersValidator domainJobParameterValidator() {
+		CompositeJobParametersValidator validator = new CompositeJobParametersValidator();
+		validator.setValidators(Arrays.asList(
+//				new FilePathParameterValidator(),
+				new NumberTypeParameterValidator()
+
+				));
+		return validator;
+	}
 	
 
 	@JobScope // Job이 실행되는 동안에만 step의 객체가 살아있도록
@@ -104,12 +118,12 @@ public class DomainJobConfig {
 	@StepScope
 	@Bean
 	public StaxEventItemReader<DomainDto> domainReader(
+			@Value("#{jobParameters['searchCd']}") String searchCd,
+			@Value("#{jobParameters['query']}") String query,
 			Jaxb2Marshaller domainMarshaller
 			){
-		log.debug("read-start");
-		Resource resource = lawDomainAPIResource.getResource("1", "민법");
+		Resource resource = lawDomainAPIResource.getResource(searchCd, query);
 		
-		log.debug("resource::::::" + resource.toString());
 		return new StaxEventItemReaderBuilder<DomainDto>()
 				.name("domainDtoReader")
 				.resource(resource)

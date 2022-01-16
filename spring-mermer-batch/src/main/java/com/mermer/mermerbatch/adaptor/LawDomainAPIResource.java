@@ -48,7 +48,7 @@ public class LawDomainAPIResource {
 				, searchCd
 				, query);
 		
-		log.debug("Resource URL = " + urlString);
+		log.info("Resource URL = " + urlString);
 		
 		try {
 			URL url = new URL(urlString);
