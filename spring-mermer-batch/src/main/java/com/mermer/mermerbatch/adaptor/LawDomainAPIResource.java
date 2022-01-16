@@ -52,8 +52,7 @@ public class LawDomainAPIResource {
 		
 		try {
 			URL url = new URL(urlString);
-			HttpURLConnection con;
-			con = (HttpURLConnection) url.openConnection();
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
 			con.setRequestMethod("GET");
@@ -61,11 +60,13 @@ public class LawDomainAPIResource {
 			con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 			byte[] xml = con.getInputStream().readAllBytes();
 			
-			return new ByteArrayResource(xml);
+			Resource result = new ByteArrayResource(xml);
+			return result;
 		} catch (MalformedURLException e) {
 			throw new IllegalArgumentException("Failed to create UrlResource");
 		} catch (IOException e) {
 			throw new IllegalArgumentException("Connection Failed");
 		}
 	}
+	
 }

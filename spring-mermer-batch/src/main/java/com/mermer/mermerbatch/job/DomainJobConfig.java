@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.jaxb.SpringDataJaxb.PageDto;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
@@ -64,12 +65,13 @@ public class DomainJobConfig {
 	private String path;
 	
 	@Bean("domainJob")
-	public Job domainJob(Step readStep) {
+	public Job domainJob(Step readStep, Step pageStep) {
 		log.debug("path>.." + path);
 		return jobBuilderFactory.get("domainJob")
 				.incrementer(new RunIdIncrementer())
 				.validator(domainJobParameterValidator())
-				.start(readStep)
+				.start(pageStep)
+				//.start(readStep)
 				.build();
 	}
 	
