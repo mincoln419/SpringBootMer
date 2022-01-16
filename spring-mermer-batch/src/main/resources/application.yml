@@ -25,3 +25,11 @@ spring:
     jdbc:
       initialize-schema: ALWAYS
   
+logging:  
+  level:
+    root: debug    
+
+external:
+  law-domain-api:
+    path: http://www.law.go.kr/DRF/lawSearch.do?target=law&type=XML
+    service-key: mincoln419

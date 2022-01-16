@@ -22,15 +22,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
 import com.mermer.mermerbatch.core.entity.Domain;
 import com.mermer.mermerbatch.core.entity.DomainDto;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 import com.mermer.mermerbatch.validator.FilePathParameterValidator;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @packageName : com.mermer.mermerbatch.job
@@ -45,14 +48,20 @@ import lombok.RequiredArgsConstructor;
  */
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class DomainJobConfig {
 
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
 	private final DomainRepository domainRepository;
+	private final LawDomainAPIResource lawDomainAPIResource;
+	
+	@Value("${external.law-domain-api.path}")
+	private String path;
 	
 	@Bean("domainJob")
 	public Job domainJob(Step readStep) {
+		log.debug("path>.." + path);
 		return jobBuilderFactory.get("domainJob")
 				.incrementer(new RunIdIncrementer())
 				.validator(new FilePathParameterValidator())
@@ -77,20 +86,38 @@ public class DomainJobConfig {
 	}
 	
 
-	
+	//sample 파일로 테스트
+//	@StepScope
+//	@Bean
+//	public StaxEventItemReader<DomainDto> domainReader(
+//			@Value("#{jobParameters['filePath']}") String filePath,
+//			Jaxb2Marshaller domainMarshaller
+//			){
+//		return new StaxEventItemReaderBuilder<DomainDto>()
+//				.name("domainDtoReader")
+//				.resource(new ClassPathResource(filePath))
+//				.addFragmentRootElements("law")
+//				.unmarshaller(domainMarshaller)//마셜러-> xml 문서 데이터를 객체에 매핑해주는 역할
+//				.build();
+//	}
+
 	@StepScope
 	@Bean
 	public StaxEventItemReader<DomainDto> domainReader(
-			@Value("#{jobParameters['filePath']}") String filePath,
 			Jaxb2Marshaller domainMarshaller
 			){
+		log.debug("read-start");
+		Resource resource = lawDomainAPIResource.getResource("1", "민법");
+		
+		log.debug("resource::::::" + resource.toString());
 		return new StaxEventItemReaderBuilder<DomainDto>()
 				.name("domainDtoReader")
-				.resource(new ClassPathResource(filePath))
+				.resource(resource)
 				.addFragmentRootElements("law")
 				.unmarshaller(domainMarshaller)//마셜러-> xml 문서 데이터를 객체에 매핑해주는 역할
 				.build();
 	}
+	
 	
 	@StepScope
 	@Bean

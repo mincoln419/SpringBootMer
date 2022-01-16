@@ -28,7 +28,7 @@ import lombok.ToString;
 public class DomainDto {
 	
 	@XmlElement(name ="법령일련번호")
-	private String lawSerial; //법령일련번호
+	private String lawSerial; //법령일련번호 - MST
 	
 	@XmlElement(name ="현행연혁코드")
 	private String isCurrent;//현행연혁코드 (현행/폐기)
@@ -40,7 +40,7 @@ public class DomainDto {
 	private String shortName;//법령약칭명
 	
 	@XmlElement(name ="법령ID")
-	private String lawId;//법령ID
+	private String lawId;//법령ID -ID
 	
 	@XmlElement(name ="공포일자")
 	private String proClamDate;//공포일자
