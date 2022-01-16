@@ -16,11 +16,17 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
+import org.springframework.batch.item.xml.StaxEventItemReader;
+import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Sort;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import com.mermer.mermerbatch.core.entity.Domain;
+import com.mermer.mermerbatch.core.entity.DomainDto;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -43,6 +49,7 @@ public class DomainJobConfig {
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
 	private final DomainRepository domainRepository;
+	
 	@Bean("domainJob")
 	public Job domainJob(Step readStep) {
 		return jobBuilderFactory.get("domainJob")
@@ -55,31 +62,42 @@ public class DomainJobConfig {
 	@SuppressWarnings("unchecked")
 	@JobScope // Job이 실행되는 동안에만 step의 객체가 살아있도록
 	@Bean("readStep")
-	public Step readStep(ItemReader domainReader,
-					     ItemProcessor<Domain, String> itemProcessor,
+	public Step readStep(StaxEventItemReader<DomainDto> domainReader,
+					     //ItemProcessor<DomainDto, String> itemProcessor,
 					     ItemWriter<String> itemWriter
 						) {
 		return stepBuilderFactory.get("readStep")
-				.<Domain, String>chunk(5)
+				.<DomainDto, String>chunk(10)
 				.reader(domainReader)
-				.processor(itemProcessor)
+				//.processor(itemProcessor)
 				.writer(itemWriter)
+				.build();
+	}
+	
+
+	
+	@StepScope
+	@Bean
+	public StaxEventItemReader<DomainDto> domainReader(
+			@Value("#{jobParameters['filePath']}") String filePath,
+			Jaxb2Marshaller domainMarshaller
+			){
+		return new StaxEventItemReaderBuilder<DomainDto>()
+				.name("domainDtoReader")
+				.resource(new ClassPathResource(filePath))
+				.addFragmentRootElements("law")
+				.unmarshaller(domainMarshaller)//마셜러-> xml 문서 데이터를 객체에 매핑해주는 역할
 				.build();
 	}
 	
 	@StepScope
 	@Bean
-	public RepositoryItemReader<Domain> domainReader(){
-		
-		return new RepositoryItemReaderBuilder<Domain>()
-				.name("domainReader")
-				.repository(domainRepository)
-				.methodName("findBy")
-				.pageSize(5)
-				.arguments(List.of())
-				.sorts(Collections.singletonMap("id", Sort.Direction.DESC))
-				.build();
+	public Jaxb2Marshaller domainMarshaller() {		
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setClassesToBeBound(DomainDto.class);
+		return jaxb2Marshaller;
 	}
+	
 	
 	@StepScope
 	@Bean
