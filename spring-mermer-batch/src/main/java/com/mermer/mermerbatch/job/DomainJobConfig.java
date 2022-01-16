@@ -118,11 +118,11 @@ public class DomainJobConfig {
 	@StepScope
 	@Bean
 	public StaxEventItemReader<DomainDto> domainReader(
-			@Value("#{jobParameters['searchCd']}") String searchCd,
+			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query,
 			Jaxb2Marshaller domainMarshaller
 			){
-		Resource resource = lawDomainAPIResource.getResource(searchCd, query);
+		Resource resource = lawDomainAPIResource.getResource(search, query);
 		
 		return new StaxEventItemReaderBuilder<DomainDto>()
 				.name("domainDtoReader")

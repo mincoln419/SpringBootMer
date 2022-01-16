@@ -43,9 +43,9 @@ public class LawDomainAPIResource {
 	@Value("${external.law-domain-api.service-key}")
 	private String serviceKey;
 	
-	public Resource getResource(String searchCd, String query) {
+	public Resource getResource(String search, String query) {
 		String urlString = String.format("%s&OC=%s&search=%s&query=%s", path, serviceKey
-				, searchCd
+				, search
 				, query);
 		
 		log.info("Resource URL = " + urlString);
