@@ -27,7 +27,7 @@ public class NumberTypeParameterValidator implements JobParametersValidator {
 		//TODO 비어있는 경우
 		
 		String search = parameters.getString(SEARCH);
-		if(!search.matches("/[0-9]+/g")) {
+		if(!search.matches("\\d*")) {
 			throw new JobParametersInvalidException(search + "가 숫자가 아닙니다");
 		}
 		

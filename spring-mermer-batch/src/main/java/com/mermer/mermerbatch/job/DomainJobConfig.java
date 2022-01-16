@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.jaxb.SpringDataJaxb.PageDto;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
@@ -64,12 +65,13 @@ public class DomainJobConfig {
 	private String path;
 	
 	@Bean("domainJob")
-	public Job domainJob(Step readStep) {
+	public Job domainJob(Step readStep, Step pageStep) {
 		log.debug("path>.." + path);
 		return jobBuilderFactory.get("domainJob")
 				.incrementer(new RunIdIncrementer())
 				.validator(domainJobParameterValidator())
-				.start(readStep)
+				.start(pageStep)
+				//.start(readStep)
 				.build();
 	}
 	
@@ -118,11 +120,11 @@ public class DomainJobConfig {
 	@StepScope
 	@Bean
 	public StaxEventItemReader<DomainDto> domainReader(
-			@Value("#{jobParameters['searchCd']}") String searchCd,
+			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query,
 			Jaxb2Marshaller domainMarshaller
 			){
-		Resource resource = lawDomainAPIResource.getResource(searchCd, query);
+		Resource resource = lawDomainAPIResource.getResource(search, query);
 		
 		return new StaxEventItemReaderBuilder<DomainDto>()
 				.name("domainDtoReader")
@@ -147,9 +149,16 @@ public class DomainJobConfig {
 	public ItemWriter<DomainDto> domainWriter(){
 		
 		return items -> {
-			items.forEach(System.out::println);
-			System.out.println("-=== chunk is finished");
-			
+			items.forEach(item -> {
+				Domain domain = Domain.builder()
+								.lawId(Long.parseLong(item.getLawId()))
+								.lawMST(Long.parseLong(item.getLawSerial()))
+								.lawName(item.getLawName())
+								.inster(99999999L)
+								.mdfer(99999999L)
+								.build();
+				domainRepository.save(domain);
+			});
 		};
 	}
 	

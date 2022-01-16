@@ -43,17 +43,16 @@ public class LawDomainAPIResource {
 	@Value("${external.law-domain-api.service-key}")
 	private String serviceKey;
 	
-	public Resource getResource(String searchCd, String query) {
+	public Resource getResource(String search, String query) {
 		String urlString = String.format("%s&OC=%s&search=%s&query=%s", path, serviceKey
-				, searchCd
+				, search
 				, query);
 		
 		log.info("Resource URL = " + urlString);
 		
 		try {
 			URL url = new URL(urlString);
-			HttpURLConnection con;
-			con = (HttpURLConnection) url.openConnection();
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
 			con.setRequestMethod("GET");
@@ -61,11 +60,13 @@ public class LawDomainAPIResource {
 			con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 			byte[] xml = con.getInputStream().readAllBytes();
 			
-			return new ByteArrayResource(xml);
+			Resource result = new ByteArrayResource(xml);
+			return result;
 		} catch (MalformedURLException e) {
 			throw new IllegalArgumentException("Failed to create UrlResource");
 		} catch (IOException e) {
 			throw new IllegalArgumentException("Connection Failed");
 		}
 	}
+	
 }
