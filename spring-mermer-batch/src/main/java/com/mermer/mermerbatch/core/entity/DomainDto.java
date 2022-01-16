@@ -22,7 +22,7 @@ import lombok.ToString;
  * 2022.01.16 Mermer 최초 생성
  */
 @ToString
-@Setter @Getter
+@Getter
 @XmlRootElement(name = "law")
 @AllArgsConstructor @NoArgsConstructor
 public class DomainDto {

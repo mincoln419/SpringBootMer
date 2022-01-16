@@ -28,6 +28,7 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import com.mermer.mermerbatch.core.entity.Domain;
 import com.mermer.mermerbatch.core.entity.DomainDto;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
+import com.mermer.mermerbatch.validator.FilePathParameterValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,20 +55,21 @@ public class DomainJobConfig {
 	public Job domainJob(Step readStep) {
 		return jobBuilderFactory.get("domainJob")
 				.incrementer(new RunIdIncrementer())
+				.validator(new FilePathParameterValidator())
 				.start(readStep)
 				.build();
 	}
 	
 	
-	@SuppressWarnings("unchecked")
+
 	@JobScope // Job이 실행되는 동안에만 step의 객체가 살아있도록
 	@Bean("readStep")
 	public Step readStep(StaxEventItemReader<DomainDto> domainReader,
 					     //ItemProcessor<DomainDto, String> itemProcessor,
-					     ItemWriter<String> itemWriter
+					     ItemWriter<DomainDto> itemWriter
 						) {
 		return stepBuilderFactory.get("readStep")
-				.<DomainDto, String>chunk(10)
+				.<DomainDto, DomainDto>chunk(10)
 				.reader(domainReader)
 				//.processor(itemProcessor)
 				.writer(itemWriter)
@@ -101,15 +103,7 @@ public class DomainJobConfig {
 	
 	@StepScope
 	@Bean
-	public ItemProcessor<Domain, String> domainProcessor(){
-		
-		return item -> "processed" + item.getContent();
-	}
-	
-	
-	@StepScope
-	@Bean
-	public ItemWriter<String> domainWriter(){
+	public ItemWriter<DomainDto> domainWriter(){
 		
 		return items -> {
 			items.forEach(System.out::println);
