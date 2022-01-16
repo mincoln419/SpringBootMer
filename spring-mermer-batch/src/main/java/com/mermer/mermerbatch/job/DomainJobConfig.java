@@ -147,9 +147,16 @@ public class DomainJobConfig {
 	public ItemWriter<DomainDto> domainWriter(){
 		
 		return items -> {
-			items.forEach(System.out::println);
-			System.out.println("-=== chunk is finished");
-			
+			items.forEach(item -> {
+				Domain domain = Domain.builder()
+								.lawId(Long.parseLong(item.getLawId()))
+								.lawMST(Long.parseLong(item.getLawSerial()))
+								.lawName(item.getLawName())
+								.inster(99999999L)
+								.mdfer(99999999L)
+								.build();
+				domainRepository.save(domain);
+			});
 		};
 	}
 	

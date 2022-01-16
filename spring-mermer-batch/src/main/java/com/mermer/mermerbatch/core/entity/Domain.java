@@ -44,14 +44,10 @@ public class Domain extends CommonEmbeded{
 	@Column(name = "DOMAIN_ID")
 	private Long id;
 	
+	private Long lawId;
 	
-	private String lawDomainName;//DB에 저장시킬 법률명
-	
-	private String lawDomainCode;//공개법률정보에서 사용하는 법률코드
-	
-	@Column(name = "LAW_CONTENT")
-	@Lob
-	private String content;
-	
+	private Long lawMST;//공개법률정보에서 사용하는 법률코드
+
+	private String lawName;//DB에 저장시킬 법률명
 	
 }
