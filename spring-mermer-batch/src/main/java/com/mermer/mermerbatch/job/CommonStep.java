@@ -28,9 +28,9 @@ import org.springframework.stereotype.Component;
 
 import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
 import com.mermer.mermerbatch.core.entity.Domain;
-import com.mermer.mermerbatch.core.entity.DomainDto;
-import com.mermer.mermerbatch.core.entity.LawSearchDto;
 import com.mermer.mermerbatch.core.entity.PageWork;
+import com.mermer.mermerbatch.core.entity.dto.DomainDto;
+import com.mermer.mermerbatch.core.entity.dto.LawSearchDto;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
 import com.mermer.mermerbatch.core.entity.type.StepType;

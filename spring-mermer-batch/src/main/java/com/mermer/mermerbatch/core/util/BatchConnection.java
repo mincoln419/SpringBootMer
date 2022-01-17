@@ -54,6 +54,7 @@ public class BatchConnection {
 			con.disconnect();
 			
 			String xml = sb.toString();
+			log.info("flag::" + flag);
 			xml = xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
 			
 			return xml; 

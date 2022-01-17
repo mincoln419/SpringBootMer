@@ -1,6 +1,10 @@
 
-package com.mermer.mermerbatch.core.entity;
+package com.mermer.mermerbatch.core.entity.dto;
 
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -9,13 +13,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
 /**
- * @packageName : com.mermer.mermerbatch.core.entity
- * @fileName : LawSearchDto.java 
+ * @packageName : com.mermer.mermerbatch.core.entity.dto
+ * @fileName : InstanceWrapperDto.java 
  * @author : Mermer 
  * @date : 2022.01.17 
- * @description : 본 검색전 페이지와 총수량에 따라 API를 얼마나 호출해야 하는지 계산하기 위한 DTO
+ * @description :
  * =========================================================== 
  * DATE AUTHOR NOTE 
  * ----------------------------------------------------------- 
@@ -23,16 +26,13 @@ import lombok.ToString;
  */
 @ToString
 @Getter
-@XmlRootElement(name = "LawSearch")
+@XmlRootElement(name = "법령")
 @AllArgsConstructor @NoArgsConstructor
-public class LawSearchDto {
+public class InstanceWrapperDto {
 
-	@XmlElement(name ="page")
-	private String page;
+	@XmlElement(name ="기본정보")
+	private BasicDto basicDto;
 	
-	@XmlElement(name ="totalCnt")
-	private String total;
-	
-	@XmlElement(name ="numOfRows")
-	private String rows;
+	@XmlElement(name ="조문")
+	private ArticleWrapperDto articleWrapperDto;
 }

@@ -32,7 +32,7 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
 import com.mermer.mermerbatch.core.entity.Domain;
-import com.mermer.mermerbatch.core.entity.DomainDto;
+import com.mermer.mermerbatch.core.entity.dto.DomainDto;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 import com.mermer.mermerbatch.core.entity.type.StepType;
 import com.mermer.mermerbatch.validator.FilePathParameterValidator;
@@ -66,13 +66,14 @@ public class DomainJobConfig {
 	private String path;
 	
 	@Bean("domainJob")
-	public Job domainJob(Step readStep, Step pageStep) {
+	public Job domainJob(Step readStep, Step pageStep, Step articleStep) {
 		log.debug("path>.." + path);
 		return jobBuilderFactory.get("domainJob")
 				.incrementer(new RunIdIncrementer())
 				.validator(domainJobParameterValidator())
 				.start(pageStep)
 				.next(readStep)
+				.next(articleStep)
 				.build();
 	}
 	
@@ -153,8 +154,8 @@ public class DomainJobConfig {
 		return items -> {
 			items.forEach(item -> {
 				Domain domain = Domain.builder()
-								.lawId(Long.parseLong(item.getLawId()))
-								.lawMST(Long.parseLong(item.getLawSerial()))
+								.lawId(Integer.parseInt(item.getLawId()))
+								.lawMST(Integer.parseInt(item.getLawSerial()))
 								.lawName(item.getLawName())
 								.inster(99999999L)
 								.mdfer(99999999L)

@@ -8,5 +8,10 @@
     "name": "external.law-domain-api.path",
     "type": "java.lang.String",
     "description": "A description for 'external.law-domain-api.path'"
+  },
+  {
+    "name": "external.law-instance-api.path",
+    "type": "java.lang.String",
+    "description": "A description for 'external.law-instance-api.path'"
   }
 ]}
