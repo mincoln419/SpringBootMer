@@ -1,18 +1,7 @@
-/**
- * @packageName : com.mermer.mermerbatch.job
- * @fileName : CommonStep.java 
- * @author : Mermer 
- * @date : 2022.01.17 
- * @description :
- * =========================================================== 
- * DATE AUTHOR NOTE 
- * ----------------------------------------------------------- 
- * 2022.01.17 Mermer 최초 생성
- */
+
 package com.mermer.mermerbatch.job;
 
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -27,69 +16,82 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 
 import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
-import com.mermer.mermerbatch.core.entity.Domain;
+import com.mermer.mermerbatch.adaptor.LawInstanceAPIResource;
+import com.mermer.mermerbatch.core.entity.Instance;
 import com.mermer.mermerbatch.core.entity.PageWork;
 import com.mermer.mermerbatch.core.entity.dto.DomainDto;
+import com.mermer.mermerbatch.core.entity.dto.InstanceDto;
 import com.mermer.mermerbatch.core.entity.dto.LawSearchDto;
-import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
+import com.mermer.mermerbatch.core.entity.dto.SubArticleDto;
+import com.mermer.mermerbatch.core.entity.embeded.HoArticle;
 import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
 import com.mermer.mermerbatch.core.entity.type.StepType;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * @packageName : com.mermer.mermerbatch.job
+ * @fileName : ArticleStep.java 
+ * @author : Mermer 
+ * @date : 2022.01.17 
+ * @description :
+ * =========================================================== 
+ * DATE AUTHOR NOTE 
+ * ----------------------------------------------------------- 
+ * 2022.01.17 Mermer 최초 생성
+ */
 @RequiredArgsConstructor
 @Component
-public class CommonStep {
-	
+public class ArticleStepConfig {
+
 	private final StepBuilderFactory stepBuilderFactory;
-	private final PageWorkRepository pageWorkRepository;
-	private final LawDomainAPIResource lawDomainAPIResource;
+	private final LawInstanceAPIResource lawInstanceAPIResource;
 	
 	@JobScope // Job이 실행되는 동안에만 step의 객체가 살아있도록
-	@Bean("pageStep")
-	public Step pageStep(StaxEventItemReader<LawSearchDto> lawSerchReader,
-					     ItemWriter<LawSearchDto> pageWriter
+	@Bean("articleStep")
+	public Step articleStep(StaxEventItemReader<InstanceDto> articleReader,
+					     ItemWriter<InstanceDto> articleWriter
 						) {
 		return stepBuilderFactory.get("pageStep")
-				.<LawSearchDto, LawSearchDto>chunk(10)
-				.reader(lawSerchReader)
-				//.processor(itemProcessor)
-				.writer(pageWriter)
+				.<InstanceDto, InstanceDto>chunk(10)
+				.reader(articleReader)
+				.writer(articleWriter)
 				.build();
 	}
+	
 	
 
 	@StepScope
 	@Bean
-	public StaxEventItemReader<LawSearchDto> lawSerchReader(
+	public StaxEventItemReader<InstanceDto> articleReader(
 			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query,
-			Jaxb2Marshaller domainMarshaller, Unmarshaller pageMarshaller
+			Unmarshaller articleMarshaller
 			){
 		
-		Resource resource = lawDomainAPIResource.getResource(search, query, StepType.PAGE);
+		Resource resource = lawInstanceAPIResource.getResource(search, query);
 		
-		return new StaxEventItemReaderBuilder<LawSearchDto>()
-				.name("pageDtoReader")
+		return new StaxEventItemReaderBuilder<InstanceDto>()
+				.name("instanceDtoReader")
 				.resource(resource)
-				.addFragmentRootElements("LawSearch")
-				.unmarshaller(pageMarshaller)//마셜러-> xml 문서 데이터를 객체에 매핑해주는 역할
+				.addFragmentRootElements("조문단위")
+				.unmarshaller(articleMarshaller)//마셜러-> xml 문서 데이터를 객체에 매핑해주는 역할
 				.build();
 	}
 	
 	
 	@StepScope
 	@Bean
-	public Jaxb2Marshaller pageMarshaller() {		
+	public Jaxb2Marshaller articleMarshaller() {		
 		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-		jaxb2Marshaller.setClassesToBeBound(LawSearchDto.class);
+		jaxb2Marshaller.setClassesToBeBound(InstanceDto.class, SubArticleDto.class, HoArticle.class);
 		return jaxb2Marshaller;
 	}
 	
 	
 	@StepScope
 	@Bean
-	public ItemWriter<LawSearchDto> pageWriter(
+	public ItemWriter<InstanceDto> articleWriter(
 			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query
 			){
@@ -97,20 +99,11 @@ public class CommonStep {
 		return items -> {
 			items.forEach(item -> {
 				System.out.println("item:" + item.toString());
-				PageWork pagework = PageWork.builder()
-									.page(Long.parseLong(item.getPage()))
-									.total(Long.parseLong(item.getTotal()))
-									.rows(Long.parseLong(item.getRows()))
-									.search(search)
-									.query(query)
-									.finished(false)
-									.inster(99999999L)
-									.mdfer(99999999L)
+				Instance pagework = Instance.builder()
+
 									.build();
-				pagework.updateTargetCnt();
-				pageWorkRepository.save(pagework);
+				
 			});
 		};
 	}
-	
 }

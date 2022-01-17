@@ -27,9 +27,11 @@ spring:
   
 logging:  
   level:
-    root: info    
+    root: debug    
 
 external:
   law-domain-api:
     path: http://www.law.go.kr/DRF/lawSearch.do?target=law&type=XML
     service-key: mincoln419
+  law-instance-api:
+    path: http://www.law.go.kr/DRF/lawService.do?target=law&type=XML

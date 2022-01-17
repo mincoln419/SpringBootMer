@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @packageName : com.mermer.mermerbatch.adaptor
- * @fileName : LawDomainAPIResource.java 
+ * @fileName : LawInstanceAPIResource.java 
  * @author : Mermer 
  * @date : 2022.01.16 
  * @description : 법률 공개 정보 API를 통해 resource 가져오기
@@ -35,59 +35,25 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class LawDomainAPIResource {
+public class LawInstanceAPIResource {
 
-	@Value("${external.law-domain-api.path}")
+	@Value("${external.law-instance-api.path}")
 	private String path;
 	@Value("${external.law-domain-api.service-key}")
 	private String serviceKey;
 	
-	@Autowired
-	private PageWorkRepository pageWorkRepository;
-	
-	public Resource getResource(String search, String query, StepType step) {
+	public Resource getResource(String search, String query) {
 		
 		
 		String urlString = null;
 		StringBuilder sb = new StringBuilder();
-		StringBuilder fin = new StringBuilder();
 		
-		if(step.equals(StepType.PAGE)) {
-			urlString = String.format("%s&OC=%s&search=%s&query=%s", path, serviceKey
-					, search
-					, query);
-			sb.append(BatchConnection.getConncetionAndXml(urlString, false));
-		}else if(step.equals(StepType.DOMAIN)) {
-			
-			Optional<PageWork> pageInfoOp = pageWorkRepository.findBySearchAndQuery(search, query);
-			
-			if(pageInfoOp.isEmpty())throw new IllegalArgumentException("No page information");
-			
-			PageWork pageInfo= pageInfoOp.get(); 
-			//페이지만큼 API를 호출하여 처리
-			for(int i = 1; i <= pageInfo.getTargetCnt(); i++) {
-				urlString = String.format("%s&OC=%s&search=%s&query=%s&page=%d", path, serviceKey
-						, search
-						, query
-						, i
-						);
-				sb.append(BatchConnection.getConncetionAndXml(urlString, true));
-			}
-			
-			//작업이 끝났으면 끝난 표시 ㄱ
-			pageInfo.setFinished(true);
-			pageWorkRepository.save(pageInfo);
-
-		}
-		log.debug("xml========" + sb.toString());
-		fin.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		fin.append("<Root>");
-		fin.append(sb.toString());
-		fin.append("</Root>");
+		urlString = String.format("%s&OC=%s&MST=%s", path, serviceKey
+				, "232157"
+				);
+		sb.append(BatchConnection.getConncetionAndXml(urlString, false));
 		
-//		log.info("final===" + fin.toString());
-		
-		Resource result = new ByteArrayResource(fin.toString().getBytes());
+		Resource result = new ByteArrayResource(sb.toString().getBytes());
 		return result;			
 	}
 	
