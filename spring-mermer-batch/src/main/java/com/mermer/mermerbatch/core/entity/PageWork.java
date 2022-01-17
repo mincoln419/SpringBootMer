@@ -57,7 +57,12 @@ public class PageWork extends CommonEmbeded{
 	
 	//현재 페이지 정보를 가지고 처리해야 할 건수를 계산함
 	public void updateTargetCnt() {
-		setTargetCnt(Long.divideUnsigned(getTotal(), getRows()));
+		Long cnt = Long.divideUnsigned(getTotal(), getRows());
+		
+		if(Long.compare(0, Long.remainderUnsigned(getTotal(), getRows())) < 0) cnt++;
+		
+		setTargetCnt(cnt);
+		
 	}
 	
 }
