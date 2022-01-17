@@ -154,8 +154,8 @@ public class DomainJobConfig {
 		return items -> {
 			items.forEach(item -> {
 				Domain domain = Domain.builder()
-								.lawId(Long.parseLong(item.getLawId()))
-								.lawMST(Long.parseLong(item.getLawSerial()))
+								.lawId(Integer.parseInt(item.getLawId()))
+								.lawMST(Integer.parseInt(item.getLawSerial()))
 								.lawName(item.getLawName())
 								.inster(99999999L)
 								.mdfer(99999999L)

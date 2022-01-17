@@ -49,10 +49,14 @@ public class LawInstanceAPIResource {
 		StringBuilder sb = new StringBuilder();
 		
 		urlString = String.format("%s&OC=%s&MST=%s", path, serviceKey
-				, "232157"
+				, "223445"
 				);
-		sb.append(BatchConnection.getConncetionAndXml(urlString, false));
 		
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		sb.append(BatchConnection.getConncetionAndXml(urlString, false));
+		sb.replace(41, 67, "");
+		
+		System.out.println("xml ==== " + sb.toString().substring(0, 100));
 		Resource result = new ByteArrayResource(sb.toString().getBytes());
 		return result;			
 	}

@@ -11,16 +11,11 @@
  */
 package com.mermer.mermerbatch.core.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -34,18 +29,18 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity @NoArgsConstructor @AllArgsConstructor
-@Table(name = "LW_TB_DOMAIN")
+@Table(name = "TB_LW_DOMAIN")
 @SuperBuilder @Getter @Setter @EqualsAndHashCode(of = "id", callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
-@SequenceGenerator(name = "LW_SQ_DOMAIN_ID_GENERATOR", sequenceName = "LW_SQ_DOMAIN_ID", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name = "SQ_LW_DOMAIN_ID_GENERATOR", sequenceName = "SQ_LW_DOMAIN_ID", initialValue = 1, allocationSize = 1)
 public class Domain extends CommonEmbeded{
 
-	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LW_SQ_DOMAIN_ID_GENERATOR")
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_LW_DOMAIN_ID_GENERATOR")
 	private Long id;
 	
-	private Long lawId;
+	private Integer lawId;
 	
-	private Long lawMST;//공개법률정보에서 사용하는 법률코드
+	private Integer lawMST;//공개법률정보에서 사용하는 법률코드
 
 	private String lawName;//DB에 저장시킬 법률명
 	

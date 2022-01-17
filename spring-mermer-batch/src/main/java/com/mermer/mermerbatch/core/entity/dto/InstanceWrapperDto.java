@@ -3,6 +3,8 @@ package com.mermer.mermerbatch.core.entity.dto;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -10,9 +12,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
 /**
  * @packageName : com.mermer.mermerbatch.core.entity.dto
- * @fileName : HoArticleDto.java 
+ * @fileName : InstanceWrapperDto.java 
  * @author : Mermer 
  * @date : 2022.01.17 
  * @description :
@@ -22,27 +25,14 @@ import lombok.ToString;
  * 2022.01.17 Mermer 최초 생성
  */
 @ToString
-@XmlRootElement(name = "호")
-@AllArgsConstructor @NoArgsConstructor
 @Getter
-public class HoArticleDto {
+@XmlRootElement(name = "법령")
+@AllArgsConstructor @NoArgsConstructor
+public class InstanceWrapperDto {
 
-	@XmlElement(name ="호번호")
-	private String hoArticleNum;
+	@XmlElement(name ="기본정보")
+	private BasicDto basicDto;
 	
-	@XmlElement(name ="호내용")
-	private String hoArticleContent;
-
-	public String getHoArticleContent() {
-		return hoArticleContent;
-	}
-
-	/**
-	 * @return
-	 */
-	public Integer calArticleNum() {
-		return getHoArticleNum().charAt(0) - 9311;
-	}
-	
-	
+	@XmlElement(name ="조문")
+	private ArticleWrapperDto articleWrapperDto;
 }

@@ -9,10 +9,16 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Fetch;
+
 import com.mermer.mermerbatch.core.entity.Instance;
+import com.mermer.mermerbatch.core.entity.type.ArticleType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,14 +44,19 @@ public class Article {
 	
 	private Integer articleNum;//조
 	
+	@Enumerated(EnumType.STRING)
+	private ArticleType articleType;//전문,조문 구분  
+	
 	private String content;//조문 내용
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "INSTANCE_ID")
+	@Builder.Default
 	private List<SubArticle> subArticleList = new ArrayList<>();//항
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "INSTANCE_ID")
-	private List<HoArticle> hoArticle = new ArrayList<>();//호
+	@Builder.Default
+	private List<HoArticle> hoArticleList = new ArrayList<>();//호
 	
 }

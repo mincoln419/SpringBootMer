@@ -1,6 +1,7 @@
 
 package com.mermer.mermerbatch.core.entity.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -23,9 +24,9 @@ import lombok.ToString;
  * 2022.01.17 Mermer 최초 생성
  */
 @ToString
-@Getter
 @XmlRootElement(name = "항")
 @AllArgsConstructor @NoArgsConstructor
+@Getter
 public class SubArticleDto {
 
 	@XmlElement(name ="항번호")
@@ -36,4 +37,11 @@ public class SubArticleDto {
 	
 	@XmlElement(name ="호")
 	private List<HoArticleDto> hoArticleList;
+
+	public Integer calArticleNum() {
+		return getSubArticleNum().charAt(0) - 9311;
+	}
+
+
+	
 }
