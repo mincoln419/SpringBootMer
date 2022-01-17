@@ -34,6 +34,7 @@ import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
 import com.mermer.mermerbatch.core.entity.Domain;
 import com.mermer.mermerbatch.core.entity.DomainDto;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
+import com.mermer.mermerbatch.core.entity.type.StepType;
 import com.mermer.mermerbatch.validator.FilePathParameterValidator;
 import com.mermer.mermerbatch.validator.NumberTypeParameterValidator;
 
@@ -71,7 +72,7 @@ public class DomainJobConfig {
 				.incrementer(new RunIdIncrementer())
 				.validator(domainJobParameterValidator())
 				.start(pageStep)
-				//.start(readStep)
+				.next(readStep)
 				.build();
 	}
 	
@@ -124,16 +125,17 @@ public class DomainJobConfig {
 			@Value("#{jobParameters['query']}") String query,
 			Jaxb2Marshaller domainMarshaller
 			){
-		Resource resource = lawDomainAPIResource.getResource(search, query);
+		Resource resource = lawDomainAPIResource.getResource(search, query, StepType.DOMAIN);
 		
 		return new StaxEventItemReaderBuilder<DomainDto>()
-				.name("domainDtoReader")
+				.name("domainReader")
 				.resource(resource)
 				.addFragmentRootElements("law")
 				.unmarshaller(domainMarshaller)//마셜러-> xml 문서 데이터를 객체에 매핑해주는 역할
 				.build();
 	}
 	
+
 	
 	@StepScope
 	@Bean

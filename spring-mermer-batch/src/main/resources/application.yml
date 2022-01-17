@@ -27,7 +27,7 @@ spring:
   
 logging:  
   level:
-    root: debug    
+    root: info    
 
 external:
   law-domain-api:

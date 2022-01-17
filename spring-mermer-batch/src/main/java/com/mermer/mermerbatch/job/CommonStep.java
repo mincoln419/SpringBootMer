@@ -33,6 +33,7 @@ import com.mermer.mermerbatch.core.entity.LawSearchDto;
 import com.mermer.mermerbatch.core.entity.PageWork;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
+import com.mermer.mermerbatch.core.entity.type.StepType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -65,7 +66,8 @@ public class CommonStep {
 			@Value("#{jobParameters['query']}") String query,
 			Jaxb2Marshaller domainMarshaller, Unmarshaller pageMarshaller
 			){
-		Resource resource = lawDomainAPIResource.getResource(search, query);
+		
+		Resource resource = lawDomainAPIResource.getResource(search, query, StepType.PAGE);
 		
 		return new StaxEventItemReaderBuilder<LawSearchDto>()
 				.name("pageDtoReader")
