@@ -79,14 +79,15 @@ public class NoticeService {
 		Notice result = noticeRepository.save(notice);
 		
 		//TODO 게시글의 댓글 정보 link return  
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, result.getId());
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class).slash(result.getId());
 		URI createdUri = selfLinkBuilder.toUri();
 	
 		EntityModel<Optional> noticeResource = NoticeResource.of(Optional.of(result));//생성자 대신 static of 사용
-		noticeResource.add((selfLinkBuilder).withSelfRel())
+		noticeResource
+		.add(linkTo(NoticeController.class).slash(result.getId()).withSelfRel())
 		.add(linkTo(NoticeController.class).withRel("query-notice"))
-		.add(selfLinkBuilder.withRel("update-notice"))
-		.add(selfLinkBuilder.slash("reply").withRel("notice-reply-create"))
+		.add(linkTo(NoticeController.class).slash(result.getId()).withRel("update-notice"))
+		.add(linkTo(NoticeController.class).slash(result.getId()).slash("reply").withRel("notice-reply-create"))
 		.add(Link.of("/docs/notice.html#resources-notice-create").withRel("profile"));
 		
 		return ResponseEntity.created(createdUri).body(noticeResource);
@@ -109,8 +110,12 @@ public class NoticeService {
 		
 		//전체 조회시 content 는 나오지 않도록 수정 
 		Page<NoticeAbstract> page = noticeRepository.findAllNoContent(pageable);
-		
-		var pagedResource = assembler.toModel(page, e -> NoticeResource.of(e).add(Link.of("/docs/notice.html#resources-get-notice").withRel("profile")));
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class);
+		var pagedResource = assembler.toModel(page, e -> {
+			return NoticeResource.of(e)
+			.add(selfLinkBuilder.withSelfRel())
+			.add(Link.of("/docs/notice.html#resources-get-notice").withRel("profile"));
+		});
 		pagedResource.add(Link.of("/docs/notice.html#resources-notice-list").withRel("profile"));
 		
 		//페이지가 안넘어갈 경우 first, next, last 링크 별도로 세팅
@@ -138,7 +143,7 @@ public class NoticeService {
 		if(optionalNotice.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class).slash(noticeId);
 		Notice notice = optionalNotice.get();
 		
 		//한번 읽을 때마다 조회수 1증가
@@ -146,9 +151,9 @@ public class NoticeService {
 		notice = noticeRepository.save(notice);
 		
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
-											.add((selfLinkBuilder).withSelfRel())
+											.add(linkTo(NoticeController.class).slash(noticeId).withSelfRel())
 											.add(Link.of("/docs/notice.html#resources-notice-get").withRel("profile"))
-											.add(selfLinkBuilder.withRel("update-notice"));
+											.add(linkTo(NoticeController.class).slash(noticeId).withRel("update-notice"));
 		
 		return ResponseEntity.ok(noticeResource);
 	}
@@ -183,7 +188,7 @@ public class NoticeService {
 	
 		noticeRepository.save(notice);
 		
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class).slash(noticeId);
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
 				.add((selfLinkBuilder).withSelfRel())
 				.add(Link.of("/docs/notice.html#resources-notice-update").withRel("profile"));
@@ -220,9 +225,9 @@ public class NoticeService {
 			noticeReplyRepository.save(reply);
 		}
 		
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class).slash(noticeId);
 		EntityModel<Notice> noticeResource = NoticeResource.of(notice)
-				.add((selfLinkBuilder).withSelfRel())
+				.add(linkTo(NoticeController.class).slash(noticeId).withSelfRel())
 				.add(Link.of("/docs/notice.html#resources-notice-delete").withRel("profile"));
 
 		return ResponseEntity.ok(noticeResource);
@@ -250,7 +255,7 @@ public class NoticeService {
 		
 		
 		/* 링크정보 hateous */
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId);
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class).slash(noticeId).slash("reply");
 		URI createdUri = selfLinkBuilder.toUri();
 	
 		EntityModel<Optional> noticeReplyResource = NoticeReplyResource.of(Optional.of(result));//생성자 대신 static of 사용
@@ -288,7 +293,7 @@ public class NoticeService {
 		reply.setParent(optionalNoticeReply.get());
 		
 		Reply result = noticeReplyRepository.save(reply);
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId).slash("reply").slash(result.getId());
+		WebMvcLinkBuilder selfLinkBuilder =  linkTo(NoticeController.class).slash(noticeId).slash("reply").slash(result.getId());
 		URI createdUri = selfLinkBuilder.toUri();
 	
 		EntityModel<Optional> noticeReplyResource = NoticeReplyResource.of(Optional.of(result));//생성자 대신 static of 사용
@@ -348,7 +353,7 @@ public class NoticeService {
 		}
 		Reply result = noticeReplyRepository.getByIdAndNotice(noticeId, replyId).get();
 		
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId, "reply").slash(replyId);
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class).slash(noticeId).slash("reply").slash(result.getId());
 				
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add((selfLinkBuilder).withSelfRel())
@@ -376,7 +381,7 @@ public class NoticeService {
 		
 		Reply result = noticeReplyRepository.save(reply);
 		
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId, "reply").slash(replyId);
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class).slash(noticeId).slash("reply").slash(result.getId());
 		
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add((selfLinkBuilder).withSelfRel())
@@ -410,7 +415,7 @@ public class NoticeService {
 			noticeReplyRepository.save(child);
 		}
 		
-		WebMvcLinkBuilder selfLinkBuilder = DevUtil.getClassLink(NoticeController.class, noticeId, "reply");
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(NoticeController.class).slash(noticeId).slash("reply").slash(result.getId());
 		
 		EntityModel<Reply> replyResource = NoticeResource.of(result)
 											.add(selfLinkBuilder.slash(replyId).withSelfRel())
