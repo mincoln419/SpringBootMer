@@ -1,10 +1,11 @@
 
-package com.mermer.mermerbatch.job;
+package com.mermer.mermerbatch.step;
 
 import java.util.List;
 
 import org.aspectj.weaver.ast.Instanceof;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -13,6 +14,7 @@ import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -52,7 +54,8 @@ import lombok.RequiredArgsConstructor;
  * 2022.01.17 Mermer 최초 생성
  */
 @RequiredArgsConstructor
-@Component
+@Configuration
+@EnableBatchProcessing
 public class ArticleStepConfig {
 
 	private final StepBuilderFactory stepBuilderFactory;
