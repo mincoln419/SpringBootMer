@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class LawDomainAPIResource {
+public class LawPageAPIResource {
 
 	@Autowired
 	private PageWorkRepository pageWorkRepository;
@@ -46,7 +46,7 @@ public class LawDomainAPIResource {
 	/**
 	 * 
 	 */
-	public LawDomainAPIResource(
+	public LawPageAPIResource(
 			@Value("${external.law-domain-api.path}") String path,
 			@Value("${external.law-domain-api.service-key}") String serviceKey) {
 		this.path = path;

@@ -7,7 +7,7 @@ spring:
     show-sql: true
     generate-ddl: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
   batch:
     jdbc:
       initialize-schema: ALWAYS

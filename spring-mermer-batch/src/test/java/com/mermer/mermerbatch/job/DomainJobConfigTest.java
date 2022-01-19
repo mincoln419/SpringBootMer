@@ -3,8 +3,6 @@ package com.mermer.mermerbatch.job;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.batch.runtime.BatchStatus;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +22,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.mermer.mermerbatch.BatchTestConfig;
 import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
-import com.mermer.mermerbatch.core.entity.repository.InstanceRepository;
-import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
+import com.mermer.mermerbatch.step.PageStepConfig;
+import com.mermer.mermerbatch.step.ReadStepConfig;
 
 /**
  * @packageName : com.mermer.mermerbatch.job
@@ -43,13 +41,11 @@ import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {DomainJobConfig.class
+@ContextConfiguration(classes = {
+		  DomainJobConfig.class
 		, BatchTestConfig.class
-		, LawDomainAPIResource.class
-		, PageWorkRepository.class
-		, DomainRepository.class
-		, CommonStep.class
-		, InstanceRepository.class})
+		, PageStepConfig.class
+		, ReadStepConfig.class})
 public class DomainJobConfigTest {
 
 	@Autowired
@@ -63,7 +59,7 @@ public class DomainJobConfigTest {
 	@Value("${external.law-domain-api.path}") String path;
 	
 	@Test
-	@DisplayName("도메인 배치 정상수행 테스트")
+	@DisplayName("도메인 페이지 정보 배치 정상수행 테스트")
 	public void success() throws Exception {
 		
 		//when-search=1 -query=형법
@@ -71,10 +67,15 @@ public class DomainJobConfigTest {
 							  .addString("search", "1")
 							  .addString("query", "형법")
 							  .toJobParameters();
-		JobExecution execution = jobLauncherTestUtils.launchStep("pageStep",param);
+		
+		JobExecution execution = jobLauncherTestUtils.launchStep("pageStep", param);
+		assertEquals(execution.getExitStatus(), ExitStatus.COMPLETED); 
+//		execution = jobLauncherTestUtils.launchStep("readStep",param);
+//		assertEquals(execution.getExitStatus(), ExitStatus.COMPLETED);
+		
+		
 		//then
-		assertEquals(execution.getExitStatus(), ExitStatus.COMPLETED);
-		assertEquals(domainRepository.count(), 0);
+		assertEquals(domainRepository.count(), 7);
 	}
 	
 	

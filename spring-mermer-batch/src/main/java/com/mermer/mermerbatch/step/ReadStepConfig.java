@@ -9,9 +9,10 @@
  * ----------------------------------------------------------- 
  * 2022.01.19 Mermer 최초 생성
  */
-package com.mermer.mermerbatch.job;
+package com.mermer.mermerbatch.step;
 
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -20,8 +21,11 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
@@ -35,8 +39,8 @@ import com.mermer.mermerbatch.core.entity.type.StepType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Component
-public class ReadStep {
+@Configuration
+public class ReadStepConfig {
 
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
@@ -49,13 +53,13 @@ public class ReadStep {
 	@Bean("readStep")
 	public Step readStep(StaxEventItemReader<DomainDto> domainReader,
 					     ItemProcessor<DomainDto, DomainDto> domainProcessor,
-					     ItemWriter<DomainDto> itemWriter
+					     ItemWriter<DomainDto> domainWriter
 						) {
 		return stepBuilderFactory.get("readStep")
 				.<DomainDto, DomainDto>chunk(10)
 				.reader(domainReader)
 				.processor(domainProcessor)
-				.writer(itemWriter)
+				.writer(domainWriter)
 				.build();
 	}
 	
@@ -74,7 +78,7 @@ public class ReadStep {
 //				.unmarshaller(domainMarshaller)//마셜러-> xml 문서 데이터를 객체에 매핑해주는 역할
 //				.build();
 //	}
-
+	
 	@StepScope
 	@Bean
 	public StaxEventItemReader<DomainDto> domainReader(
