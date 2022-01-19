@@ -3,8 +3,11 @@ package com.mermer.mermerbatch.adaptor;
 
 import java.util.Optional;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -33,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
  * ----------------------------------------------------------- 
  * 2022.01.16 Mermer 최초 생성
  */
-@Slf4j
 @Component
 public class LawInstanceAPIResource {
 

@@ -12,7 +12,6 @@
 package com.mermer.mermerbatch.job;
 
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -27,11 +26,8 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 
 import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
-import com.mermer.mermerbatch.core.entity.Domain;
 import com.mermer.mermerbatch.core.entity.PageWork;
-import com.mermer.mermerbatch.core.entity.dto.DomainDto;
 import com.mermer.mermerbatch.core.entity.dto.LawSearchDto;
-import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
 import com.mermer.mermerbatch.core.entity.type.StepType;
 

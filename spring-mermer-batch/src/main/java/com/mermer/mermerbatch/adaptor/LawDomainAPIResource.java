@@ -3,17 +3,27 @@ package com.mermer.mermerbatch.adaptor;
 
 import java.util.Optional;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.mermer.mermerbatch.core.entity.PageWork;
+import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
+import com.mermer.mermerbatch.core.entity.repository.InstanceRepository;
 import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
 import com.mermer.mermerbatch.core.entity.type.StepType;
 import com.mermer.mermerbatch.core.util.BatchConnection;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -37,17 +47,26 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class LawDomainAPIResource {
 
-	@Value("${external.law-domain-api.path}")
-	private String path;
-	@Value("${external.law-domain-api.service-key}")
-	private String serviceKey;
-	
 	@Autowired
 	private PageWorkRepository pageWorkRepository;
+
+	
+	private String path;
+	private String serviceKey;
+	/**
+	 * 
+	 */
+	public LawDomainAPIResource(
+			@Value("${external.law-domain-api.path}") String path,
+			@Value("${external.law-domain-api.service-key}") String serviceKey) {
+		this.path = path;
+		this.serviceKey = serviceKey;
+		System.out.println("====================> LawDomainAPIResource construct");
+	
+	}
 	
 	public Resource getResource(String search, String query, StepType step) {
-		
-		
+
 		String urlString = null;
 		StringBuilder sb = new StringBuilder();
 		StringBuilder fin = new StringBuilder();

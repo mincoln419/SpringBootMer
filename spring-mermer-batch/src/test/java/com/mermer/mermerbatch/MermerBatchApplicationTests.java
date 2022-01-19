@@ -1,9 +1,9 @@
 package com.mermer.mermerbatch;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.batch.test.context.SpringBatchTest;
 
-@SpringBootTest
+@SpringBatchTest
 class MermerBatchApplicationTests {
 
 	@Test
