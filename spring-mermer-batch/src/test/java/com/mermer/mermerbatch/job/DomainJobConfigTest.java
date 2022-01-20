@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,6 +86,8 @@ public class DomainJobConfigTest {
 	@Test
 	@DisplayName("도메인 페이지 정보 배치 정상수행 테스트")
 	public void success() throws Exception {
+		String search = "1";
+		String query = "형법";
 		
 		//given
 		PageWork pageInfo = PageWork.builder()
@@ -98,25 +101,57 @@ public class DomainJobConfigTest {
 		when(lawDomainAPIResource.getResource(anyString(), anyString(), any())).thenReturn(
 				new ClassPathResource("sample.xml"));
 		
+		
 		//when
 		JobParameters param = new JobParametersBuilder()
-							  .addString("search", "1")
-							  .addString("query", "형법")
+							  .addString("search", search)
+							  .addString("query",query)
 							  .toJobParameters();
 		JobExecution execution = jobLauncherTestUtils.launchJob(param);
 		
 		
 		//then
-		assertEquals(execution.getExitStatus(), ExitStatus.COMPLETED); 	
+		assertEquals(execution.getExitStatus(), ExitStatus.COMPLETED);
 		verify(domainService, times(1)).savePageWork(any(), anyString(), anyString());
 		verify(domainService, times(20)).saveDomainInfo(any());
+		//assertEquals(domainRepository.count(), 20);
 	}
 	
 	
 	@Test
 	@DisplayName("파라미터가 없을 때 에러 발생 테스트")
-	public void fail_no_arguemnt() {
-		
+	public void Error_no_search_arguemnt() throws Exception {
+		//when
+		JobParameters param = new JobParametersBuilder()
+							  .addString("search", null)
+							  .toJobParameters();
+		try {
+			jobLauncherTestUtils.launchJob(param);
+		} catch (Exception e) {
+			assertEquals(e.getMessage(), "조회구분이 빈 값입니다.");
+		} 	
+	}
+
+	
+	
+	@Test
+	@DisplayName("질의문이 null 일때 와일드카드 문자열로 처리되는 지 테스트")
+	public void Error_no_query_arguemnt() throws Exception {
+		//when
+		JobParameters param = new JobParametersBuilder()
+							  .addString("search", "1")
+							  .toJobParameters();
+		try {
+			jobLauncherTestUtils.launchJob(param);
+		} catch (Exception e) {
+			assertEquals(e.getMessage(), "모든 법령을 조회할 수 없습니다");
+		} 	
 	}
 	
+	
+	@AfterEach
+	public void tearDown() {
+		domainRepository.deleteAll();
+		pageWorkRepository.deleteAll();
+	}
 }

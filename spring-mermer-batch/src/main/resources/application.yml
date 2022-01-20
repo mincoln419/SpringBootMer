@@ -35,5 +35,5 @@ external:
 ---
 logging:  
   level:
-    root: info
+    root: debug
 

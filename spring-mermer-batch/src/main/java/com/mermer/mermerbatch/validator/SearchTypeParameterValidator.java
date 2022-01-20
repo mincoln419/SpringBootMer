@@ -6,37 +6,29 @@ import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.JobParametersValidator;
 
 /**
- * @packageName : com.mermer.mermerbatch.validator
- * @fileName : NumberTypeParameter.java 
+ * @packageName : com.mermer.mermerbatch.job
+ * @fileName : SearchTypeParameterValidator.java 
  * @author : Mermer 
- * @date : 2022.01.16 
+ * @date : 2022.01.21 
  * @description :
  * =========================================================== 
  * DATE AUTHOR NOTE 
  * ----------------------------------------------------------- 
- * 2022.01.16 Mermer 최초 생성
+ * 2022.01.21 Mermer 최초 생성
  */
-public class NumberTypeParameterValidator implements JobParametersValidator {
+public class SearchTypeParameterValidator implements JobParametersValidator{
 
-	private static final String SEARCH = "search";
+	
+	private static final String QUERY = "query";
 	
 	@Override
 	public void validate(JobParameters parameters) throws JobParametersInvalidException {
-
-		
 		//TODO 비어있는 경우
-		
-		String search = parameters.getString(SEARCH);
+		String search = parameters.getString(QUERY);
 		if(search == null) {
-			throw new JobParametersInvalidException("조회구분이 빈 값입니다.");
-		}
-		else if(!search.matches("\\d*")) {
-			throw new JobParametersInvalidException(search + "가 숫자가 아닙니다");
+			throw new JobParametersInvalidException("모든 법령을 조회할 수 없습니다");
 		}
 		
-		//TODO 길이가 필요할 경우
-		
-
 	}
 
 }
