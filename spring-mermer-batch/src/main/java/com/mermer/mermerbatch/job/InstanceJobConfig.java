@@ -35,8 +35,8 @@ public class InstanceJobConfig {
 	private JobBuilderFactory jobBuilderFactory;
 
 	@Bean("instanceJob")
-	public Job domainJob(Step pageStep, Step readStep, Step articleStep) {
-		return jobBuilderFactory.get("domainJob")
+	public Job domainJob(Step articleStep) {
+		return jobBuilderFactory.get("instanceJob")
 				.incrementer(new RunIdIncrementer())
 				.validator(domainJobParameterValidator())
 				.start(articleStep)
