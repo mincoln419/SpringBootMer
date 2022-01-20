@@ -7,7 +7,10 @@ import java.util.List;
 
 import javax.batch.runtime.StepExecution;
 
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.JobParametersValidator;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -59,20 +62,51 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Configuration
 @EnableBatchProcessing
+@Slf4j
+@RequiredArgsConstructor
 public class DomainJobConfig {
 
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
+	
+
 
 	
 	@Bean("domainJob")
-	public Job domainJob(Step pageStep, Step readStep, Step articleStep) {
+	public Job domainJob(
+			JobExecutionListener jobExecutionListener,
+			Step pageStep,
+			Step readStep) {
 		return jobBuilderFactory.get("domainJob")
 				.incrementer(new RunIdIncrementer())
 				.validator(domainJobParameterValidator())
+				.listener(jobExecutionListener)
 				.start(pageStep)
 				.next(readStep)
+				//.on("COUNTINUOS").to(readStep).next(readStep)
+				//.end()
 				.build();
+	}
+	
+	@JobScope
+	@Bean
+	public JobExecutionListener jobExecutionListener() {
+		return new JobExecutionListener() {
+			
+			@Override
+			public void beforeJob(JobExecution jobExecution) {
+				log.info("[JobExecutionListenerBeforeJob] jobExcution is " + jobExecution.getStatus());
+				
+			}
+			
+			@Override
+			public void afterJob(JobExecution jobExecution) {
+				if(jobExecution.getStatus() == BatchStatus.FAILED) {
+					//TODO 배치가 실패했을 때 특별한 액션을 설정해둘 수 있음
+					log.info("[JobExecutionListenerAfterJob] jobExcution is " + jobExecution.getStatus());
+				}
+			}
+		};
 	}
 	
 	

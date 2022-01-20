@@ -12,7 +12,6 @@
 package com.mermer.mermerbatch.step;
 
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -23,20 +22,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 
 import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
-import com.mermer.mermerbatch.adaptor.LawPageAPIResource;
 import com.mermer.mermerbatch.core.entity.PageWork;
 import com.mermer.mermerbatch.core.entity.dto.LawSearchDto;
 import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
 import com.mermer.mermerbatch.core.entity.type.StepType;
-
-import lombok.RequiredArgsConstructor;
+import com.mermer.mermerbatch.service.DomainService;
 
 
 @Component
@@ -47,10 +43,10 @@ public class PageStepConfig {
 	private StepBuilderFactory stepBuilderFactory;
 	
 	@Autowired
-	private PageWorkRepository pageWorkRepository;
+	private LawDomainAPIResource lawDomainAPIResource;
 	
 	@Autowired
-	private LawPageAPIResource lawPageAPIResource;
+	private DomainService domainService;
 	
 	@JobScope // Job이 실행되는 동안에만 step의 객체가 살아있도록
 	@Bean("pageStep")
@@ -67,14 +63,14 @@ public class PageStepConfig {
 	
 
 	@StepScope
-	@Bean
+	@Bean("pageSerchReader")
 	public StaxEventItemReader<LawSearchDto> pageSerchReader(
 			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query,
 			Jaxb2Marshaller domainMarshaller, Unmarshaller pageMarshaller
 			){
 		
-		Resource resource = lawPageAPIResource.getResource(search, query, StepType.PAGE);
+		Resource resource = lawDomainAPIResource.getResource(search, query, StepType.PAGE);
 		
 		return new StaxEventItemReaderBuilder<LawSearchDto>()
 				.name("pageDtoReader")
@@ -95,7 +91,7 @@ public class PageStepConfig {
 	
 	
 	@StepScope
-	@Bean
+	@Bean("pageWriter")
 	public ItemWriter<LawSearchDto> pageWriter(
 			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query
@@ -104,18 +100,8 @@ public class PageStepConfig {
 		return items -> {
 			items.forEach(item -> {
 				System.out.println("item:" + item.toString());
-				PageWork pagework = PageWork.builder()
-									.page(Long.parseLong(item.getPage()))
-									.total(Long.parseLong(item.getTotal()))
-									.rows(Long.parseLong(item.getRows()))
-									.search(search)
-									.query(query)
-									.finished(false)
-									.inster(99999999L)
-									.mdfer(99999999L)
-									.build();
-				pagework.updateTargetCnt();
-				pageWorkRepository.save(pagework);
+				domainService.savePageWork(item, search, query);
+
 			});
 		};
 	}

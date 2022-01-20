@@ -16,6 +16,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.listener.CompositeItemReadListener;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
@@ -34,7 +35,9 @@ import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
 import com.mermer.mermerbatch.core.entity.Domain;
 import com.mermer.mermerbatch.core.entity.dto.DomainDto;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
+import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
 import com.mermer.mermerbatch.core.entity.type.StepType;
+import com.mermer.mermerbatch.service.DomainService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,21 +47,29 @@ public class ReadStepConfig {
 
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
+	
 	@Autowired
 	private DomainRepository domainRepository;
+	
+	@Autowired
+	private PageWorkRepository pageRepository;
+	
 	@Autowired
 	private LawDomainAPIResource lawDomainAPIResource;
+	
+	@Autowired
+	private DomainService domainService;
 
 	@JobScope // Job이 실행되는 동안에만 step의 객체가 살아있도록
 	@Bean("readStep")
 	public Step readStep(StaxEventItemReader<DomainDto> domainReader,
-					     ItemProcessor<DomainDto, DomainDto> domainProcessor,
+					     ItemProcessor<DomainDto, DomainDto> domainDtoProcessor,
 					     ItemWriter<DomainDto> domainWriter
 						) {
 		return stepBuilderFactory.get("readStep")
 				.<DomainDto, DomainDto>chunk(10)
 				.reader(domainReader)
-				.processor(domainProcessor)
+				.processor(domainDtoProcessor)
 				.writer(domainWriter)
 				.build();
 	}
@@ -80,14 +91,14 @@ public class ReadStepConfig {
 //	}
 	
 	@StepScope
-	@Bean
+	@Bean("domainReader")
 	public StaxEventItemReader<DomainDto> domainReader(
 			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query,
 			Jaxb2Marshaller domainMarshaller
 			){
-		
-		Resource resource = lawDomainAPIResource.getResource(search, query, StepType.DOMAIN);
+		//if(pageRepository.findBySearchAndQuery(search, query).t)
+		Resource resource = lawDomainAPIResource.getResource(search, query, StepType.PAGE);
 		
 		return new StaxEventItemReaderBuilder<DomainDto>()
 				.name("domainReader")
@@ -97,9 +108,8 @@ public class ReadStepConfig {
 				.build();
 	}
 	
-
 	@StepScope
-	@Bean
+	@Bean("domainProcessor")
 	public ItemProcessor<DomainDto, DomainDto> domainDtoProcessor(){
 		System.out.println("processor");
 		return item -> item;
@@ -116,19 +126,12 @@ public class ReadStepConfig {
 	
 	
 	@StepScope
-	@Bean
+	@Bean("domainWriter")
 	public ItemWriter<DomainDto> domainWriter(){
 		
 		return items -> {
 			items.forEach(item -> {
-				Domain domain = Domain.builder()
-								.lawId(Integer.parseInt(item.getLawId()))
-								.lawMST(Integer.parseInt(item.getLawSerial()))
-								.lawName(item.getLawName())
-								.inster(99999999L)
-								.mdfer(99999999L)
-								.build();
-				domainRepository.save(domain);
+				domainService.saveDomainInfo(item);
 			});
 		};
 	}
