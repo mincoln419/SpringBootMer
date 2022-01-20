@@ -61,6 +61,9 @@ public class LawDomainAPIResource {
 		StringBuilder sb = new StringBuilder();
 		StringBuilder fin = new StringBuilder();
 		
+		//질의문이 빈값으로 들어오면 와일드 카드로 사용
+		query = query == null? "" : query;
+		
 		if(step.equals(StepType.PAGE)) {
 			urlString = String.format("%s&OC=%s&search=%s&query=%s", path, serviceKey
 					, search

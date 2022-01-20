@@ -45,6 +45,7 @@ import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 import com.mermer.mermerbatch.core.entity.type.StepType;
 import com.mermer.mermerbatch.validator.FilePathParameterValidator;
 import com.mermer.mermerbatch.validator.NumberTypeParameterValidator;
+import com.mermer.mermerbatch.validator.SearchTypeParameterValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -114,8 +115,8 @@ public class DomainJobConfig {
 		CompositeJobParametersValidator validator = new CompositeJobParametersValidator();
 		validator.setValidators(Arrays.asList(
 //				new FilePathParameterValidator(),
-				new NumberTypeParameterValidator()
-
+				new NumberTypeParameterValidator(),
+				new SearchTypeParameterValidator()
 				));
 		return validator;
 	}
