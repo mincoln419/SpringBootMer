@@ -2,9 +2,13 @@
 package com.mermer.mermerbatch.step;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.aspectj.weaver.ast.Instanceof;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -41,6 +45,7 @@ import com.mermer.mermerbatch.core.entity.type.ArticleType;
 import com.mermer.mermerbatch.core.entity.type.StepType;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @packageName : com.mermer.mermerbatch.job
@@ -56,6 +61,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Configuration
 @EnableBatchProcessing
+@Slf4j
 public class ArticleStepConfig {
 
 	private final StepBuilderFactory stepBuilderFactory;
@@ -66,16 +72,37 @@ public class ArticleStepConfig {
 	
 	@JobScope // Job이 실행되는 동안에만 step의 객체가 살아있도록
 	@Bean("articleStep")
-	public Step articleStep(StaxEventItemReader<InstanceWrapperDto> articleReader,
-					     ItemWriter<InstanceWrapperDto> articleWriter
-						) {
+	public Step articleStep(
+							StepExecutionListener stepExecutionListener,
+						    StaxEventItemReader<InstanceWrapperDto> articleReader,
+					        ItemWriter<InstanceWrapperDto> articleWriter
+						   ) {
 		return stepBuilderFactory.get("articleStep")
+				.listener(stepExecutionListener)
 				.<InstanceWrapperDto, InstanceWrapperDto>chunk(10)
 				.reader(articleReader)
 				.writer(articleWriter)
 				.build();
 	}
 	
+	
+	@Bean
+	public StepExecutionListener stepExecutionListener() {
+		return new StepExecutionListener() {
+			
+			@Override
+			public void beforeStep(StepExecution stepExecution) {
+				log.info("[StepExecutionListener] " + stepExecution.getStatus());
+				
+			}
+			
+			@Override
+			public ExitStatus afterStep(StepExecution stepExecution) {
+				log.info("[StepExecutionListener] " + stepExecution.getStatus());
+				return stepExecution.getExitStatus();
+			}
+		};
+	}
 	
 
 	@StepScope
@@ -112,8 +139,8 @@ public class ArticleStepConfig {
 		
 		return item -> {
 			System.out.println("lawid" + Integer.parseInt(item.get(0).getBasicDto().getLawId()));
-			Domain domain = domainRepository.findByLawId(Integer.parseInt(item.get(0).getBasicDto().getLawId())).get();
-			
+			Optional<Domain> option = domainRepository.findByLawId(Integer.parseInt(item.get(0).getBasicDto().getLawId()));
+			Domain domain = option.isPresent()? option.get():null; 
 			item.get(0).getArticleWrapperDto().getInstanceDto().forEach(instance -> {
 					
 					Article article = Article.builder()

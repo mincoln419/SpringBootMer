@@ -40,9 +40,6 @@ public class InstanceJobConfig {
 				.incrementer(new RunIdIncrementer())
 				.validator(domainJobParameterValidator())
 				.start(articleStep)
-				.on("CONTINOUS").to(articleStep).from(articleStep)
-				.on("*").end()
-				.end()
 				.build();
 	}
 	

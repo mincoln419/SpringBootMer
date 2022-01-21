@@ -1,23 +1,12 @@
 
 package com.mermer.mermerbatch.adaptor;
 
-import java.util.Optional;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import com.mermer.mermerbatch.core.entity.PageWork;
-import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
-import com.mermer.mermerbatch.core.entity.type.StepType;
 import com.mermer.mermerbatch.core.util.BatchConnection;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @packageName : com.mermer.mermerbatch.adaptor
