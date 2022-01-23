@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,5 +44,8 @@ public class Domain extends CommonEmbeded{
 	private Integer lawMST;//공개법률정보에서 사용하는 법률코드
 
 	private String lawName;//DB에 저장시킬 법률명
+	
+	@Builder.Default
+	private String finished = "N";
 	
 }

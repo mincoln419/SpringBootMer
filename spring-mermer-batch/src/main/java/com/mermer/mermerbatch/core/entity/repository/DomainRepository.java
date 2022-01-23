@@ -1,11 +1,14 @@
 
 package com.mermer.mermerbatch.core.entity.repository;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.mermer.mermerbatch.core.entity.Domain;
 
@@ -30,4 +33,24 @@ public interface DomainRepository extends JpaRepository<Domain, Long>{
 	 * @return
 	 */
 	Optional<Domain> findByLawId(Integer lawId);
+
+
+	@Query(nativeQuery = true, value = "select * from tb_lw_domain "
+									 + "where use_yn = 'Y' "
+									 + "and finished = 'N' "
+									 + "and law_name = ?1 " )
+	List<Domain> findByLawName(String query);
+
+	/**
+	 * @param query
+	 * @return 
+	 */
+	@Query(nativeQuery = true, value = "select * from tb_lw_domain "
+			 + "where use_yn = 'Y' "
+			 + "and finished = 'N' "
+			 + "and law_name = ?1" )
+	List<Domain> findByLawContent(String query);
+	
+	
+	
 }
