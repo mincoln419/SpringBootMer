@@ -1,10 +1,8 @@
 
 package com.mermer.mermerbatch.step;
 
-import java.util.List;
 import java.util.Optional;
 
-import org.aspectj.weaver.ast.Instanceof;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
@@ -22,27 +20,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.stereotype.Component;
 
-import com.mermer.mermerbatch.adaptor.LawDomainAPIResource;
 import com.mermer.mermerbatch.adaptor.LawInstanceAPIResource;
 import com.mermer.mermerbatch.core.entity.Domain;
 import com.mermer.mermerbatch.core.entity.Instance;
-import com.mermer.mermerbatch.core.entity.PageWork;
 import com.mermer.mermerbatch.core.entity.dto.BasicDto;
-import com.mermer.mermerbatch.core.entity.dto.DomainDto;
 import com.mermer.mermerbatch.core.entity.dto.InstanceDto;
 import com.mermer.mermerbatch.core.entity.dto.InstanceWrapperDto;
-import com.mermer.mermerbatch.core.entity.dto.LawSearchDto;
 import com.mermer.mermerbatch.core.entity.dto.SubArticleDto;
 import com.mermer.mermerbatch.core.entity.embeded.Article;
 import com.mermer.mermerbatch.core.entity.embeded.HoArticle;
 import com.mermer.mermerbatch.core.entity.embeded.SubArticle;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 import com.mermer.mermerbatch.core.entity.repository.InstanceRepository;
-import com.mermer.mermerbatch.core.entity.repository.PageWorkRepository;
 import com.mermer.mermerbatch.core.entity.type.ArticleType;
-import com.mermer.mermerbatch.core.entity.type.StepType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,13 +65,14 @@ public class ArticleStepConfig {
 	@Bean("articleStep")
 	public Step articleStep(
 							StepExecutionListener stepExecutionListener,
-						    StaxEventItemReader<InstanceWrapperDto> articleReader,
-					        ItemWriter<InstanceWrapperDto> articleWriter
+						    StaxEventItemReader<InstanceDto> articleReader,
+					        ItemWriter<InstanceDto> articleWriter
 						   ) {
 		return stepBuilderFactory.get("articleStep")
 				.listener(stepExecutionListener)
-				.<InstanceWrapperDto, InstanceWrapperDto>chunk(10)
+				.<InstanceDto, InstanceDto>chunk(10)
 				.reader(articleReader)
+				//.processor(null)
 				.writer(articleWriter)
 				.build();
 	}
@@ -107,7 +99,7 @@ public class ArticleStepConfig {
 
 	@StepScope
 	@Bean
-	public StaxEventItemReader<InstanceWrapperDto> articleReader(
+	public StaxEventItemReader<InstanceDto> articleReader(
 			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query,
 			Unmarshaller articleMarshaller
@@ -115,8 +107,8 @@ public class ArticleStepConfig {
 		
 		Resource resource = lawInstanceAPIResource.getResource(search, query);
 		
-		return new StaxEventItemReaderBuilder<InstanceWrapperDto>()
-				.name("InstanceWrapperDto")
+		return new StaxEventItemReaderBuilder<InstanceDto>()
+				.name("InstanceDto")
 				.resource(resource)
 				.addFragmentRootElements("법령")
 				.unmarshaller(articleMarshaller)//마셜러-> xml 문서 데이터를 객체에 매핑해주는 역할
@@ -135,14 +127,12 @@ public class ArticleStepConfig {
 	
 	@StepScope
 	@Bean
-	public ItemWriter<InstanceWrapperDto> articleWriter(){
+	public ItemWriter<InstanceDto> articleWriter(){
+		int lawId = 0;
+		Optional<Domain> option = domainRepository.findByLawId(lawId);
+		Domain domain = option.isPresent()? option.get():null;
 		
-		return item -> {
-			System.out.println("lawid" + Integer.parseInt(item.get(0).getBasicDto().getLawId()));
-			Optional<Domain> option = domainRepository.findByLawId(Integer.parseInt(item.get(0).getBasicDto().getLawId()));
-			Domain domain = option.isPresent()? option.get():null; 
-			item.get(0).getArticleWrapperDto().getInstanceDto().forEach(instance -> {
-					
+		return items -> items.forEach(instance -> {
 					Article article = Article.builder()
 									.articleNum(Integer.parseInt(instance.getArticleNum()))
 									.articleType(instance.getArticleType().equals("전문") ? ArticleType.PREAMBLE :ArticleType.ARTICLE)
@@ -177,4 +167,4 @@ public class ArticleStepConfig {
 				});
 		};
 	}
-}
+

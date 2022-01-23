@@ -38,20 +38,8 @@ public class InstanceJobConfig {
 	public Job domainJob(Step articleStep) {
 		return jobBuilderFactory.get("instanceJob")
 				.incrementer(new RunIdIncrementer())
-				.validator(domainJobParameterValidator())
 				.start(articleStep)
 				.build();
 	}
-	
-	
-	private JobParametersValidator domainJobParameterValidator() {
-		CompositeJobParametersValidator validator = new CompositeJobParametersValidator();
-		validator.setValidators(Arrays.asList(
-//				new FilePathParameterValidator(),
-				new NumberTypeParameterValidator()
-
-				));
-		return validator;
-	}
-	
+		
 }
