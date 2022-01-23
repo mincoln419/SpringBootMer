@@ -35,10 +35,18 @@ public class InstanceJobConfig {
 	private JobBuilderFactory jobBuilderFactory;
 
 	@Bean("instanceJob")
-	public Job domainJob(Step articleStep) {
+	public Job domainJob(
+			  Step articleStep, 
+			  Step instanceUnWrapStep, 
+			  Step targetStep,
+			  Step targetPringStep
+			) {
 		return jobBuilderFactory.get("instanceJob")
 				.incrementer(new RunIdIncrementer())
-				.start(articleStep)
+				.start(targetStep) // 상세 데이터를 뽑을 법률 목록 조회 -> context에 세팅
+				.next(targetPringStep)
+				//.next(instanceWrapperStep) //상세 데이터 메타데이터 처리
+				//.next(articleStep) // 상세 데이터 각 조문을 각각 DB에 저장
 				.build();
 	}
 		

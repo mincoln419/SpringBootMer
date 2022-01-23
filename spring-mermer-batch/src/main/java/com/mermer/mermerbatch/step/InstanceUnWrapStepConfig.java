@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @EnableBatchProcessing
 @Slf4j
-public class InstanceUnWrapStep {
+public class InstanceUnWrapStepConfig {
 	
 	private final StepBuilderFactory stepBuilderFactory;
 	private final DomainRepository domainRepository;
@@ -55,22 +55,22 @@ public class InstanceUnWrapStep {
 	@JobScope
 	@Bean("instanceUnWrapStep")
 	public Step instanceUnWrapStep(
-		    	StaxEventItemReader<InstanceWrapperDto> articleReader,
-		    	ItemWriter<InstanceWrapperDto> articleWriter
+		    	StaxEventItemReader<InstanceWrapperDto> unWrapReader,
+		    	ItemWriter<InstanceWrapperDto> unWrapWriter
 			) {
 		
 		return stepBuilderFactory.get("instanceUnWrapStep")
 				.<InstanceWrapperDto, InstanceWrapperDto>chunk(10)
-				.reader(articleReader)
+				.reader(unWrapReader)
 				//.processor(null)
-				.writer(articleWriter)
+				.writer(unWrapWriter)
 				.build();
 				
 	}
 	
 	@StepScope
 	@Bean
-	public StaxEventItemReader<InstanceWrapperDto> articleReader(
+	public StaxEventItemReader<InstanceWrapperDto> unWrapReader(
 			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query,
 			Unmarshaller articleMarshaller
@@ -89,7 +89,7 @@ public class InstanceUnWrapStep {
 	
 	@StepScope
 	@Bean
-	public Jaxb2Marshaller articleMarshaller() {		
+	public Jaxb2Marshaller unWrapMarshaller() {		
 		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
 		jaxb2Marshaller.setClassesToBeBound(InstanceWrapperDto.class, BasicDto.class, InstanceDto.class, SubArticleDto.class, HoArticle.class);
 		return jaxb2Marshaller;
@@ -97,7 +97,7 @@ public class InstanceUnWrapStep {
 	
 	@StepScope
 	@Bean
-	public ItemWriter<InstanceWrapperDto> articleWriter(){
+	public ItemWriter<InstanceWrapperDto> unWrapWriter(){
 		return item -> {
 			System.out.println(item);
 		};
