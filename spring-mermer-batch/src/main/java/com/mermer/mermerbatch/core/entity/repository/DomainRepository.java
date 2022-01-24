@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.mermer.mermerbatch.core.entity.Domain;
+import com.mermer.mermerbatch.core.entity.LawInfo;
 
 /**
  * @packageName : com.mermer.mermerbatch.core.entity.repository
@@ -35,21 +36,21 @@ public interface DomainRepository extends JpaRepository<Domain, Long>{
 	Optional<Domain> findByLawId(Integer lawId);
 
 
-	@Query(nativeQuery = true, value = "select * from tb_lw_domain "
+	@Query(nativeQuery = true, value = "select law_Id from house.tb_lw_domain "
 									 + "where use_yn = 'Y' "
 									 + "and finished = 'N' "
-									 + "and law_name = ?1 " )
-	List<Domain> findByLawName(String query);
+									 + "and law_name like '%' ?1 '%' " )
+	List<Integer> findByLawName(String query);
 
 	/**
 	 * @param query
 	 * @return 
 	 */
-	@Query(nativeQuery = true, value = "select * from tb_lw_domain "
+	@Query(nativeQuery = true, value = "select * from house.tb_lw_domain "
 			 + "where use_yn = 'Y' "
 			 + "and finished = 'N' "
 			 + "and law_name = ?1" )
-	List<Domain> findByLawContent(String query);
+	List<LawInfo> findByLawContent(String query);
 	
 	
 	

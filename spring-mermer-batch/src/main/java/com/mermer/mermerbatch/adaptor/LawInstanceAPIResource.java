@@ -1,12 +1,25 @@
 
 package com.mermer.mermerbatch.adaptor;
 
+import java.sql.Clob;
+import java.sql.SQLException;
+
+import javax.sql.rowset.serial.SerialClob;
+import javax.sql.rowset.serial.SerialException;
+
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import com.mermer.mermerbatch.core.entity.Xmls;
+import com.mermer.mermerbatch.core.entity.repository.XmlRepository;
 import com.mermer.mermerbatch.core.util.BatchConnection;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @packageName : com.mermer.mermerbatch.adaptor
@@ -26,6 +39,7 @@ import com.mermer.mermerbatch.core.util.BatchConnection;
  * 2022.01.16 Mermer 최초 생성
  */
 @Component
+@Slf4j
 public class LawInstanceAPIResource {
 
 	@Value("${external.law-instance-api.path}")
@@ -33,14 +47,17 @@ public class LawInstanceAPIResource {
 	@Value("${external.law-domain-api.service-key}")
 	private String serviceKey;
 	
-	public Resource getResource(String search, String query) {
-		
-		
+	@Autowired
+	private XmlRepository xmlRepository;
+	
+	public Resource getResource(String search, String query, ExecutionContext context) throws SerialException, SQLException {
+		log.info("context::" + context);
 		String urlString = null;
 		StringBuilder sb = new StringBuilder();
-		
-		urlString = String.format("%s&OC=%s&MST=%s", path, serviceKey
-				, "223445"
+		Integer lawId = context.getInt("lawId");
+		log.info("getResource[lawId] :" + lawId);
+		urlString = String.format("%s&OC=%s&ID=%s", path, serviceKey
+				, lawId
 				);
 		
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -48,6 +65,16 @@ public class LawInstanceAPIResource {
 		sb.replace(41, 67, "");
 		
 		System.out.println("xml ==== " + sb.toString().substring(0, 100));
+		
+		
+		Clob clob = new SerialClob(sb.toString().toCharArray());
+		Xmls xml = Xmls.builder()
+				.inster(99999999L)
+				.mdfer(99999999L)
+				.content(clob)
+				.build();
+		Long xmlId  = xmlRepository.save(xml).getId();
+		context.put("xmlId", xmlId);
 		Resource result = new ByteArrayResource(sb.toString().getBytes());
 		return result;			
 	}

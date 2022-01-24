@@ -20,7 +20,7 @@ spring:
     show-sql: true
     generate-ddl: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
   batch:
     jdbc:
       initialize-schema: never
@@ -35,5 +35,5 @@ external:
 ---
 logging:  
   level:
-    root: debug
+    root: info
 

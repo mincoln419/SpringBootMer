@@ -1,7 +1,10 @@
 
 package com.mermer.mermerbatch.step;
 
+import java.sql.SQLException;
 import java.util.Optional;
+
+import javax.sql.rowset.serial.SerialException;
 
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
@@ -11,6 +14,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
@@ -60,6 +64,8 @@ public class ArticleStepConfig {
 	private final DomainRepository domainRepository;
 	private final InstanceRepository instanceRepository;
 	
+	private ExecutionContext context;
+	
 	
 	@JobScope // Job이 실행되는 동안에만 step의 객체가 살아있도록
 	@Bean("articleStep")
@@ -102,10 +108,11 @@ public class ArticleStepConfig {
 	public StaxEventItemReader<InstanceDto> articleReader(
 			@Value("#{jobParameters['search']}") String search,
 			@Value("#{jobParameters['query']}") String query,
-			Unmarshaller articleMarshaller
-			){
-		
-		Resource resource = lawInstanceAPIResource.getResource(search, query);
+			Unmarshaller articleMarshaller,
+			StepExecution stepExecution
+			) throws SerialException, SQLException{
+		 
+		Resource resource = lawInstanceAPIResource.getResource(search, query, context);
 		
 		return new StaxEventItemReaderBuilder<InstanceDto>()
 				.name("InstanceDto")
@@ -165,6 +172,9 @@ public class ArticleStepConfig {
 										.build();
 					instanceRepository.save(inst);
 				});
-		};
+		}
+
+
+
 	}
 
