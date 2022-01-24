@@ -11,9 +11,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.mermer.mermerbatch.BatchTestConfig;
-import com.mermer.mermerbatch.step.ArticleStepConfig;
-import com.mermer.mermerbatch.step.PageStepConfig;
-import com.mermer.mermerbatch.step.ReadStepConfig;
 
 /**
  * @packageName : com.mermer.mermerbatch.job
@@ -33,7 +30,6 @@ import com.mermer.mermerbatch.step.ReadStepConfig;
 @ContextConfiguration(classes = {
 		  InstanceJobConfig.class
 		, BatchTestConfig.class
-		, ArticleStepConfig.class
 		})
 public class InstanceJobConfigTest {
 
