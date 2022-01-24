@@ -64,7 +64,6 @@ public class TargetStepConfig {
 		
 				StepExecution stepExecution = chunkContext.getStepContext().getStepExecution();
 				ExecutionContext executionContext = stepExecution.getJobExecution().getExecutionContext();
-				
 				List<Domain> domainQueue = null; 
 
 				
