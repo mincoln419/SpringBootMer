@@ -39,6 +39,9 @@ public class Xmls extends CommonEmbeded{
 	
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_LW_XML_TEMP_ID_GENERATOR")
 	private Long id;
+	
+	private Integer lawId;
+	
 	private Clob content;
 
 }

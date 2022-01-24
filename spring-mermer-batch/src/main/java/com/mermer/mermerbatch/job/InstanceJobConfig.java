@@ -29,16 +29,15 @@ public class InstanceJobConfig {
 	private JobBuilderFactory jobBuilderFactory;
 
 	@Bean("instanceJob")
-	public Job domainJob(
-			  Step articleStep, 
-			  Step instanceUnWrapStep, 
+	public Job domainJob( 
+			  Step instanceStep, 
 			  Step targetStep,
 			  Step targetPringStep
 			) {
 		return jobBuilderFactory.get("instanceJob")
 				.incrementer(new RunIdIncrementer())
 				.start(targetStep) // 상세 데이터를 뽑을 법률 목록 조회 -> context에 세팅
-				.on("CONTINUABLE").to(instanceUnWrapStep).next(targetStep)
+				.on("CONTINUABLE").to(instanceStep).next(targetStep)
 				.from(targetStep)
 				.on("*").end()
 				.end()

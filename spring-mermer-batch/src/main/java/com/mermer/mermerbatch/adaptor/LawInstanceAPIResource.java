@@ -69,6 +69,7 @@ public class LawInstanceAPIResource {
 		
 		Clob clob = new SerialClob(sb.toString().toCharArray());
 		Xmls xml = Xmls.builder()
+				.lawId(lawId)
 				.inster(99999999L)
 				.mdfer(99999999L)
 				.content(clob)
