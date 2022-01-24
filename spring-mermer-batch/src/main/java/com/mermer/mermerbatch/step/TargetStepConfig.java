@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.mermer.mermerbatch.core.entity.Domain;
+import com.mermer.mermerbatch.core.entity.LawInfo;
 import com.mermer.mermerbatch.core.entity.repository.DomainRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,13 @@ public class TargetStepConfig {
 				.build();
 	}
 	
+	
+	/*
+	 * ExecutionContext에 저장할 데이터
+	 * 1. law id -> 다음 스텝에 이용할 값
+	 * 2. domain List -> 도메인 리스트
+	 * 3. item count
+	 */
 	@StepScope
 	@Bean
 	public Tasklet targetListTasklet(
@@ -60,15 +69,41 @@ public class TargetStepConfig {
 			@Value("#{jobParameters['query']}") String query
 			) {
 		
-			return ((constribution, chunkContext) -> {
+			return ((contribution, chunkContext) -> {
 		
 				StepExecution stepExecution = chunkContext.getStepContext().getStepExecution();
 				ExecutionContext executionContext = stepExecution.getJobExecution().getExecutionContext();
-				List<Domain> domainQueue = null; 
+				 
 
+				//데이터가 있으면 다음 스텝을 실행하도록 하고, 데이터가 없으면 종료되도록 한다
+				//데이터가 있으면 -> CONTINUABLE
+				// 1. domainList
+				// 2. lawId
+				// 3. itemCount
 				
-				executionContext.putString("lawId", "test");
+				//데이터가 없을때만 transaction
+				List<Integer> lowInfoList = null;
+				if(!executionContext.containsKey("lawInfoList")){
+					lowInfoList = domainRepository.findByLawName(query);
+					executionContext.put("lawInfoList", lowInfoList);
+					executionContext.putInt("itemCount", lowInfoList.size());
+				}else {
+					lowInfoList = (List<Integer>) executionContext.get("lawInfoList");
+				}
 				
+				Integer itemCount = executionContext.getInt("itemCount");
+				
+				if(itemCount == 0) {
+					contribution.setExitStatus(ExitStatus.COMPLETED);
+					return RepeatStatus.FINISHED;
+				}
+				itemCount--;
+				
+				executionContext.putInt("itemCount", itemCount);
+				Integer lawId = lowInfoList.get(itemCount);
+				
+				executionContext.putInt("lawId", lawId);
+				contribution.setExitStatus(new ExitStatus("CONTINUABLE"));
 				return RepeatStatus.FINISHED;
 			});
 		
@@ -89,7 +124,7 @@ public class TargetStepConfig {
 				@Value("#{jobExecutionContext['lawId']}") String lawId
 			) {
 		return ((contribution, chunkContext) ->{
-			System.out.println("domainQueue" + lawId);
+			log.info("[targetPrintTasklet[lawId]]::" + lawId);
 			return RepeatStatus.FINISHED;
 		});
 	}

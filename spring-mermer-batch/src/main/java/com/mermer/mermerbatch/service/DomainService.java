@@ -57,7 +57,7 @@ public class DomainService {
 	public void saveDomainInfo(DomainDto item) {
 		Domain domain = Domain.builder()
 				.lawId(Integer.parseInt(item.getLawId().trim()))
-				.lawMST(Integer.parseInt(item.getLawSerial().trim()))
+				.lawMst(Integer.parseInt(item.getLawSerial().trim()))
 				.lawName(item.getLawName().trim())
 				.inster(99999999L)
 				.mdfer(99999999L)

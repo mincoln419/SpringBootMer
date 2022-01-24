@@ -41,7 +41,7 @@ public class Domain extends CommonEmbeded{
 	
 	private Integer lawId;
 	
-	private Integer lawMST;//공개법률정보에서 사용하는 법률코드
+	private Integer lawMst;//공개법률정보에서 사용하는 법률코드
 
 	private String lawName;//DB에 저장시킬 법률명
 	
