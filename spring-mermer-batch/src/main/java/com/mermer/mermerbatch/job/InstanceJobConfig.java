@@ -38,7 +38,7 @@ public class InstanceJobConfig {
 		return jobBuilderFactory.get("instanceJob")
 				.incrementer(new RunIdIncrementer())
 				.start(targetStep) // 상세 데이터를 뽑을 법률 목록 조회 -> context에 세팅
-				.on("CONTINUABLE").to(targetPringStep).next(targetStep)
+				.on("CONTINUABLE").to(instanceUnWrapStep).next(targetStep)
 				.from(targetStep)
 				.on("*").end()
 				.end()
