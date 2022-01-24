@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="filecomment_context" deleted="false" description="Comment for created Java files" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.filecomment" name="filecomment">/**&#13;
+ * @packageName : ${package_name}&#13;
+ * @fileName : ${file_name} &#13;
+ * @author : Mermer &#13;
+ * @date : ${id:date('YYYY.MM.dd')} &#13;
+ * @description :&#13;
+ * =========================================================== &#13;
+ * DATE AUTHOR NOTE &#13;
+ * ----------------------------------------------------------- &#13;
+ * ${id:date('YYYY.MM.dd')} Mermer 최초 생성&#13;
+ */</template></templates>

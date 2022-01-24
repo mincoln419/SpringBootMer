@@ -20,7 +20,7 @@ Notice 리소스는 Notice를 만들거나 조회할 때 사용한다.
 
 `POST` 요청을 사용해서 새 Notice를 만들 수 있다.
 
-operation::create-account[snippets='request-fields,curl-request,http-request,request-headers,http-response,response-headers,response-fields,links']
+operation::create-notice[snippets='request-fields,curl-request,http-request,request-headers,http-response,response-headers,response-fields,links']
 
 
 [[resources-notice-list]]
@@ -28,7 +28,7 @@ operation::create-account[snippets='request-fields,curl-request,http-request,req
 
 `GET` 요청을 사용하여 서비스의 모든 Notice를 조회할 수 있다.
 
-operation::get-account[snippets='response-fields,curl-request,http-response,links']
+operation::query-notice[snippets='response-fields,curl-request,http-response,links']
 
 
 [[resources-notice-get]]
@@ -67,7 +67,7 @@ operation::query-notice-reply[snippets='curl-request,http-response,links']
 
 `Get` 요청을 사용해서 기존 Notice 댓글 하나를 조회할 수 있다.
 
-operation::get-notice-reply[snippets='request-fields,curl-request,http-response,links']
+operation::get-notice-reply[snippets='curl-request,http-response,links']
 
 
 [[resources-notice-reply-create]]

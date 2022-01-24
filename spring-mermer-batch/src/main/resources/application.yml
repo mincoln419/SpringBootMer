@@ -1,0 +1,39 @@
+spring:
+  profiles:
+    active: local
+  batch:
+    job:
+      names: ${job.name:NONE}
+      
+      
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/house
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: house
+    password: house
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+  batch:
+    jdbc:
+      initialize-schema: never
+---
+external:
+  law-domain-api:
+    path: http://www.law.go.kr/DRF/lawSearch.do?target=law&type=XML
+    service-key: mincoln419
+  law-instance-api:
+    path: http://www.law.go.kr/DRF/lawService.do?target=law&type=XML
+
+---
+logging:  
+  level:
+    root: info
+

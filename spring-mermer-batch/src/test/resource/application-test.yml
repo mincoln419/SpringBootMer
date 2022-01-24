@@ -1,0 +1,28 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    database: h2
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: create
+  batch:
+    jdbc:
+      initialize-schema: ALWAYS
+---
+external:
+  law-domain-api:
+    path: http://www.law.go.kr/DRF/lawSearch.do?target=law&type=XML
+    service-key: mincoln419
+  law-instance-api:
+    path: http://www.law.go.kr/DRF/lawService.do?target=law&type=XML
+
+---
+logging:  
+  level:
+    root: debug
+
+
+
