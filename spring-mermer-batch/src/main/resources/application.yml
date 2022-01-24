@@ -23,7 +23,7 @@ spring:
       ddl-auto: create
   batch:
     jdbc:
-      initialize-schema: ALWAYS
+      initialize-schema: never
 ---
 external:
   law-domain-api:
