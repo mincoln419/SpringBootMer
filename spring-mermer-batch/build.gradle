@@ -29,8 +29,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.batch:spring-batch-test'
 	
-	runtimeOnly 'mysql:mysql-connector-java'
+	testRuntimeOnly 'mysql:mysql-connector-java'
 	testRuntimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.postgresql:postgresql'
 	
 	implementation 'org.springframework:spring-oxm'
 	implementation 'javax.xml.bind:jaxb-api:2.3.0'

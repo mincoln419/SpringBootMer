@@ -11,11 +11,14 @@ spring:
   config:
     activate:
       on-profile: local
-  datasource:
-    url: jdbc:mysql://127.0.0.1:3306/house
-    driverClassName: com.mysql.cj.jdbc.Driver
-    username: house
-    password: house
+#  datasource:
+#    url: jdbc:mysql://127.0.0.1:3306/house
+#    driverClassName: com.mysql.cj.jdbc.Driver
+#    username: house
+#    password: house
+  datasource:    username: mermer
+    password: pass
+    url: jdbc:postgresql://localhost:5432/postgres    driver-class-name: org.postgresql.Driver 
   jpa:
     show-sql: true
     generate-ddl: false
