@@ -62,7 +62,7 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @EnableBatchProcessing
 @Slf4j
-public class InstanceUnWrapStepConfig  {
+public class InstanceStepConfig  {
 	
 	private final StepBuilderFactory stepBuilderFactory;
 	private final DomainRepository domainRepository;
