@@ -55,7 +55,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder @Getter @Setter @EqualsAndHashCode(of = "id", callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
 @SequenceGenerator(name = "LW_SQ_DOMAIN_ID_GENERATOR", sequenceName = "LW_SQ_DOMAIN_ID", initialValue = 1, allocationSize = 1)
-public abstract class LawDomain extends CommonEmbeded{
+public class LawDomain extends CommonEmbeded{
 
 	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LW_SQ_DOMAIN_ID_GENERATOR")
 	@Column(name = "DOMAIN_ID")
