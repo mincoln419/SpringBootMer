@@ -5,12 +5,14 @@
     Version: 0.0.3 - 프로그램 기능 및 목적 서술 추가
     Version: 0.0.4 - 프로그램 기능 구체화
     Version: 0.0.5 - 프로그램 주요 비즈니스 변경 -> 단순화
+    Version: 0.1.0 - 데이터 수신처리를 위해 배치 프로그램 추가
 ##
 
 
 
 ### Introduce ###
-- 이 프로젝트는 Springboot 와 react.js 를 활용하여 만든 '형량 계산기' 프로그램입니다.
+- 이 프로젝트는 Springboot 와 react.js 를 활용하여 만든 법률 검색 간편화 시스템입니다. 
+- 공개법령 API의 xml 파일을 DB에 저장 후 보다 정제된 데이터를 json 방식으로 리턴해줍니다.
 - 이 프로젝트의 목표는 다음과 같습니다
 
 ### 법률 검색 개선 프로그램
@@ -39,7 +41,8 @@
   - 적용 법률을 특별법, 일반법으로 선택할 수 있게 하여 형량 비교를 할 수 있도록 함
 
 ### Build Spec ###
-- maven 4.0
+- maven 4.0 (Spring Rest API)
+- gradle 6.5.1(Spring batch)
 - spring-boot-starter 2.6.5
 - spring 5.3.12
 - spring-data-jdbc 2.2.6
@@ -49,7 +52,11 @@
 - h2 1.4.200
 - lombok 1.18.22
 - spring-restdocs-mockmvc 2.0.6.RELEASE
-- 
+- query DSL
+- spring-boot-batch
+- rest.js 
+- next.js
+- redux.js reduxSaga.js
 
 ### 사용자 인증 ###
 - OAuth2 및 redis를 통한 token 저장
