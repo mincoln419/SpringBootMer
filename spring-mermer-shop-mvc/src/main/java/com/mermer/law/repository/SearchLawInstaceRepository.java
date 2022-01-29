@@ -13,14 +13,12 @@ package com.mermer.law.repository;
 
 import java.util.List;
 
-import com.google.common.base.Optional;
+import com.mermer.law.entity.CriminalLaw;
 import com.mermer.law.entity.LawInstance;
-
-import lombok.AllArgsConstructor;
 
 
 public interface SearchLawInstaceRepository {
 
 	
-	public List<LawInstance> lawInstances(LawInstance instance);
+	public List<CriminalLaw> ciminalLaws(LawInstance instance);
 }
