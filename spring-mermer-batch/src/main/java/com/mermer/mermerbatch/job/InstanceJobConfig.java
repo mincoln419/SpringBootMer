@@ -41,8 +41,6 @@ public class InstanceJobConfig {
 				.from(targetStep)
 				.on("*").end()
 				.end()
-				//.next(instanceWrapperStep) //상세 데이터 메타데이터 처리
-				//.next(articleStep) // 상세 데이터 각 조문을 각각 DB에 저장
 				.build();
 	}
 		
