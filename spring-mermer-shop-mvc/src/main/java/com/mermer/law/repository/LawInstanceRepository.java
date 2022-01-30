@@ -16,6 +16,6 @@ import com.mermer.law.entity.CriminalLaw;
  * ----------------------------------------------------------- 
  * 2022.01.14 Mermer 최초 생성
  */
-public interface LawInstanceRepository extends JpaRepository<CriminalLaw, Long>{
+public interface LawInstanceRepository extends JpaRepository<CriminalLaw, Long> , SearchLawInstaceRepository{
 
 }

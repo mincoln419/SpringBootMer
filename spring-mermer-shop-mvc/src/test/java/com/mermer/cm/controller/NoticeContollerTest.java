@@ -1,6 +1,7 @@
 
 package com.mermer.cm.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -26,6 +27,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -34,6 +36,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -45,6 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mermer.cm.entity.Account;
 import com.mermer.cm.entity.Notice;
+import com.mermer.cm.entity.NoticeAbstract;
 import com.mermer.cm.entity.Reply;
 import com.mermer.cm.entity.UpLoadFile;
 import com.mermer.cm.entity.dto.NoticeDto;
@@ -90,6 +96,17 @@ public class NoticeContollerTest extends BaseTest {
 		upLoadFileRepository.deleteAll();
 		accountRepository.deleteAll();
 	}
+	
+	@Test
+	@DisplayName("notice repo dsl query만 테스트")
+	public void dslquery_success() {
+		Notice notice = generateNotice(1);
+		
+		Page<NoticeAbstract> result = noticeRepository.findAllNoContent(Pageable.ofSize(1));
+		
+		assertThat(notice.getTitle()).isEqualTo(result.getContent().get(0).getTitle());
+	}
+	
 	
 	@Test
 	@DisplayName("Notice 생성")

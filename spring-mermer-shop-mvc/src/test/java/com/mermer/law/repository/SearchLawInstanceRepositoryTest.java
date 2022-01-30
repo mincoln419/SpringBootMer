@@ -13,6 +13,8 @@ package com.mermer.law.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
@@ -22,10 +24,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.mermer.common.BaseTest;
 import com.mermer.law.entity.CriminalLaw;
 import com.mermer.law.entity.LawDomain;
+import com.mermer.law.entity.LawInstance;
 import com.mermer.law.entity.QCriminalLaw;
 import com.mermer.law.entity.QLawDomain;
+import com.mermer.law.entity.dto.SelectLawDto;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @SpringBootTest
@@ -41,24 +47,29 @@ public class SearchLawInstanceRepositoryTest {
 	private LawDomainRepository domainRepository;
 	
 	@Autowired
-	private LawInstanceRepository criminalLawRepository;
+	private LawInstanceRepository lawInstanceRepository;
+	
+	
 	
 	@BeforeEach
 	public void before() {
+		lawInstanceRepository.deleteAll();
+		domainRepository.deleteAll();
 		queryFactory = new JPAQueryFactory(em);
-		
 		LawDomain sample = LawDomain.builder()
-						   .content("test")
-						   .lawDomainCode("11111")
-						   .lawDomainName("형법")
-						   .build();
+				   .content("test")
+				   .lawDomainCode("11111")
+				   .lawDomainName("형법")
+				   .build();
 		LawDomain domain = domainRepository.save(sample);
 		CriminalLaw lawA = CriminalLaw.builder()
-						   .articleNum(10)
-						   .domain(domain)
-						   .purnishment("처벌한다")
-						   .build();
-		criminalLawRepository.save(lawA);
+				   .articleNum(10)
+				   .domain(domain)
+				   .purnishment("처벌한다")
+				   .build();
+		lawInstanceRepository.save(lawA);
+		
+
 	}
 	
 	
@@ -113,13 +124,31 @@ public class SearchLawInstanceRepositoryTest {
 		
 		QCriminalLaw crime = QCriminalLaw.criminalLaw;
 		
-		CriminalLaw findCrime = queryFactory
-				.select(crime)
+		SelectLawDto findCrime = queryFactory
+				.select(Projections.constructor(SelectLawDto.class,
+						crime.id,
+						crime.articleNum,
+						crime.purnishment)					
+						)
 				.from(crime)
 				.where(crime.articleNum.eq(10))
 				.fetchOne();
 		
 		assertThat(findCrime.getPurnishment()).isEqualTo("처벌한다");
 		
+	}
+	
+	@Test
+	@DisplayName("repo query 테스트")
+	public void selectCriminalLaws_success() {
+
+		CriminalLaw input = CriminalLaw
+				.builder()
+				.articleNum(10)
+				.build();
+		
+		List<SelectLawDto> list = lawInstanceRepository.selectCriminalLaws(input);
+		
+		assertThat(list.get(0).getPurnishment()).isEqualTo("처벌한다");
 	}
 }
