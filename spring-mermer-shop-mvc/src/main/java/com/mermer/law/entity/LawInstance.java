@@ -27,6 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -41,25 +42,25 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity @NoArgsConstructor @AllArgsConstructor
-@Table(name = "LW_TB_INSTANCE")
 @SuperBuilder @Getter @Setter @EqualsAndHashCode(of = "id", callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
-@SequenceGenerator(name = "LW_SQ_INSTANCE_ID_GENERATOR", sequenceName = "LW_SQ_ID_GENERATOR", initialValue = 1, allocationSize = 1)
-@Inheritance(strategy = InheritanceType.JOINED)
+@SequenceGenerator(name = "SQ_LW_INSTANCE_ID_GENERATOR", sequenceName = "SQ_LW_ID_GENERATOR", initialValue = 1, allocationSize = 1)
+@Inheritance(strategy = InheritanceType.JOINED)//상속전략 
 @DiscriminatorColumn(name = "LAW_TYPE")
+@Table(name = "TB_LW_INSTANCE")
 public abstract class LawInstance extends CommonEmbeded{
 	
-	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LW_SQ_INSTANCE_ID_GENERATOR")
-	private Long id;
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_LW_INSTANCE_ID_GENERATOR")
+	protected Long id;
 	
 	@ManyToOne
 	@JoinColumn(name = "DOMAIN_ID")
-	private LawDomain domain;
+	protected LawDomain domain;
 	
-	@NotBlank
-	private Long articleNum;
-	
+	protected Integer articleNum;
 	
 	@Embedded
-	private Structure structure;
+	protected Structure structure;
+	
+	
 }

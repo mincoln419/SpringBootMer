@@ -16,10 +16,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import com.mermer.cm.entity.type.UseYn;
 import com.mermer.law.entity.CriminalLaw;
 import com.mermer.law.entity.LawInstance;
 import com.mermer.law.entity.QCriminalLaw;
 import com.mermer.law.entity.QLawInstance;
+import com.mermer.law.entity.dto.SelectLawDto;
 import com.mermer.law.repository.SearchLawInstaceRepository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -28,33 +30,33 @@ import com.querydsl.jpa.JPQLQuery;
 public class SearchLawInstaceRepositoryImpl extends QuerydslRepositorySupport implements SearchLawInstaceRepository{
 
 	/**
-	 * @param domainClass
+	 * @param CriminalLaw
 	 */
 	public SearchLawInstaceRepositoryImpl() {
 		super(CriminalLaw.class);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public List<CriminalLaw> ciminalLaws(LawInstance instance) {
+	public List<SelectLawDto> selectCriminalLaws(CriminalLaw input) {
 		
 		QCriminalLaw criminalLaw = QCriminalLaw.criminalLaw;
 		
 		JPQLQuery<CriminalLaw> jpqlQuery = from(criminalLaw);
 		
-		JPQLQuery<CriminalLaw> tuple = jpqlQuery.select(Projections.constructor(CriminalLaw.class,
+		JPQLQuery<SelectLawDto> tuple = jpqlQuery.select(Projections.constructor(SelectLawDto.class,
 																		criminalLaw.id,
 																		criminalLaw.articleNum,																		
-																		criminalLaw.structure,
 																		criminalLaw.purnishment,
-																		criminalLaw.domain.id)					
-																		);
+																		criminalLaw.domain					
+																		)
+												)
+												;
 		
 		
-		List<CriminalLaw> list = tuple.fetch();
+		List<SelectLawDto> list = tuple.fetch();
 		
 		return list;
-	}
+	} 
 	
 
 

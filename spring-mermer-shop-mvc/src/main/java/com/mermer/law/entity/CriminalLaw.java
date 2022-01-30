@@ -38,10 +38,10 @@ import lombok.experimental.SuperBuilder;
  * 2022.01.12 Mermer 최초 생성
  */
 @Entity @NoArgsConstructor @AllArgsConstructor
-@Table(name = "LW_TB_CRIMINAL")
+@Table(name = "TB_LW_CRIMINAL")
 @SuperBuilder @Getter @Setter
-@DiscriminatorValue("CIVIL")
-public class CriminalLaw extends LawInstance{
+@DiscriminatorValue("CRIMINAL")
+public class CriminalLaw extends LawInstance {
 
 	@NotBlank
 	private String purnishment;
