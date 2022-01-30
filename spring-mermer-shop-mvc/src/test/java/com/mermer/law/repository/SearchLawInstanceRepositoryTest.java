@@ -24,6 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.mermer.law.entity.CriminalLaw;
 import com.mermer.law.entity.LawDomain;
+import com.mermer.law.entity.QCriminalLaw;
+import com.mermer.law.entity.QLawDomain;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @SpringBootTest
@@ -38,6 +40,9 @@ public class SearchLawInstanceRepositoryTest {
 	@Autowired
 	private LawDomainRepository domainRepository;
 	
+	@Autowired
+	private LawInstanceRepository criminalLawRepository;
+	
 	@BeforeEach
 	public void before() {
 		queryFactory = new JPAQueryFactory(em);
@@ -49,10 +54,11 @@ public class SearchLawInstanceRepositoryTest {
 						   .build();
 		LawDomain domain = domainRepository.save(sample);
 		CriminalLaw lawA = CriminalLaw.builder()
-						   .articleNum(10L)
+						   .articleNum(10)
 						   .domain(domain)
+						   .purnishment("처벌한다")
 						   .build();
-		
+		criminalLawRepository.save(lawA);
 	}
 	
 	
@@ -63,5 +69,57 @@ public class SearchLawInstanceRepositoryTest {
 		
 		assertThat(domainRepository.count() > 0);
 		assertThat(domainRepository.findAll().get(0).getContent()).isEqualTo("test");
+	}
+	
+	
+	@Test
+	@DisplayName("query DSL 처리 확인")
+	public void queryDsl_success() {
+		
+		QLawDomain domain = new QLawDomain("domain");
+		
+		LawDomain findDomain = queryFactory
+				.select(domain)
+				.from(domain)
+				.where(domain.lawDomainCode.eq("11111"))
+				.fetchOne();
+		
+		assertThat(findDomain.getContent()).isEqualTo("test");
+		
+	}
+	
+	
+	@Test
+	@DisplayName("query DSL 처리 확인 - 기본 queryDsl 기본 생성자")
+	public void queryDsl_contruct_success() {
+		
+		QLawDomain domain = QLawDomain.lawDomain;
+		
+		LawDomain findDomain = queryFactory
+				.select(domain)
+				.from(domain)
+				.where(domain.lawDomainCode.eq("11111"))
+				.fetchOne();
+		
+		assertThat(findDomain.getContent()).isEqualTo("test");
+		
+	}
+	
+	
+	
+	@Test
+	@DisplayName("query DSL 처리 확인 - law detail")
+	public void queryDsl_detail_success() {
+		
+		QCriminalLaw crime = QCriminalLaw.criminalLaw;
+		
+		CriminalLaw findCrime = queryFactory
+				.select(crime)
+				.from(crime)
+				.where(crime.articleNum.eq(10))
+				.fetchOne();
+		
+		assertThat(findCrime.getPurnishment()).isEqualTo("처벌한다");
+		
 	}
 }

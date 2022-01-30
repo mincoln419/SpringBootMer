@@ -51,13 +51,13 @@ import lombok.experimental.SuperBuilder;
 
 
 @Entity @NoArgsConstructor @AllArgsConstructor
-@Table(name = "LW_TB_DOMAIN")
+@Table(name = "TB_LW_DOMAIN")
 @SuperBuilder @Getter @Setter @EqualsAndHashCode(of = "id", callSuper = false)
 @EntityListeners(AuditingEntityListener.class)
-@SequenceGenerator(name = "LW_SQ_DOMAIN_ID_GENERATOR", sequenceName = "LW_SQ_DOMAIN_ID", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name = "SQ_LW_DOMAIN_ID_GENERATOR", sequenceName = "SQ_LW_DOMAIN_ID", initialValue = 1, allocationSize = 1)
 public class LawDomain extends CommonEmbeded{
 
-	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LW_SQ_DOMAIN_ID_GENERATOR")
+	@Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_LW_DOMAIN_ID_GENERATOR")
 	@Column(name = "DOMAIN_ID")
 	private Long id;
 	

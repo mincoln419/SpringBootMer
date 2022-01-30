@@ -3,7 +3,7 @@ package com.mermer.law.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.mermer.law.entity.LawInstance;
+import com.mermer.law.entity.CriminalLaw;
 
 /**
  * @packageName : com.mermer.law.repository
@@ -16,6 +16,6 @@ import com.mermer.law.entity.LawInstance;
  * ----------------------------------------------------------- 
  * 2022.01.14 Mermer 최초 생성
  */
-public interface LawInstanceRepository extends JpaRepository<LawInstance, Long>{
+public interface LawInstanceRepository extends JpaRepository<CriminalLaw, Long>{
 
 }

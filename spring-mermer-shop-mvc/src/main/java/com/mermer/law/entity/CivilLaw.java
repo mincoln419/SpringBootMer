@@ -41,12 +41,11 @@ import lombok.experimental.SuperBuilder;
  * 2022.01.11 Mermer 최초 생성
  */
 @Entity @NoArgsConstructor @AllArgsConstructor
-@Table(name = "LW_TB_CIVIL")
+@Table(name = "TB_LW_CIVIL")
 @SuperBuilder @Getter @Setter
 @DiscriminatorValue("CIVIL")
 public class CivilLaw extends LawInstance{
-	
-		
+			
 	@NotBlank
 	private String legalRight;
 	
