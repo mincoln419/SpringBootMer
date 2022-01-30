@@ -1,3 +1,11 @@
+
+package com.mermer.law.repository;
+
+import java.util.List;
+
+import com.mermer.law.entity.CriminalLaw;
+import com.mermer.law.entity.LawInstance;
+
 /**
  * @packageName : com.mermer.law.repository
  * @fileName : SearchLawInstaceRepository.java 
@@ -9,14 +17,6 @@
  * ----------------------------------------------------------- 
  * 2022.01.14 Mermer 최초 생성
  */
-package com.mermer.law.repository;
-
-import java.util.List;
-
-import com.mermer.law.entity.CriminalLaw;
-import com.mermer.law.entity.LawInstance;
-
-
 public interface SearchLawInstaceRepository {
 
 	

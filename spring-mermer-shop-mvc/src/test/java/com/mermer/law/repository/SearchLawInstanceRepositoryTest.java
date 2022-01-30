@@ -62,5 +62,6 @@ public class SearchLawInstanceRepositoryTest {
 		domainRepository.findAll();
 		
 		assertThat(domainRepository.count() > 0);
+		assertThat(domainRepository.findAll().get(0).getContent()).isEqualTo("test");
 	}
 }
