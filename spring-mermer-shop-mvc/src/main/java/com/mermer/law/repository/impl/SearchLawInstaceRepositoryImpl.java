@@ -30,8 +30,8 @@ public class SearchLawInstaceRepositoryImpl extends QuerydslRepositorySupport im
 	/**
 	 * @param domainClass
 	 */
-	public SearchLawInstaceRepositoryImpl(Class<?> domainClass) {
-		super(domainClass);
+	public SearchLawInstaceRepositoryImpl() {
+		super(CriminalLaw.class);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -47,7 +47,7 @@ public class SearchLawInstaceRepositoryImpl extends QuerydslRepositorySupport im
 																		criminalLaw.articleNum,																		
 																		criminalLaw.structure,
 																		criminalLaw.purnishment,
-																		criminalLaw.domain)					
+																		criminalLaw.domain.id)					
 																		);
 		
 		
