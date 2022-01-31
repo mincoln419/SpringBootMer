@@ -18,12 +18,9 @@ import org.springframework.stereotype.Repository;
 
 import com.mermer.cm.entity.type.UseYn;
 import com.mermer.law.entity.CriminalLaw;
-import com.mermer.law.entity.LawInstance;
 import com.mermer.law.entity.QCriminalLaw;
-import com.mermer.law.entity.QLawInstance;
-import com.mermer.law.entity.dto.SelectLawDto;
 import com.mermer.law.repository.SearchLawInstaceRepository;
-import com.querydsl.core.types.Projections;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 
 @Repository
@@ -37,23 +34,21 @@ public class SearchLawInstaceRepositoryImpl extends QuerydslRepositorySupport im
 	}
 
 	@Override
-	public List<SelectLawDto> selectCriminalLaws(CriminalLaw input) {
+	public List<CriminalLaw> selectCriminalLaws(CriminalLaw input) {
 		
 		QCriminalLaw criminalLaw = QCriminalLaw.criminalLaw;
 		
 		JPQLQuery<CriminalLaw> jpqlQuery = from(criminalLaw);
 		
-		JPQLQuery<SelectLawDto> tuple = jpqlQuery.select(Projections.constructor(SelectLawDto.class,
-																		criminalLaw.id,
-																		criminalLaw.articleNum,																		
-																		criminalLaw.purnishment,
-																		criminalLaw.domain					
-																		)
-												)
+		JPQLQuery<CriminalLaw> tuple = jpqlQuery.select(criminalLaw)
 												;
+		BooleanBuilder conditionBuilder = new BooleanBuilder();
+		 
+		conditionBuilder.and(criminalLaw.useYn.eq(UseYn.Y));
+		conditionBuilder.and(criminalLaw.articleNum.eq(input.getArticleNum()));
+		tuple.where(conditionBuilder);
 		
-		
-		List<SelectLawDto> list = tuple.fetch();
+		List<CriminalLaw> list = tuple.fetch();
 		
 		return list;
 	} 

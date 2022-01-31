@@ -14,6 +14,7 @@ package com.mermer.law.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -24,14 +25,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.mermer.common.BaseTest;
 import com.mermer.law.entity.CriminalLaw;
 import com.mermer.law.entity.LawDomain;
-import com.mermer.law.entity.LawInstance;
 import com.mermer.law.entity.QCriminalLaw;
 import com.mermer.law.entity.QLawDomain;
-import com.mermer.law.entity.dto.SelectLawDto;
-import com.querydsl.core.types.Projections;
+import com.mermer.law.entity.embeded.Structure;
+import com.mermer.law.entity.type.LawMethod;
+import com.mermer.law.entity.type.LawResult;
+import com.mermer.law.entity.type.LawSubject;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @SpringBootTest
@@ -66,6 +67,12 @@ public class SearchLawInstanceRepositoryTest {
 				   .articleNum(10)
 				   .domain(domain)
 				   .purnishment("처벌한다")
+				   .structure(Structure.builder()
+							.method(Set.of(LawMethod.DANGER))
+							.subject(Set.of(LawSubject.MAN))
+							.object(Set.of(LawSubject.MAN))
+							.result(Set.of(LawResult.DEAD))
+							.build())
 				   .build();
 		lawInstanceRepository.save(lawA);
 		
@@ -124,12 +131,8 @@ public class SearchLawInstanceRepositoryTest {
 		
 		QCriminalLaw crime = QCriminalLaw.criminalLaw;
 		
-		SelectLawDto findCrime = queryFactory
-				.select(Projections.constructor(SelectLawDto.class,
-						crime.id,
-						crime.articleNum,
-						crime.purnishment)					
-						)
+		CriminalLaw findCrime = queryFactory
+				.select(crime)
 				.from(crime)
 				.where(crime.articleNum.eq(10))
 				.fetchOne();
@@ -147,8 +150,9 @@ public class SearchLawInstanceRepositoryTest {
 				.articleNum(10)
 				.build();
 		
-		List<SelectLawDto> list = lawInstanceRepository.selectCriminalLaws(input);
+		List<CriminalLaw> list = lawInstanceRepository.selectCriminalLaws(input);
 		
 		assertThat(list.get(0).getPurnishment()).isEqualTo("처벌한다");
+		assertThat(list.get(0).getStructure().getSubject()).contains(LawSubject.MAN);
 	}
 }
