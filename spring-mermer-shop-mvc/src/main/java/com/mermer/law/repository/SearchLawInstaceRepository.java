@@ -4,8 +4,6 @@ package com.mermer.law.repository;
 import java.util.List;
 
 import com.mermer.law.entity.CriminalLaw;
-import com.mermer.law.entity.LawInstance;
-import com.mermer.law.entity.dto.SelectLawDto;
 
 /**
  * @packageName : com.mermer.law.repository
@@ -21,5 +19,5 @@ import com.mermer.law.entity.dto.SelectLawDto;
 public interface SearchLawInstaceRepository {
 
 	
-	public List<SelectLawDto> selectCriminalLaws(CriminalLaw instance);
+	public List<CriminalLaw> selectCriminalLaws(CriminalLaw instance);
 }
