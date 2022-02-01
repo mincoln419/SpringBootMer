@@ -35,20 +35,16 @@ import lombok.NoArgsConstructor;
 public class Structure {
 	
 	@Enumerated(EnumType.STRING)
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<LawSubject> subject; // 주체
+	private LawSubject subject; // 주체
 	
 	@Enumerated(EnumType.STRING)
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<LawSubject> object; // 객체
+	private LawSubject object; // 객체
 	
 	@Enumerated(EnumType.STRING)
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<LawMethod> method; // 수단, 방법
-	
+	private LawMethod method; // 수단, 방법
+
 	@Enumerated(EnumType.STRING)
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<LawResult> result; // 결과
+	private LawResult result; // 결과
 	
 	
 	

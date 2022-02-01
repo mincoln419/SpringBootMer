@@ -33,7 +33,9 @@ import com.mermer.law.entity.embeded.Structure;
 import com.mermer.law.entity.type.LawMethod;
 import com.mermer.law.entity.type.LawResult;
 import com.mermer.law.entity.type.LawSubject;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -89,10 +91,10 @@ public class SearchLawInstanceRepositoryTest {
 				   .domain(domain)
 				   .purnishment(arr[randInt])
 				   .structure(Structure.builder()
-							.method(Set.of(LawMethod.DANGER))
-							.subject(Set.of(LawSubject.MAN))
-							.object(Set.of(LawSubject.MAN))
-							.result(Set.of(LawResult.DEAD))
+							.method(LawMethod.DANGER)
+							.subject(LawSubject.MAN)
+							.object(LawSubject.MAN)
+							.result(LawResult.DEAD)
 							.build())
 				   .build();
 		lawInstanceRepository.save(lawA);
@@ -156,7 +158,7 @@ public class SearchLawInstanceRepositoryTest {
 				.where(crime.articleNum.eq(10))
 				.fetchOne();
 		
-		assertThat(findCrime.getStructure().getSubject()).contains(LawSubject.MAN);
+		assertThat(findCrime.getStructure().getSubject()).isEqualTo(LawSubject.MAN);
 		
 	}
 	
@@ -171,7 +173,7 @@ public class SearchLawInstanceRepositoryTest {
 		
 		List<CriminalLaw> list = lawInstanceRepository.selectCriminalLaws(input);
 		
-		assertThat(list.get(0).getStructure().getSubject()).contains(LawSubject.MAN);
+		assertThat(list.get(0).getStructure().getSubject()).isEqualTo(LawSubject.MAN);
 	}
 	
 	@Test
@@ -207,8 +209,8 @@ public class SearchLawInstanceRepositoryTest {
 		
 		List<String> result = queryFactory
 				.select(new CaseBuilder()
-						.when(crime.structure.method.contains(LawMethod.DANGER)).then("위험")
-						.when(crime.structure.method.contains(LawMethod.MULTIPLE)).then("공동")
+						.when(crime.structure.method.eq(LawMethod.DANGER)).then("위험")
+						.when(crime.structure.method.eq(LawMethod.MULTIPLE)).then("공동")
 						.otherwise("기타").as("방법")
 						)
 				.from(crime)
@@ -218,5 +220,117 @@ public class SearchLawInstanceRepositoryTest {
 		String tuple = result.get(0);
 		assertThat(tuple).isEqualTo("위험");
 	}
-			
+
+	@Test
+	@DisplayName("프로젝션 사용 - tuple")
+	public void projection_tuple_success() {
+		for(int i = 11 ; i < 21; i++) {
+			generateLawInstance(i);
+		}
+		
+		QCriminalLaw crime = QCriminalLaw.criminalLaw;
+		
+		List<Tuple> result = queryFactory
+				.select(crime.purnishment,
+						new CaseBuilder()
+						.when(crime.structure.method.eq(LawMethod.DANGER)).then("위험")
+						.when(crime.structure.method.eq(LawMethod.MULTIPLE)).then("공동")
+						.otherwise("기타").as("방법")
+						)
+				.from(crime)
+				.orderBy(crime.domain.lawDomainName.asc())
+				.fetch();
+		
+		Tuple tuple = result.get(0);
+		assertThat(tuple.get(crime.purnishment)).isEqualTo("처벌");
+		assertThat(tuple.get(1, String.class)).isEqualTo("위험");
+	}
+	
+	
+	@Test
+	@DisplayName("boolean Builder 다이나믹 쿼리")
+	public void booleanBuilder_success() {
+		
+		for(int i = 11 ; i < 21; i++) {
+			generateLawInstance(i);
+		}
+		
+		QCriminalLaw crime = QCriminalLaw.criminalLaw;
+		
+		List<Tuple> result = queryFactory
+				.select(crime.purnishment,
+						new CaseBuilder()
+						.when(crime.structure.method.eq(LawMethod.DANGER)).then("위험")
+						.when(crime.structure.method.eq(LawMethod.MULTIPLE)).then("공동")
+						.otherwise("기타").as("방법")
+						)
+				.from(crime)
+				.orderBy(crime.domain.lawDomainName.asc())
+				.fetch();
+		
+		BooleanBuilder conditions = new BooleanBuilder();
+		
+		
+		Tuple tuple = result.get(0);
+		assertThat(tuple.get(crime.purnishment)).isEqualTo("처벌");
+		assertThat(tuple.get(1, String.class)).isEqualTo("위험");
+		
+	}
+	
+	@Test
+	@DisplayName("whereParam 다이나믹 쿼리")
+	public void whereParam_success() {
+		for(int i = 11 ; i < 21; i++) {
+			generateLawInstance(i);
+		}
+		
+		QCriminalLaw crime = QCriminalLaw.criminalLaw;
+		
+		Integer queryArticleNum = 15;
+		String purnishment = "처벌";
+		
+		List<Tuple> result = queryFactory
+				.select(crime.purnishment,
+						new CaseBuilder()
+						.when(crime.structure.method.eq(LawMethod.DANGER)).then("위험")
+						.when(crime.structure.method.eq(LawMethod.MULTIPLE)).then("공동")
+						.otherwise("기타").as("방법")
+						)
+				.from(crime)
+				.where(articleNumEq(crime, queryArticleNum), purnishmentEq(crime, purnishment))
+				.orderBy(crime.domain.lawDomainName.asc())
+				.fetch();
+		
+		assertThat(result.size()).isGreaterThan(0);
+	}
+
+
+	/**
+	 * @param crime 
+	 * @method purnishmentEq
+	 * @param purnishment
+	 * @return
+	 * Predicate
+	 * @description 
+	 */
+	private Predicate purnishmentEq(QCriminalLaw crime, String purnishment) {
+		
+		if(!purnishment.isEmpty())return crime.purnishment.eq(purnishment);
+		else return null;
+	}
+
+
+	/**
+	 * @param crime 
+	 * @method articleNumEq
+	 * @param queryArticleNum
+	 * @return
+	 * Predicate
+	 * @description 
+	 */
+	private Predicate articleNumEq(QCriminalLaw crime, Integer queryArticleNum) {
+		
+		if(queryArticleNum != null)return crime.articleNum.eq(queryArticleNum);
+		else return null;
+	}
 }
