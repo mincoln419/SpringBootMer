@@ -33,6 +33,8 @@ import com.mermer.law.entity.embeded.Structure;
 import com.mermer.law.entity.type.LawMethod;
 import com.mermer.law.entity.type.LawResult;
 import com.mermer.law.entity.type.LawSubject;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 @SpringBootTest
@@ -50,6 +52,7 @@ public class SearchLawInstanceRepositoryTest {
 	@Autowired
 	private LawInstanceRepository lawInstanceRepository;
 	
+	private LawDomain domain;
 	
 	
 	@BeforeEach
@@ -62,11 +65,29 @@ public class SearchLawInstanceRepositoryTest {
 				   .lawDomainCode("11111")
 				   .lawDomainName("형법")
 				   .build();
-		LawDomain domain = domainRepository.save(sample);
+		domain = domainRepository.save(sample);
+
+		generateLawInstance(10);
+
+	}
+	
+	
+	/**
+	 * @method generateLawInstance
+	 * @param i
+	 * void
+	 * @description 
+	 */
+	private void generateLawInstance(int i) {
+		
+		String[] arr = {"처벌", "면제", "보호관찰", "치료감호"};
+		
+		int randInt = ((int)Math.random()) % 4;
+		
 		CriminalLaw lawA = CriminalLaw.builder()
-				   .articleNum(10)
+				   .articleNum(i)
 				   .domain(domain)
-				   .purnishment("처벌한다")
+				   .purnishment(arr[randInt])
 				   .structure(Structure.builder()
 							.method(Set.of(LawMethod.DANGER))
 							.subject(Set.of(LawSubject.MAN))
@@ -75,11 +96,9 @@ public class SearchLawInstanceRepositoryTest {
 							.build())
 				   .build();
 		lawInstanceRepository.save(lawA);
-		
-
 	}
-	
-	
+
+
 	@Test
 	@DisplayName("도메인 생성 확인 테스트")
 	public void domain_create_success() {
@@ -137,7 +156,7 @@ public class SearchLawInstanceRepositoryTest {
 				.where(crime.articleNum.eq(10))
 				.fetchOne();
 		
-		assertThat(findCrime.getPurnishment()).isEqualTo("처벌한다");
+		assertThat(findCrime.getStructure().getSubject()).contains(LawSubject.MAN);
 		
 	}
 	
@@ -152,7 +171,52 @@ public class SearchLawInstanceRepositoryTest {
 		
 		List<CriminalLaw> list = lawInstanceRepository.selectCriminalLaws(input);
 		
-		assertThat(list.get(0).getPurnishment()).isEqualTo("처벌한다");
 		assertThat(list.get(0).getStructure().getSubject()).contains(LawSubject.MAN);
 	}
+	
+	@Test
+	@DisplayName("집합함수 테스트")
+	public void groupFunction_success() {
+		
+		for(int i = 11 ; i < 21; i++) {
+			generateLawInstance(i);
+		}
+		
+		QCriminalLaw crime = QCriminalLaw.criminalLaw;
+		
+		List<Tuple> result = queryFactory
+				.select(crime.count(), crime.domain.lawDomainName)
+				.from(crime)
+				.orderBy(crime.domain.lawDomainName.asc())
+				.groupBy(crime.domain.lawDomainName)
+				.fetch();
+		Tuple tuple = result.get(0);
+		assertThat(tuple.get(crime.count())).isEqualTo(11);
+	}
+	
+	
+	@Test
+	@DisplayName("case 문 테스트")
+	public void case_test_success() {
+		
+		for(int i = 11 ; i < 21; i++) {
+			generateLawInstance(i);
+		}
+		
+		QCriminalLaw crime = QCriminalLaw.criminalLaw;
+		
+		List<String> result = queryFactory
+				.select(new CaseBuilder()
+						.when(crime.structure.method.contains(LawMethod.DANGER)).then("위험")
+						.when(crime.structure.method.contains(LawMethod.MULTIPLE)).then("공동")
+						.otherwise("기타").as("방법")
+						)
+				.from(crime)
+				.orderBy(crime.domain.lawDomainName.asc())
+				.fetch();
+		
+		String tuple = result.get(0);
+		assertThat(tuple).isEqualTo("위험");
+	}
+			
 }
