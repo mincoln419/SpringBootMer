@@ -36,9 +36,5 @@ public class SearchLawDto {
 	
 	private String searchBody;
 		
-	
-	
-	
-	
-	
+
 }

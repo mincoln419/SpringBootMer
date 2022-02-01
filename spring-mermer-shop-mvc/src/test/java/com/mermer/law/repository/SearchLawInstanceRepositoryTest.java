@@ -89,10 +89,10 @@ public class SearchLawInstanceRepositoryTest {
 				   .domain(domain)
 				   .purnishment(arr[randInt])
 				   .structure(Structure.builder()
-							.method(Set.of(LawMethod.DANGER))
-							.subject(Set.of(LawSubject.MAN))
-							.object(Set.of(LawSubject.MAN))
-							.result(Set.of(LawResult.DEAD))
+							.method(LawMethod.DANGER)
+							.subject(LawSubject.MAN)
+							.object(LawSubject.MAN)
+							.result(LawResult.DEAD)
 							.build())
 				   .build();
 		lawInstanceRepository.save(lawA);
@@ -156,7 +156,7 @@ public class SearchLawInstanceRepositoryTest {
 				.where(crime.articleNum.eq(10))
 				.fetchOne();
 		
-		assertThat(findCrime.getStructure().getSubject()).contains(LawSubject.MAN);
+		assertThat(findCrime.getStructure().getSubject()).isEqualTo(LawSubject.MAN);
 		
 	}
 	
@@ -171,7 +171,7 @@ public class SearchLawInstanceRepositoryTest {
 		
 		List<CriminalLaw> list = lawInstanceRepository.selectCriminalLaws(input);
 		
-		assertThat(list.get(0).getStructure().getSubject()).contains(LawSubject.MAN);
+		assertThat(list.get(0).getStructure().getSubject()).isEqualTo(LawSubject.MAN);
 	}
 	
 	@Test
@@ -207,8 +207,8 @@ public class SearchLawInstanceRepositoryTest {
 		
 		List<String> result = queryFactory
 				.select(new CaseBuilder()
-						.when(crime.structure.method.contains(LawMethod.DANGER)).then("위험")
-						.when(crime.structure.method.contains(LawMethod.MULTIPLE)).then("공동")
+						.when(crime.structure.method.eq(LawMethod.DANGER)).then("위험")
+						.when(crime.structure.method.eq(LawMethod.MULTIPLE)).then("공동")
 						.otherwise("기타").as("방법")
 						)
 				.from(crime)
@@ -218,5 +218,29 @@ public class SearchLawInstanceRepositoryTest {
 		String tuple = result.get(0);
 		assertThat(tuple).isEqualTo("위험");
 	}
-			
+
+	@Test
+	@DisplayName("프로젝션 사용 - tuple")
+	public void projection_tuple_success() {
+		for(int i = 11 ; i < 21; i++) {
+			generateLawInstance(i);
+		}
+		
+		QCriminalLaw crime = QCriminalLaw.criminalLaw;
+		
+		List<Tuple> result = queryFactory
+				.select(crime.purnishment,
+						new CaseBuilder()
+						.when(crime.structure.method.eq(LawMethod.DANGER)).then("위험")
+						.when(crime.structure.method.eq(LawMethod.MULTIPLE)).then("공동")
+						.otherwise("기타").as("방법")
+						)
+				.from(crime)
+				.orderBy(crime.domain.lawDomainName.asc())
+				.fetch();
+		
+		Tuple tuple = result.get(0);
+		assertThat(tuple.get(crime.purnishment)).isEqualTo("처벌");
+		assertThat(tuple.get(1, String.class)).isEqualTo("위험");
+	}
 }
