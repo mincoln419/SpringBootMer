@@ -45,18 +45,13 @@ public class SearchLawInstaceRepositoryImpl extends QuerydslRepositorySupport im
 		BooleanBuilder conditionBuilder = new BooleanBuilder();
 		 
 		conditionBuilder.and(criminalLaw.useYn.eq(UseYn.Y));
-		conditionBuilder.and(criminalLaw.articleNum.eq(input.getArticleNum()));
+		if(input.getArticleNum() !=null)conditionBuilder.and(criminalLaw.articleNum.eq(input.getArticleNum()));
 		tuple.where(conditionBuilder);
+		tuple.orderBy(criminalLaw.domain.lawDomainName.asc());
 		
 		List<CriminalLaw> list = tuple.fetch();
 		
 		return list;
 	} 
-	
-
-
-	
-	
-	
 
 }
