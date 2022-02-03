@@ -1,14 +1,4 @@
-/**
- * @packageName : com.mermer.cm.repository
- * @fileName : Querydsl4RepositorySupport.java 
- * @author : Mermer 
- * @date : 2022.02.02 
- * @description :
- * =========================================================== 
- * DATE AUTHOR NOTE 
- * ----------------------------------------------------------- 
- * 2022.02.02 Mermer 최초 생성
- */
+
 package com.mermer.cm.repository;
 
 import java.util.List;
@@ -35,10 +25,15 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 /**
- * Querydsl 4.x 버전에 맞춘 Querydsl 지원 라이브러리 *
- * 
- * @author Younghan Kim * @see
- *         org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
+ * @packageName : com.mermer.cm.repository
+ * @fileName : Querydsl4RepositorySupport.java 
+ * @author Younghan Kim 
+ * @date : 2022.02.02 
+ * @description : Querydsl 4.x 버전에 맞춘 Querydsl 지원 라이브러리 *
+ * =========================================================== 
+ * DATE AUTHOR NOTE 
+ * ----------------------------------------------------------- 
+ * 2022.02.02 Mermer 최초 생성 - 김영한 강사 코드 copy
  */
 @Repository
 public abstract class Querydsl4RepositorySupport {
@@ -53,6 +48,8 @@ public abstract class Querydsl4RepositorySupport {
 		this.domainClass = domainClass;
 	}
 
+	
+	//상속받은 도메인의 entityManager 와 JPAQueryFactory 세팅
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Autowired
 	public void setEntityManager(EntityManager entityManager) {
